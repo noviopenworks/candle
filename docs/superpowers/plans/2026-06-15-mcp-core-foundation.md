@@ -28,7 +28,7 @@ base-ref: 337453d2b73d76f03aecb8eeadf1aded3fbf2752
 - Create: `internal/version/version_test.go`
 - Create: `internal/version/version.go`
 
-- [ ] **Step 1: Initialize the module and a smoke test**
+- [x] **Step 1: Initialize the module and a smoke test**
 
 Create `internal/version/version_test.go`:
 
@@ -44,12 +44,12 @@ func TestString(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go mod init github.com/vend-ai/intel-mcp && go test ./internal/version/`
 Expected: FAIL — `undefined: String`
 
-- [ ] **Step 3: Implement minimal code**
+- [x] **Step 3: Implement minimal code**
 
 Create `internal/version/version.go`:
 
@@ -76,12 +76,12 @@ func main() {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go build ./... && go test ./internal/version/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add go.mod cmd internal/version

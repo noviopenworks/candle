@@ -3,7 +3,7 @@
 > Open-phase task outline. Refined against the Design Doc + delta specs in the design/build phases.
 
 ## 1. Project scaffolding
-- [ ] 1.1 Initialize Go module, repo layout (`cmd/`, `internal/`), lint/test tooling
+- [x] 1.1 Initialize Go module, repo layout (`cmd/`, `internal/`), lint/test tooling
 - [ ] 1.2 Choose + wire MCP Go server library; minimal stdio server that lists zero tools
 
 ## 2. Storage
