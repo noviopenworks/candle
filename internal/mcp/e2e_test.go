@@ -16,8 +16,9 @@ import (
 // `index` subcommand, then launches `serve` as a real subprocess over the SDK's
 // stdio transport. It uses the SDK client (which performs the JSON-RPC
 // initialize handshake) to assert:
-//   - tools/list advertises all five base tool names, and
-//   - tools/call for list_repos returns the ingested repo.
+//   - tools/list advertises every tool name (base + openapi), and
+//   - tools/call for list_repos returns the ingested repo, and
+//   - tools/call for explain_endpoint returns the indexed operationId.
 //
 // Using the SDK's own CommandTransport guarantees the newline-delimited JSON-RPC
 // framing matches the server's StdioTransport, so the subprocess exchange is
@@ -44,9 +45,23 @@ func TestEndToEndStdio(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Write an OpenAPI spec the manifest will reference, exercising the contract layer.
+	specPath := filepath.Join(tmp, "openapi.yaml")
+	if err := os.WriteFile(specPath, []byte(
+		"openapi: 3.0.3\n"+
+			"info:\n  title: Inventory API\n  version: \"1.4.0\"\n"+
+			"paths:\n"+
+			"  /x:\n"+
+			"    post:\n"+
+			"      operationId: reserveProduct\n"+
+			"      summary: Reserve product stock\n"+
+			"      responses:\n        '200': { description: ok }\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
 	manifestPath := filepath.Join(tmp, "manifest.yaml")
 	if err := os.WriteFile(manifestPath, []byte(
-		"repos:\n  - repo: org/svc\n    graph: "+graphPath+"\n    commit: abc\n    branch: main\n"), 0o644); err != nil {
+		"repos:\n  - repo: org/svc\n    graph: "+graphPath+"\n    commit: abc\n    branch: main\n    openapi:\n      - "+specPath+"\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -110,6 +125,23 @@ func TestEndToEndStdio(t *testing.T) {
 	body := contentText(res.Content)
 	if !strings.Contains(body, "org/svc") {
 		t.Fatalf("list_repos did not return ingested repo org/svc; got: %s", body)
+	}
+
+	// 7. tools/call explain_endpoint must return the indexed operationId from the
+	// OpenAPI spec, proving the contract layer is wired through index → serve.
+	epRes, err := session.CallTool(ctx, &mcpsdk.CallToolParams{
+		Name:      "explain_endpoint",
+		Arguments: map[string]any{"repo": "org/svc", "method": "POST", "path": "/x"},
+	})
+	if err != nil {
+		t.Fatalf("tools/call explain_endpoint failed: %v", err)
+	}
+	if epRes.IsError {
+		t.Fatalf("explain_endpoint returned IsError: %+v", epRes.Content)
+	}
+	epBody := contentText(epRes.Content)
+	if !strings.Contains(epBody, "reserveProduct") {
+		t.Fatalf("explain_endpoint did not return operationId reserveProduct; got: %s", epBody)
 	}
 }
 

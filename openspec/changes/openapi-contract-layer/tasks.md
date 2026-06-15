@@ -29,7 +29,7 @@
 - [x] 5.3 `openapi://…/schema/<schemaName>`
 
 ## 6. Verification
-- [ ] 6.1 Sample spec parsed, operations/schemas indexed, `list_apis` returns it
-- [ ] 6.2 `explain_endpoint` returns correct contract data on a fixture
-- [ ] 6.3 Swagger 2.0 / missing / malformed specs skipped (warn, no crash); unknown repo/endpoint/schema → empty/not-found
-- [ ] 6.4 End-to-end: index fixture repo, serve over stdio, `list_apis` + `explain_endpoint`
+- [x] 6.1 Sample spec parsed, operations/schemas indexed, `list_apis` returns it
+- [x] 6.2 `explain_endpoint` returns correct contract data on a fixture
+- [x] 6.3 Swagger 2.0 / missing / malformed specs skipped (warn, no crash); unknown repo/endpoint/schema → empty/not-found
+- [x] 6.4 End-to-end: index fixture repo, serve over stdio, `list_apis` + `explain_endpoint`

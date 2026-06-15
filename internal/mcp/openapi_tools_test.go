@@ -55,3 +55,35 @@ func TestFindEndpointAndSchema(t *testing.T) {
 		t.Fatalf("find_schema: %+v err=%v", sc, err)
 	}
 }
+
+// TestOpenAPIToolsUnknownRepo verifies every openapi tool degrades to ErrNotFound
+// (not a protocol error) for an unresolvable repo.
+func TestOpenAPIToolsUnknownRepo(t *testing.T) {
+	tl := seedAPITools(t)
+	if _, err := tl.ListAPIs("no/such"); err != ErrNotFound {
+		t.Fatalf("list_apis unknown repo: expected ErrNotFound, got %v", err)
+	}
+	if _, err := tl.FindEndpoint("no/such", "x"); err != ErrNotFound {
+		t.Fatalf("find_endpoint unknown repo: expected ErrNotFound, got %v", err)
+	}
+	if _, err := tl.ExplainEndpoint("no/such", "GET", "/x"); err != ErrNotFound {
+		t.Fatalf("explain_endpoint unknown repo: expected ErrNotFound, got %v", err)
+	}
+	if _, err := tl.FindSchema("no/such", "x"); err != ErrNotFound {
+		t.Fatalf("find_schema unknown repo: expected ErrNotFound, got %v", err)
+	}
+}
+
+// TestFindUnknownReturnsEmpty verifies that find tools on a resolvable repo
+// return an empty result (not an error) when nothing matches.
+func TestFindUnknownReturnsEmpty(t *testing.T) {
+	tl := seedAPITools(t)
+	ops, err := tl.FindEndpoint("org/svc", "zzz-no-match")
+	if err != nil || len(ops) != 0 {
+		t.Fatalf("expected empty endpoints, got %+v err=%v", ops, err)
+	}
+	sc, err := tl.FindSchema("org/svc", "zzz-no-match")
+	if err != nil || len(sc) != 0 {
+		t.Fatalf("expected empty schemas, got %+v err=%v", sc, err)
+	}
+}

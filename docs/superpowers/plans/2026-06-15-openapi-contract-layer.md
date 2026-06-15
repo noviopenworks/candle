@@ -1048,27 +1048,27 @@ git commit -m "feat(mcp): register openapi tools + openapi:// resources"
 - Modify: `internal/mcp/e2e_test.go`
 - Modify: `openspec/changes/openapi-contract-layer/tasks.md`
 
-- [ ] **Step 1: Extend the E2E test**
+- [x] **Step 1: Extend the E2E test**
 
 Extend the existing subprocess E2E test (or add a sibling) to: write a fixture repo with an `openapi.yaml`, a manifest with `openapi:`, run `index`, serve, then assert via the SDK client that `tools/list` includes `list_apis`/`find_endpoint`/`explain_endpoint`/`find_schema`, and that `explain_endpoint {repo, "POST", "/x"}` returns the operationId.
 
-- [ ] **Step 2: Run E2E**
+- [x] **Step 2: Run E2E**
 
-Run: `go test ./internal/mcp/ -run E2E -v`
+Run: `go test ./internal/mcp/ -run TestEndToEndStdio -v` (the test is named `TestEndToEndStdio`; `-run E2E` matches nothing)
 Expected: PASS (asserts the four new tools + an explain_endpoint result).
 
-- [ ] **Step 3: Degradation checks**
+- [x] **Step 3: Degradation checks**
 
 Confirm tests cover: missing spec file (warn+skip, run continues), Swagger 2.0 (`ErrUnsupportedVersion` → warn+skip in ingest), unknown repo/endpoint/schema (`ErrNotFound`/empty). Add any missing as failing-first tests in `internal/ingest` / `internal/mcp`.
 
 Run: `go test ./...`
 Expected: PASS
 
-- [ ] **Step 4: Check off OpenSpec tasks.md**
+- [x] **Step 4: Check off OpenSpec tasks.md**
 
 Mark items 1.1–6.4 in `openspec/changes/openapi-contract-layer/tasks.md` as complete (`- [ ]` → `- [x]`).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add openspec/changes/openapi-contract-layer/tasks.md internal/mcp
