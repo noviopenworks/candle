@@ -10,7 +10,7 @@ verify_mode: null
 auto_transition: true
 base_ref: null
 design_doc: docs/superpowers/specs/2026-06-15-openapi-contract-layer-design.md
-plan: null
+plan: docs/superpowers/plans/2026-06-15-openapi-contract-layer.md
 verify_result: pending
 verification_report: null
 branch_status: pending
