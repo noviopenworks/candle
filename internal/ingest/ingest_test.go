@@ -35,3 +35,25 @@ func TestRunIngestsAndToleratesMissing(t *testing.T) {
 		t.Fatalf("expected 1 node ingested, got %d", n)
 	}
 }
+
+func TestRunIndexesOpenAPI(t *testing.T) {
+	dir := t.TempDir()
+	graphPath := filepath.Join(dir, "graph.json")
+	os.WriteFile(graphPath, []byte(`{"nodes":[],"edges":[]}`), 0o644)
+	specPath := filepath.Join(dir, "openapi.yaml")
+	os.WriteFile(specPath, []byte("openapi: 3.0.3\ninfo:\n  title: T\n  version: \"1\"\npaths:\n  /x:\n    get:\n      operationId: getX\n      responses:\n        '200': { description: ok }\n"), 0o644)
+
+	cfg := &config.Config{Repos: []config.RepoConfig{
+		{Repo: "org/svc", Graph: graphPath, Commit: "c1", OpenAPI: []string{specPath}},
+	}}
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	if _, err := Run(s, cfg); err != nil {
+		t.Fatalf("run: %v", err)
+	}
+	var ops int
+	s.DB.QueryRow(`SELECT COUNT(*) FROM http_operations`).Scan(&ops)
+	if ops != 1 {
+		t.Fatalf("expected 1 operation indexed, got %d", ops)
+	}
+}

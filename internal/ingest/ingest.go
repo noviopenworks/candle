@@ -6,6 +6,7 @@ import (
 
 	"github.com/vend-ai/intel-mcp/internal/config"
 	"github.com/vend-ai/intel-mcp/internal/graph"
+	"github.com/vend-ai/intel-mcp/internal/openapi"
 	"github.com/vend-ai/intel-mcp/internal/store"
 )
 
@@ -42,6 +43,34 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 			return rep, err
 		}
 		rep.Indexed++
+
+		// OpenAPI specs (pure contract serving).
+		var bundles []store.APISpecBundle
+		for _, sp := range r.OpenAPI {
+			spec, perr := openapi.ParseFile(sp)
+			if perr != nil {
+				rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: openapi %s: %v", r.Repo, sp, perr))
+				continue
+			}
+			bundles = append(bundles, toBundle(spec, sp))
+		}
+		if err := s.ReplaceAPISpecs(indexID, bundles); err != nil {
+			return rep, err
+		}
 	}
 	return rep, nil
+}
+
+func toBundle(spec *openapi.Spec, specPath string) store.APISpecBundle {
+	b := store.APISpecBundle{Spec: store.APISpec{Kind: "openapi", Name: spec.Name, Version: spec.Version, Path: specPath}}
+	for _, op := range spec.Operations {
+		b.Operations = append(b.Operations, store.HTTPOperation{
+			Method: op.Method, Path: op.Path, OperationID: op.OperationID, Summary: op.Summary,
+			RequestSchema: op.RequestSchema, ResponseSchema: op.ResponseSchema, Security: op.Security, Tags: op.Tags,
+		})
+	}
+	for _, sc := range spec.Schemas {
+		b.Schemas = append(b.Schemas, store.APISchema{Name: sc.Name, Kind: "openapi_schema", RawRef: sc.RawRef})
+	}
+	return b
 }
