@@ -1735,7 +1735,7 @@ git commit -m "feat(mcp): stdio server adapter + cobra serve/index CLI"
 **Files:**
 - Create: `internal/mcp/e2e_test.go`
 
-- [ ] **Step 1: Write the E2E test**
+- [x] **Step 1: Write the E2E test**
 
 Build the binary, ingest a fixture, launch `serve` over stdio, and exchange MCP `initialize` + `tools/list` + one `tools/call`. Implement as a Go test that compiles the binary with `go build`, writes a fixture `graph.json` and a manifest in a temp dir, runs `index`, then runs `serve` as a subprocess wired to stdin/stdout pipes, sending newline-delimited JSON-RPC and asserting:
 - `tools/list` response contains all five tool names.
@@ -1748,21 +1748,21 @@ package mcp
 // differs; in that case assert via an in-process server handle instead.
 ```
 
-- [ ] **Step 2: Run it to confirm it fails (no assertions yet / not implemented)**
+- [x] **Step 2: Run it to confirm it fails (no assertions yet / not implemented)**
 
 Run: `go test ./internal/mcp/ -run TestEndToEndStdio -v`
 Expected: FAIL until implemented.
 
-- [ ] **Step 3: Implement against the verified SDK transport framing**
+- [x] **Step 3: Implement against the verified SDK transport framing**
 
 Fill in the subprocess JSON-RPC exchange using the framing the official SDK's stdio transport expects (confirmed in Task 11). Assert the five tool names and the `list_repos` result.
 
-- [ ] **Step 4: Run to verify it passes**
+- [x] **Step 4: Run to verify it passes**
 
 Run: `go test ./...`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp
