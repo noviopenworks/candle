@@ -2,6 +2,8 @@
 comet_change: openapi-contract-layer
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-15-openapi-contract-layer
+status: final
 ---
 
 # Technical Design — openapi-contract-layer

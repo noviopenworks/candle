@@ -2,6 +2,7 @@
 change: openapi-contract-layer
 design-doc: docs/superpowers/specs/2026-06-15-openapi-contract-layer-design.md
 base-ref: 30924f5f411e9f9a9d427296ec1f35c19a143554
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 # OpenAPI Contract Layer Implementation Plan
@@ -16,6 +17,7 @@ base-ref: 30924f5f411e9f9a9d427296ec1f35c19a143554
 
 **Conventions:** TDD per task (failing test → run-fail → implement → run-pass → commit). `go test ./...`. Nullable TEXT columns read with `COALESCE(col,'')`. Tools are pure functions over the store (no SDK types); SDK confined to `server.go`.
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 1: Manifest — add OpenAPI spec paths
@@ -73,6 +75,7 @@ git add internal/config
 git commit -m "feat(config): add openapi spec paths to manifest"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 2: Storage — api_specs / http_operations / api_schemas tables
@@ -154,6 +157,7 @@ git add internal/store
 git commit -m "feat(store): api_specs/http_operations/api_schemas tables"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 3: OpenAPI parser (`internal/openapi`)
@@ -433,6 +437,7 @@ git add internal/openapi go.mod go.sum
 git commit -m "feat(openapi): kin-openapi 3.x parser with swagger2 rejection"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 4: Store — api CRUD + queries
@@ -737,6 +742,7 @@ git add internal/store
 git commit -m "feat(store): api spec/operation/schema CRUD + queries"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 5: Ingest — wire OpenAPI parsing into the index flow
@@ -830,6 +836,7 @@ git add internal/ingest
 git commit -m "feat(ingest): index openapi specs into the same index_id"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 6: Tools — list_apis / find_endpoint / explain_endpoint / find_schema
@@ -1000,6 +1007,7 @@ git add internal/mcp
 git commit -m "feat(mcp): openapi tools (list_apis/find_endpoint/explain_endpoint/find_schema)"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 7: Register OpenAPI tools + `openapi://` resources in the server
@@ -1040,6 +1048,7 @@ git add internal/mcp
 git commit -m "feat(mcp): register openapi tools + openapi:// resources"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ### Task 8: E2E + degradation sweep + tasks.md sync
@@ -1075,6 +1084,7 @@ git add openspec/changes/openapi-contract-layer/tasks.md internal/mcp
 git commit -m "test(mcp): e2e + degradation for openapi layer; check off tasks"
 ```
 
+archived-with: 2026-06-15-openapi-contract-layer
 ---
 
 ## Self-Review
