@@ -1033,7 +1033,7 @@ Add small helpers `parseOpenAPIURI` and reuse `resourceText`/`toolErr`. Keep the
 Run: `go build ./... && go vet ./... && go test ./...`
 Expected: build succeeds, vet clean, all unit tests PASS.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add internal/mcp
