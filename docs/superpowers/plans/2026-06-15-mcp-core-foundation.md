@@ -1518,7 +1518,7 @@ git commit -m "feat(ingest): config-driven ingestion with missing-graph toleranc
 - Create: `internal/mcp/resources_test.go`
 - Modify: `cmd/intel-mcp/main.go`
 
-- [ ] **Step 1: Write the failing test (resources are pure → testable)**
+- [x] **Step 1: Write the failing test (resources are pure → testable)**
 
 Create `internal/mcp/resources_test.go`:
 
@@ -1560,12 +1560,12 @@ func TestGraphNodeResourceUnknown(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/mcp/ -run Resource`
 Expected: FAIL — `undefined: (*Tools).RepoResource`
 
-- [ ] **Step 3: Implement resources (pure)**
+- [x] **Step 3: Implement resources (pure)**
 
 Create `internal/mcp/resources.go`:
 
@@ -1609,12 +1609,12 @@ func (t *Tools) GraphNodeResource(repo, nodeID string) (string, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/mcp/`
 Expected: PASS
 
-- [ ] **Step 5: Wire the SDK adapter and CLI (verified against the real SDK API)**
+- [x] **Step 5: Wire the SDK adapter and CLI (verified against the real SDK API)**
 
 Create `internal/mcp/server.go` — register each tool/resource by delegating to the pure methods above. Pseudocode against the official SDK shape (adjust to the verified API):
 
@@ -1716,12 +1716,12 @@ func main() {
 }
 ```
 
-- [ ] **Step 6: Verify build**
+- [x] **Step 6: Verify build**
 
 Run: `go build ./... && go test ./...`
 Expected: build succeeds; all unit tests PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add internal/mcp cmd

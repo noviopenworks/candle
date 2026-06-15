@@ -4,7 +4,7 @@
 
 ## 1. Project scaffolding
 - [x] 1.1 Initialize Go module, repo layout (`cmd/`, `internal/`), lint/test tooling
-- [ ] 1.2 Choose + wire MCP Go server library; minimal stdio server that lists zero tools
+- [x] 1.2 Choose + wire MCP Go server library; minimal stdio server that lists zero tools
 
 ## 2. Storage
 - [x] 2.1 Define SQLite schema: `repos`/`index` (snapshot = `index_id`), `nodes`, `edges`
@@ -28,8 +28,8 @@
 - [x] 5.5 `get_file_context`
 
 ## 6. Resources
-- [ ] 6.1 `repo://…` resource handler
-- [ ] 6.2 `graph://…` resource handler (commit-pinned, graceful degrade)
+- [x] 6.1 `repo://…` resource handler
+- [x] 6.2 `graph://…` resource handler (commit-pinned, graceful degrade)
 
 ## 7. Verification
 - [ ] 7.1 Ingest a sample repo graph; tools return expected results
