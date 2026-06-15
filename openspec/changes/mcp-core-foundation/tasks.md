@@ -21,11 +21,11 @@
 - [x] 4.2 Map `org/repo` (+ branch/commit) → indexed snapshot
 
 ## 5. Base MCP tools
-- [ ] 5.1 `list_repos`
-- [ ] 5.2 `resolve_repo`
-- [ ] 5.3 `query_repo`
-- [ ] 5.4 `explain_symbol`
-- [ ] 5.5 `get_file_context`
+- [x] 5.1 `list_repos`
+- [x] 5.2 `resolve_repo`
+- [x] 5.3 `query_repo`
+- [x] 5.4 `explain_symbol`
+- [x] 5.5 `get_file_context`
 
 ## 6. Resources
 - [ ] 6.1 `repo://…` resource handler

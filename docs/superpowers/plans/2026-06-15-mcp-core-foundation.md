@@ -1180,7 +1180,7 @@ git commit -m "feat(registry): repo resolution + fuzzy match"
 - Create: `internal/mcp/tools_test.go`
 - Create: `internal/mcp/tools.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/mcp/tools_test.go`:
 
@@ -1250,12 +1250,12 @@ func TestGetFileContext(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/mcp/`
 Expected: FAIL — `undefined: NewTools`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/mcp/tools.go`:
 
@@ -1371,12 +1371,12 @@ func (t *Tools) QueryRepo(repo, name string) ([]store.NodeRow, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/mcp/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp
