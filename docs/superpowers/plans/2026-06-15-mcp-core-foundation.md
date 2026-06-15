@@ -1391,7 +1391,7 @@ git commit -m "feat(mcp): pure tool implementations over the store"
 - Create: `internal/ingest/ingest_test.go`
 - Create: `internal/ingest/ingest.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/ingest/ingest_test.go`:
 
@@ -1435,12 +1435,12 @@ func TestRunIngestsAndToleratesMissing(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/ingest/`
 Expected: FAIL — `undefined: Run`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/ingest/ingest.go`:
 
@@ -1494,12 +1494,12 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/ingest/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/ingest
