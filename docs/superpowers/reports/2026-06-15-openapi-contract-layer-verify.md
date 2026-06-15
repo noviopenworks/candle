@@ -49,8 +49,9 @@ match — no delta-spec ↔ design-doc contradiction. Code reuses foundation pat
 
 ## Branch handling
 
-Pending user decision (recorded below once chosen). Branch `feature/20260615/openapi-contract-layer`
-holds all 10 feature commits off `master`.
+Handled: per user choice, `feature/20260615/openapi-contract-layer` was fast-forward-merged into
+`master` and the branch deleted. master HEAD `6361543` holds all the work; build + 40 tests pass
+on master. No remote configured.
 
 ## Final assessment
 
