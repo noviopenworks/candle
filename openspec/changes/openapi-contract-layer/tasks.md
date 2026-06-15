@@ -10,18 +10,18 @@
 - [x] 2.1 Parse OpenAPI 3.x with `kin-openapi`; resolve `$ref`, flatten components
 - [x] 2.2 Detect + skip Swagger 2.0 with a warning
 - [x] 2.3 Normalize spec meta, operations (method/path/operationId/summary/schemas/security/tags), and schemas
-- [ ] 2.4 Tolerate missing/malformed spec files (skip + warn)
+- [x] 2.4 Tolerate missing/malformed spec files (skip + warn)
 
 ## 3. Spec indexing
-- [ ] 3.1 Store parsed specs/operations/schemas under the repo's `index_id`
+- [x] 3.1 Store parsed specs/operations/schemas under the repo's `index_id`
 - [x] 3.2 Idempotent re-index (delete+reinsert per index_id, cascade by api_spec_id)
-- [ ] 3.3 Wire spec indexing into the `index` flow after graph ingest
+- [x] 3.3 Wire spec indexing into the `index` flow after graph ingest
 
 ## 4. Tools (pure functions, registered with the base tools)
-- [ ] 4.1 `list_apis` (kind-discriminated, forward-compatible with protobuf)
-- [ ] 4.2 `find_endpoint` (lexical match: NL / path / method / operationId)
-- [ ] 4.3 `explain_endpoint` (contract data only — no handler/service_flow)
-- [ ] 4.4 `find_schema` (OpenAPI schema matches)
+- [x] 4.1 `list_apis` (kind-discriminated, forward-compatible with protobuf)
+- [x] 4.2 `find_endpoint` (lexical match: NL / path / method / operationId)
+- [x] 4.3 `explain_endpoint` (contract data only — no handler/service_flow)
+- [x] 4.4 `find_schema` (OpenAPI schema matches)
 
 ## 5. Resources
 - [ ] 5.1 `openapi://…/spec/<path>`

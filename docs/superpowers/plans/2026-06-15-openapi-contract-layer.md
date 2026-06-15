@@ -745,7 +745,7 @@ git commit -m "feat(store): api spec/operation/schema CRUD + queries"
 - Modify: `internal/ingest/ingest.go`
 - Modify: `internal/ingest/ingest_test.go`
 
-- [ ] **Step 1: Write failing test**
+- [x] **Step 1: Write failing test**
 
 Append to `internal/ingest/ingest_test.go`:
 
@@ -773,12 +773,12 @@ func TestRunIndexesOpenAPI(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/ingest/ -run TestRunIndexesOpenAPI`
 Expected: FAIL — specs not indexed (0 operations).
 
-- [ ] **Step 3: Implement — add spec indexing after graph load**
+- [x] **Step 3: Implement — add spec indexing after graph load**
 
 In `internal/ingest/ingest.go`, after the successful `graph.Load(...)` for a repo, resolve specs and store them. Add imports `github.com/vend-ai/intel-mcp/internal/openapi` and `path/filepath`, and after `rep.Indexed++` insert:
 
@@ -818,12 +818,12 @@ func toBundle(spec *openapi.Spec, specPath string) store.APISpecBundle {
 
 (`indexID` is already in scope from the `UpsertIndex` call earlier in the loop. Ensure `store` is imported.)
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/ingest/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/ingest
@@ -838,7 +838,7 @@ git commit -m "feat(ingest): index openapi specs into the same index_id"
 - Create: `internal/mcp/openapi_tools.go`
 - Create: `internal/mcp/openapi_tools_test.go`
 
-- [ ] **Step 1: Write failing test**
+- [x] **Step 1: Write failing test**
 
 Create `internal/mcp/openapi_tools_test.go`:
 
@@ -902,12 +902,12 @@ func TestFindEndpointAndSchema(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/mcp/ -run 'API|Endpoint|Schema'`
 Expected: FAIL — `undefined: (*Tools).ListAPIs`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/mcp/openapi_tools.go`:
 
@@ -988,12 +988,12 @@ func (t *Tools) FindSchema(repo, query string) ([]store.APISchema, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/mcp/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp
