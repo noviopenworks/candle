@@ -2,6 +2,8 @@
 comet_change: mcp-core-foundation
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-15-mcp-core-foundation
+status: final
 ---
 
 # Technical Design — mcp-core-foundation

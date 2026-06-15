@@ -2,6 +2,7 @@
 change: mcp-core-foundation
 design-doc: docs/superpowers/specs/2026-06-15-mcp-core-foundation-design.md
 base-ref: 337453d2b73d76f03aecb8eeadf1aded3fbf2752
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 # MCP Core Foundation Implementation Plan
@@ -18,6 +19,7 @@ base-ref: 337453d2b73d76f03aecb8eeadf1aded3fbf2752
 
 **Conventions:** Each task is TDD (failing test → run-fail → implement → run-pass → commit). Run all tests with `go test ./...`. The store uses an in-memory or temp-file DB in tests.
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 1: Project scaffolding
@@ -88,6 +90,7 @@ git add go.mod cmd internal/version
 git commit -m "chore: scaffold go module and version package"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 2: SQLite store — open and migrate schema
@@ -267,6 +270,7 @@ git add internal/store
 git commit -m "feat(store): sqlite open + schema migration"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 3: Store — upsert repo and index snapshot
@@ -360,6 +364,7 @@ git add internal/store
 git commit -m "feat(store): idempotent repo+index upsert"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 4: Graph — graph.json types and parser
@@ -519,6 +524,7 @@ git add internal/graph
 git commit -m "feat(graph): graph.json types and parser"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 5: Graph — idempotent loader into the store
@@ -671,6 +677,7 @@ git add internal/graph
 git commit -m "feat(graph): idempotent loader with malformed-entry skipping"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 6: Config — viper manifest loader
@@ -816,6 +823,7 @@ git add internal/config
 git commit -m "feat(config): viper manifest loader with validation"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 7: Store — node/edge queries and cross-index helper
@@ -1023,6 +1031,7 @@ git add internal/store
 git commit -m "feat(store): node/edge queries + cross-index helper"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 8: Registry — resolve org/repo → index_id with fuzzy match
@@ -1172,6 +1181,7 @@ git add internal/registry
 git commit -m "feat(registry): repo resolution + fuzzy match"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 9: Tools — pure functions over the store
@@ -1383,6 +1393,7 @@ git add internal/mcp
 git commit -m "feat(mcp): pure tool implementations over the store"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 10: Ingest pipeline — config → loader (the `index` use case)
@@ -1506,6 +1517,7 @@ git add internal/ingest
 git commit -m "feat(ingest): config-driven ingestion with missing-graph tolerance"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 11: MCP server adapter (official SDK) + cobra CLI
@@ -1728,6 +1740,7 @@ git add internal/mcp cmd
 git commit -m "feat(mcp): stdio server adapter + cobra serve/index CLI"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 12: End-to-end stdio test
@@ -1769,6 +1782,7 @@ git add internal/mcp
 git commit -m "test(mcp): end-to-end stdio initialize + tools/list + tools/call"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ### Task 13: tasks.md sync + degradation sweep
@@ -1794,6 +1808,7 @@ git add openspec/changes/mcp-core-foundation/tasks.md
 git commit -m "docs(openspec): check off mcp-core-foundation tasks; note cross-repo join decision"
 ```
 
+archived-with: 2026-06-15-mcp-core-foundation
 ---
 
 ## Self-Review
