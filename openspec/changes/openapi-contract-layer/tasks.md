@@ -3,18 +3,18 @@
 > Scope: pure contract serving (parse + serve). Operation→handler linking and service_flow are deferred to a future change (see design doc). Refined against the Design Doc + delta specs.
 
 ## 1. Manifest + storage
-- [ ] 1.1 Extend `RepoConfig` with `openapi []string` (`mapstructure:"openapi"`); resolve relative to manifest dir
-- [ ] 1.2 Add `api_specs`, `http_operations`, `api_schemas` tables + indexes to `schemaSQL`; migration
+- [x] 1.1 Extend `RepoConfig` with `openapi []string` (`mapstructure:"openapi"`); resolve relative to manifest dir
+- [x] 1.2 Add `api_specs`, `http_operations`, `api_schemas` tables + indexes to `schemaSQL`; migration
 
 ## 2. OpenAPI parsing (`internal/openapi`)
-- [ ] 2.1 Parse OpenAPI 3.x with `kin-openapi`; resolve `$ref`, flatten components
-- [ ] 2.2 Detect + skip Swagger 2.0 with a warning
-- [ ] 2.3 Normalize spec meta, operations (method/path/operationId/summary/schemas/security/tags), and schemas
+- [x] 2.1 Parse OpenAPI 3.x with `kin-openapi`; resolve `$ref`, flatten components
+- [x] 2.2 Detect + skip Swagger 2.0 with a warning
+- [x] 2.3 Normalize spec meta, operations (method/path/operationId/summary/schemas/security/tags), and schemas
 - [ ] 2.4 Tolerate missing/malformed spec files (skip + warn)
 
 ## 3. Spec indexing
 - [ ] 3.1 Store parsed specs/operations/schemas under the repo's `index_id`
-- [ ] 3.2 Idempotent re-index (delete+reinsert per index_id, cascade by api_spec_id)
+- [x] 3.2 Idempotent re-index (delete+reinsert per index_id, cascade by api_spec_id)
 - [ ] 3.3 Wire spec indexing into the `index` flow after graph ingest
 
 ## 4. Tools (pure functions, registered with the base tools)

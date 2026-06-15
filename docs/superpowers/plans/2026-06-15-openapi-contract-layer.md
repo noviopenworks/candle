@@ -25,7 +25,7 @@ base-ref: 30924f5f411e9f9a9d427296ec1f35c19a143554
 - Modify: `internal/config/config_test.go`
 - Modify: `internal/config/testdata/manifest.yaml`
 
-- [ ] **Step 1: Extend fixture + write failing test**
+- [x] **Step 1: Extend fixture + write failing test**
 
 Add to `internal/config/testdata/manifest.yaml` under the first repo:
 
@@ -48,12 +48,12 @@ func TestOpenAPIPaths(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/config/ -run TestOpenAPIPaths`
 Expected: FAIL — `OpenAPI` field undefined.
 
-- [ ] **Step 3: Add the field**
+- [x] **Step 3: Add the field**
 
 In `internal/config/config.go`, add to `RepoConfig`:
 
@@ -61,12 +61,12 @@ In `internal/config/config.go`, add to `RepoConfig`:
 	OpenAPI []string `mapstructure:"openapi"`
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/config/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/config
@@ -81,7 +81,7 @@ git commit -m "feat(config): add openapi spec paths to manifest"
 - Modify: `internal/store/schema.go`
 - Modify: `internal/store/store_test.go`
 
-- [ ] **Step 1: Write failing test**
+- [x] **Step 1: Write failing test**
 
 Append to `internal/store/store_test.go`:
 
@@ -99,12 +99,12 @@ func TestAPITablesExist(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store/ -run TestAPITablesExist`
 Expected: FAIL — tables not found.
 
-- [ ] **Step 3: Append tables to `schemaSQL`**
+- [x] **Step 3: Append tables to `schemaSQL`**
 
 Add to the `schemaSQL` const in `internal/store/schema.go` (before the closing backtick):
 
@@ -142,12 +142,12 @@ CREATE INDEX IF NOT EXISTS idx_api_schemas_spec ON api_schemas(api_spec_id);
 CREATE INDEX IF NOT EXISTS idx_api_specs_index  ON api_specs(index_id);
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/store
@@ -164,7 +164,7 @@ git commit -m "feat(store): api_specs/http_operations/api_schemas tables"
 - Create: `internal/openapi/testdata/inventory.yaml`
 - Create: `internal/openapi/testdata/swagger2.yaml`
 
-- [ ] **Step 1: Write fixtures + failing test**
+- [x] **Step 1: Write fixtures + failing test**
 
 Create `internal/openapi/testdata/inventory.yaml`:
 
@@ -256,12 +256,12 @@ func TestParseSwagger2IsRejected(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/openapi/`
 Expected: FAIL — `undefined: ParseFile`.
 
-- [ ] **Step 3: Implement the parser**
+- [x] **Step 3: Implement the parser**
 
 Create `internal/openapi/openapi.go`:
 
@@ -421,12 +421,12 @@ func sortedRespCodes(r *openapi3.Responses) []string {
 
 > Note: `kin-openapi`'s exact accessor names (`Paths.Map()`, `Responses.Map()`, `Content.Get`) are version-dependent. Verify against the resolved module version at implementation time and adjust these accessors only; the `Spec`/`Operation`/`Schema` shapes stay fixed.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go get github.com/getkin/kin-openapi/openapi3 && go mod tidy && go test ./internal/openapi/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/openapi go.mod go.sum
@@ -441,7 +441,7 @@ git commit -m "feat(openapi): kin-openapi 3.x parser with swagger2 rejection"
 - Create: `internal/store/api.go`
 - Create: `internal/store/api_test.go`
 
-- [ ] **Step 1: Write failing test**
+- [x] **Step 1: Write failing test**
 
 Create `internal/store/api_test.go`:
 
@@ -498,12 +498,12 @@ func TestFindOperationAndSchema(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store/ -run 'API|Operation|Schema'`
 Expected: FAIL — `undefined: APISpec`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/store/api.go`:
 
@@ -725,12 +725,12 @@ func (s *Store) FindSchemas(indexID int64, query string) ([]APISchema, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/store
