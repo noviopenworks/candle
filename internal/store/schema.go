@@ -60,4 +60,35 @@ CREATE INDEX IF NOT EXISTS idx_nodes_file     ON nodes(index_id, source_file);
 CREATE INDEX IF NOT EXISTS idx_edges_source   ON edges(index_id, source);
 CREATE INDEX IF NOT EXISTS idx_edges_target   ON edges(index_id, target);
 CREATE INDEX IF NOT EXISTS idx_edges_relation ON edges(index_id, relation);
+CREATE TABLE IF NOT EXISTS api_specs (
+  id        INTEGER PRIMARY KEY,
+  index_id  INTEGER NOT NULL REFERENCES indexes(id),
+  kind      TEXT NOT NULL,
+  name      TEXT,
+  version   TEXT,
+  path      TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS http_operations (
+  id              INTEGER PRIMARY KEY,
+  api_spec_id     INTEGER NOT NULL REFERENCES api_specs(id),
+  method          TEXT NOT NULL,
+  path            TEXT NOT NULL,
+  operation_id    TEXT,
+  summary         TEXT,
+  request_schema  TEXT,
+  response_schema TEXT,
+  security        TEXT,
+  tags            TEXT
+);
+CREATE TABLE IF NOT EXISTS api_schemas (
+  id          INTEGER PRIMARY KEY,
+  api_spec_id INTEGER NOT NULL REFERENCES api_specs(id),
+  name        TEXT NOT NULL,
+  kind        TEXT NOT NULL,
+  raw_ref     TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_http_ops_spec    ON http_operations(api_spec_id);
+CREATE INDEX IF NOT EXISTS idx_http_ops_opid    ON http_operations(operation_id);
+CREATE INDEX IF NOT EXISTS idx_api_schemas_spec ON api_schemas(api_spec_id);
+CREATE INDEX IF NOT EXISTS idx_api_specs_index  ON api_specs(index_id);
 `

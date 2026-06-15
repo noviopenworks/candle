@@ -31,6 +31,18 @@ func TestOpenIsIdempotent(t *testing.T) {
 	}
 }
 
+func TestAPITablesExist(t *testing.T) {
+	s, _ := Open(":memory:")
+	defer s.Close()
+	for _, tbl := range []string{"api_specs", "http_operations", "api_schemas"} {
+		var name string
+		if err := s.DB.QueryRow(
+			`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, tbl).Scan(&name); err != nil {
+			t.Fatalf("expected table %q: %v", tbl, err)
+		}
+	}
+}
+
 func TestUpsertRepoAndIndex(t *testing.T) {
 	s, _ := Open(":memory:")
 	defer s.Close()
