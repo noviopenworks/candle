@@ -1,0 +1,40 @@
+openapi: 3.0.3
+info:
+  title: Inventory API
+  version: 1.4.0
+paths:
+  /products/{productId}/reservations:
+    post:
+      operationId: reserveProduct
+      summary: Reserve product stock
+      tags: [reservations]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReserveProductRequest'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+components:
+  schemas:
+    ReserveProductRequest:
+      type: object
+      properties:
+        productId: { type: string }
+    ReservationResponse:
+      type: object
+      properties:
+        status: { type: string }
