@@ -17,8 +17,8 @@
 - [x] 3.4 Tolerate missing/empty/partial graphs without erroring
 
 ## 4. Repo registry / resolution
-- [ ] 4.1 Decide + implement repo-snapshot discovery (resolves the design-phase unknown)
-- [ ] 4.2 Map `org/repo` (+ branch/commit) → indexed snapshot
+- [x] 4.1 Decide + implement repo-snapshot discovery (resolves the design-phase unknown)
+- [x] 4.2 Map `org/repo` (+ branch/commit) → indexed snapshot
 
 ## 5. Base MCP tools
 - [ ] 5.1 `list_repos`

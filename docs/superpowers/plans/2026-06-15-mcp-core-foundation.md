@@ -680,7 +680,7 @@ git commit -m "feat(graph): idempotent loader with malformed-entry skipping"
 - Create: `internal/config/config.go`
 - Create: `internal/config/testdata/manifest.yaml`
 
-- [ ] **Step 1: Write the failing test and fixture**
+- [x] **Step 1: Write the failing test and fixture**
 
 Create `internal/config/testdata/manifest.yaml`:
 
@@ -726,12 +726,12 @@ func TestInvalidRepoIdentity(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/config/`
 Expected: FAIL — `undefined: Load`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/config/config.go`:
 
@@ -804,12 +804,12 @@ func Load(path string) (*Config, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/config/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/config
@@ -824,7 +824,7 @@ git commit -m "feat(config): viper manifest loader with validation"
 - Create: `internal/store/query_test.go`
 - Create: `internal/store/query.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/store/query_test.go`:
 
@@ -893,12 +893,12 @@ func TestNodesByLabelAcrossIndexes(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store/ -run 'Nodes|Neighbors'`
 Expected: FAIL — `undefined: (*Store).NodesByLabel`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/store/query.go`:
 
@@ -1011,12 +1011,12 @@ func (s *Store) NodesByFile(indexID int64, file string) ([]NodeRow, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/store
@@ -1031,7 +1031,7 @@ git commit -m "feat(store): node/edge queries + cross-index helper"
 - Create: `internal/registry/registry_test.go`
 - Create: `internal/registry/registry.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/registry/registry_test.go`:
 
@@ -1070,12 +1070,12 @@ func TestResolveExactAndFuzzy(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/registry/`
 Expected: FAIL — `undefined: New`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/registry/registry.go`:
 
@@ -1160,12 +1160,12 @@ func (r *Registry) Match(query string) ([]RepoInfo, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/registry/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/registry
