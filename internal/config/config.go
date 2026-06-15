@@ -13,6 +13,8 @@ type RepoConfig struct {
 	Graph  string `mapstructure:"graph"`
 	Commit string `mapstructure:"commit"`
 	Branch string `mapstructure:"branch"`
+
+	OpenAPI []string `mapstructure:"openapi"`
 }
 
 // Config is the parsed manifest.

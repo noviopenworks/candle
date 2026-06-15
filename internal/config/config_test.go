@@ -19,6 +19,16 @@ func TestLoadManifest(t *testing.T) {
 	}
 }
 
+func TestOpenAPIPaths(t *testing.T) {
+	cfg, err := Load("testdata/manifest.yaml")
+	if err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	if len(cfg.Repos[0].OpenAPI) != 1 || cfg.Repos[0].OpenAPI[0] != "api/openapi.yaml" {
+		t.Fatalf("expected one openapi path, got %+v", cfg.Repos[0].OpenAPI)
+	}
+}
+
 func TestInvalidRepoIdentity(t *testing.T) {
 	_, err := (RepoConfig{Repo: "noslash"}).validate()
 	if err == nil {
