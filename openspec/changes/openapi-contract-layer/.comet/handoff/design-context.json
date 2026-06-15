@@ -1,0 +1,15 @@
+{
+  "change": "openapi-contract-layer",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "9795a57dd9db7b8c412f6a41787eecd3f5dd885a001e75524dc32846002dbfde",
+  "files": [
+    { "path": "openspec/changes/openapi-contract-layer/proposal.md", "sha256": "db5414272ca6a1afc4101527e132fd4bb3472d40b3d1baa9f93a4b6ae1e1f79f" },
+    { "path": "openspec/changes/openapi-contract-layer/design.md", "sha256": "a6857c32b500fb967268bb410d7c27a97208aed18a80548868a5247e0d1d4215" },
+    { "path": "openspec/changes/openapi-contract-layer/tasks.md", "sha256": "fa51dba603ab2ea44fe8987e7e21bec1051cbd681b15ea18e3528d45504ffebe" },
+    { "path": "openspec/changes/openapi-contract-layer/specs/openapi-index/spec.md", "sha256": "e44a3b7a6f5ae607b8d7fdd698aab95b356355f49b3d013d24eb8df317dceadb" },
+    { "path": "openspec/changes/openapi-contract-layer/specs/openapi-tools/spec.md", "sha256": "28faa263a3628caaf8fee000dda8419e4525611fa9e72880806f69aedaa9b75b" }
+  ]
+}
