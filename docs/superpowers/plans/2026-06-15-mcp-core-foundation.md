@@ -369,7 +369,7 @@ git commit -m "feat(store): idempotent repo+index upsert"
 - Create: `internal/graph/graph.go`
 - Create: `internal/graph/testdata/sample.json`
 
-- [ ] **Step 1: Write the failing test and fixture**
+- [x] **Step 1: Write the failing test and fixture**
 
 Create `internal/graph/testdata/sample.json`:
 
@@ -429,12 +429,12 @@ func TestParseEmpty(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/graph/`
 Expected: FAIL — `undefined: Parse`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/graph/graph.go`:
 
@@ -507,12 +507,12 @@ func ParseBytes(b []byte) (*Graph, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/graph/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/graph
@@ -527,7 +527,7 @@ git commit -m "feat(graph): graph.json types and parser"
 - Create: `internal/graph/loader_test.go`
 - Create: `internal/graph/loader.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/graph/loader_test.go`:
 
@@ -573,12 +573,12 @@ func TestLoadIsIdempotentAndSkipsMalformed(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/graph/ -run TestLoadIsIdempotent`
 Expected: FAIL — `undefined: Load`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/graph/loader.go`:
 
@@ -659,12 +659,12 @@ func Load(s *store.Store, indexID int64, g *Graph) (LoadResult, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/graph/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/graph

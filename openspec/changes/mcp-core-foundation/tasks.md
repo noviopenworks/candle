@@ -11,10 +11,10 @@
 - [x] 2.2 Migration/bootstrap on startup; idempotent open
 
 ## 3. Graphify ingestion
-- [ ] 3.1 Parse `graph.json` (nodes/edges/hyperedges) per the Graphify schema
-- [ ] 3.2 Loader: upsert nodes by Graphify `id`, edges by `(source,target,relation)`; idempotent re-ingest
+- [x] 3.1 Parse `graph.json` (nodes/edges/hyperedges) per the Graphify schema
+- [x] 3.2 Loader: upsert nodes by Graphify `id`, edges by `(source,target,relation)`; idempotent re-ingest
 - [ ] 3.3 Support cross-repo merged graph input
-- [ ] 3.4 Tolerate missing/empty/partial graphs without erroring
+- [x] 3.4 Tolerate missing/empty/partial graphs without erroring
 
 ## 4. Repo registry / resolution
 - [ ] 4.1 Decide + implement repo-snapshot discovery (resolves the design-phase unknown)
