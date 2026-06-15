@@ -1,0 +1,17 @@
+# Go
+/bin/
+*.exe
+*.test
+*.out
+
+# Local index / SQLite store
+*.db
+*.sqlite
+*.sqlite3
+
+# Graphify output (consumed, not committed)
+graphify-out/
+
+# Env / local config
+.env
+*.local.yaml
