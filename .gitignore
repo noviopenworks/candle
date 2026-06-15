@@ -15,3 +15,6 @@ graphify-out/
 # Env / local config
 .env
 *.local.yaml
+
+# Worktrees
+.worktrees/
