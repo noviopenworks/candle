@@ -1,0 +1,10 @@
+{
+  "nodes": [
+    {"id": "http_reservation_reserveproduct", "label": "ReserveProduct", "file_type": "code", "source_file": "internal/http/reservation_handler.go", "source_location": "L10"},
+    {"id": "reservation_service_reserveproduct", "label": "ReserveProduct", "file_type": "code", "source_file": "internal/reservation/service.go"}
+  ],
+  "edges": [
+    {"source": "http_reservation_reserveproduct", "target": "reservation_service_reserveproduct", "relation": "calls", "confidence": "EXTRACTED", "confidence_score": 1.0, "weight": 1.0, "source_file": "internal/http/reservation_handler.go"}
+  ],
+  "hyperedges": []
+}
