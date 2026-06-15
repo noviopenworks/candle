@@ -20,6 +20,10 @@ var ToolNames = []string{
 	"query_repo",
 	"explain_symbol",
 	"get_file_context",
+	"list_apis",
+	"find_endpoint",
+	"explain_endpoint",
+	"find_schema",
 }
 
 // NewServer builds the MCP server backed by the store, registering all base
@@ -37,6 +41,10 @@ func NewServer(s *store.Store) *mcpsdk.Server {
 	registerQueryRepo(srv, tools)
 	registerExplainSymbol(srv, tools)
 	registerGetFileContext(srv, tools)
+	registerListAPIs(srv, tools)
+	registerFindEndpoint(srv, tools)
+	registerExplainEndpoint(srv, tools)
+	registerFindSchema(srv, tools)
 	registerResources(srv, tools)
 
 	return srv
@@ -143,6 +151,78 @@ func registerGetFileContext(srv *mcpsdk.Server, tools *Tools) {
 	})
 }
 
+type listAPIsArgs struct {
+	Repo string `json:"repo" jsonschema:"repo identity (org/name)"`
+}
+
+func registerListAPIs(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "list_apis",
+		Description: "List the API contracts indexed for a repo (kind-discriminated).",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args listAPIsArgs) (*mcpsdk.CallToolResult, any, error) {
+		apis, err := tools.ListAPIs(args.Repo)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(apis)), nil, nil
+	})
+}
+
+type findEndpointArgs struct {
+	Repo  string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Query string `json:"query" jsonschema:"lexical match: NL / path / method / operationId"`
+}
+
+func registerFindEndpoint(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "find_endpoint",
+		Description: "Find HTTP operations in a repo by lexical match on path/method/operationId/summary.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args findEndpointArgs) (*mcpsdk.CallToolResult, any, error) {
+		ops, err := tools.FindEndpoint(args.Repo, args.Query)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(ops)), nil, nil
+	})
+}
+
+type explainEndpointArgs struct {
+	Repo   string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Method string `json:"method" jsonschema:"HTTP method (GET, POST, ...)"`
+	Path   string `json:"path" jsonschema:"endpoint path template"`
+}
+
+func registerExplainEndpoint(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "explain_endpoint",
+		Description: "Explain an HTTP endpoint's contract: operationId, summary, request/response schemas, security, tags.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args explainEndpointArgs) (*mcpsdk.CallToolResult, any, error) {
+		op, err := tools.ExplainEndpoint(args.Repo, args.Method, args.Path)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(op)), nil, nil
+	})
+}
+
+type findSchemaArgs struct {
+	Repo  string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Query string `json:"query" jsonschema:"schema name substring"`
+}
+
+func registerFindSchema(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "find_schema",
+		Description: "Find OpenAPI component schemas in a repo by name substring.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args findSchemaArgs) (*mcpsdk.CallToolResult, any, error) {
+		schemas, err := tools.FindSchema(args.Repo, args.Query)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(schemas)), nil, nil
+	})
+}
+
 // toolErr maps a not-found into a tool-level error result (IsError) rather than
 // a protocol error, so unknown repos/symbols degrade gracefully.
 func toolErr(err error) (*mcpsdk.CallToolResult, any, error) {
@@ -195,6 +275,36 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		}
 		return resourceText(req.Params.URI, body), nil
 	})
+
+	srv.AddResourceTemplate(&mcpsdk.ResourceTemplate{
+		Name:        "openapi",
+		Description: "An OpenAPI artifact (operation/schema/spec) as JSON, commit-pinned.",
+		MIMEType:    "application/json",
+		URITemplate: "openapi://{org}/{name}/commit/{sha}/{kind}/{ref}",
+	}, func(_ context.Context, req *mcpsdk.ReadResourceRequest) (*mcpsdk.ReadResourceResult, error) {
+		repo, kind, ref, err := parseOpenAPIURI(req.Params.URI)
+		if err != nil {
+			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+		}
+		var body string
+		switch kind {
+		case "operation":
+			body, err = tools.OperationResource(repo, ref)
+		case "schema":
+			body, err = tools.SchemaResource(repo, ref)
+		case "spec":
+			body, err = tools.SpecResource(repo, ref)
+		default:
+			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+		}
+		if err != nil {
+			if err == ErrNotFound {
+				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+			}
+			return nil, err
+		}
+		return resourceText(req.Params.URI, body), nil
+	})
 }
 
 func resourceText(uri, body string) *mcpsdk.ReadResourceResult {
@@ -218,4 +328,18 @@ func parseGraphNodeURI(uri string) (repo, nodeID string, err error) {
 		return "", "", fmt.Errorf("malformed graph node uri %q", uri)
 	}
 	return parts[0] + "/" + parts[1], parts[5], nil
+}
+
+// parseOpenAPIURI parses openapi://org/name/commit/<sha>/<kind>/<ref> into the
+// repo identity (org/name), the kind segment (operation|schema|spec), and the
+// trailing ref. The ref may itself contain slashes (e.g. spec paths), so all
+// segments after the kind are rejoined.
+func parseOpenAPIURI(uri string) (repo, kind, ref string, err error) {
+	rest := strings.TrimPrefix(uri, "openapi://")
+	parts := strings.Split(rest, "/")
+	// org / name / commit / <sha> / <kind> / <ref...>
+	if len(parts) < 6 || parts[2] != "commit" {
+		return "", "", "", fmt.Errorf("malformed openapi uri %q", uri)
+	}
+	return parts[0] + "/" + parts[1], parts[4], strings.Join(parts[5:], "/"), nil
 }

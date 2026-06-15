@@ -1009,7 +1009,7 @@ git commit -m "feat(mcp): openapi tools (list_apis/find_endpoint/explain_endpoin
 
 > **SDK note:** reuse the exact `AddTool` / `AddResourceTemplate` patterns already established in `server.go` for the base tools. Confine all SDK types to this file. Append the four new tool names to `ToolNames`.
 
-- [ ] **Step 1: Register tools**
+- [x] **Step 1: Register tools**
 
 In `NewServer`, after the base tool registrations, add `AddTool` calls for `list_apis`, `find_endpoint`, `explain_endpoint`, `find_schema` with typed arg structs:
 - `list_apis`: `{Repo string}` → `tools.ListAPIs`
@@ -1019,7 +1019,7 @@ In `NewServer`, after the base tool registrations, add `AddTool` calls for `list
 
 Each handler mirrors the base-tool handlers: call the pure method, on `ErrNotFound` return an `IsError`/empty result (not a protocol error), else marshal the result to text content. Append the four names to `ToolNames`.
 
-- [ ] **Step 2: Register `openapi://` resources**
+- [x] **Step 2: Register `openapi://` resources**
 
 Add an `AddResourceTemplate` for `openapi://{repo}/commit/{sha}/...` (mirror the `graph://` handler). Parse the URI suffix to dispatch:
 - `.../operation/<operationId>` → `tools` resolve repo → `store.OperationByID` → JSON
@@ -1028,7 +1028,7 @@ Add an `AddResourceTemplate` for `openapi://{repo}/commit/{sha}/...` (mirror the
 
 Add small helpers `parseOpenAPIURI` and reuse `resourceText`/`toolErr`. Keep the resolution logic delegating to pure `Tools`/`store` methods.
 
-- [ ] **Step 3: Build + run full suite**
+- [x] **Step 3: Build + run full suite**
 
 Run: `go build ./... && go vet ./... && go test ./...`
 Expected: build succeeds, vet clean, all unit tests PASS.

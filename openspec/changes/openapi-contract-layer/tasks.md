@@ -24,9 +24,9 @@
 - [x] 4.4 `find_schema` (OpenAPI schema matches)
 
 ## 5. Resources
-- [ ] 5.1 `openapi://…/spec/<path>`
-- [ ] 5.2 `openapi://…/operation/<operationId>`
-- [ ] 5.3 `openapi://…/schema/<schemaName>`
+- [x] 5.1 `openapi://…/spec/<path>`
+- [x] 5.2 `openapi://…/operation/<operationId>`
+- [x] 5.3 `openapi://…/schema/<schemaName>`
 
 ## 6. Verification
 - [ ] 6.1 Sample spec parsed, operations/schemas indexed, `list_apis` returns it
