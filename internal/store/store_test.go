@@ -30,3 +30,26 @@ func TestOpenIsIdempotent(t *testing.T) {
 		t.Fatalf("second migrate: %v", err)
 	}
 }
+
+func TestUpsertRepoAndIndex(t *testing.T) {
+	s, _ := Open(":memory:")
+	defer s.Close()
+
+	id1, err := s.UpsertIndex("org", "svc", "abc123", "main", "/p/graph.json")
+	if err != nil {
+		t.Fatalf("upsert: %v", err)
+	}
+	// Same (repo, commit) returns the same index_id (idempotent).
+	id2, err := s.UpsertIndex("org", "svc", "abc123", "main", "/p/graph.json")
+	if err != nil {
+		t.Fatalf("upsert 2: %v", err)
+	}
+	if id1 != id2 {
+		t.Fatalf("expected idempotent index id, got %d and %d", id1, id2)
+	}
+	var repoCount int
+	s.DB.QueryRow(`SELECT COUNT(*) FROM repos`).Scan(&repoCount)
+	if repoCount != 1 {
+		t.Fatalf("expected 1 repo, got %d", repoCount)
+	}
+}

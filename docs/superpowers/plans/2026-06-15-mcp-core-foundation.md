@@ -275,7 +275,7 @@ git commit -m "feat(store): sqlite open + schema migration"
 - Modify: `internal/store/store_test.go`
 - Create: `internal/store/repos.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `internal/store/store_test.go`:
 
@@ -304,12 +304,12 @@ func TestUpsertRepoAndIndex(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store/ -run TestUpsertRepoAndIndex`
 Expected: FAIL — `undefined: (*Store).UpsertIndex`
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `internal/store/repos.go`:
 
@@ -348,12 +348,12 @@ func (s *Store) UpsertIndex(org, name, commit, branch, graphPath string) (int64,
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store/ -run TestUpsertRepoAndIndex`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/store
