@@ -7,8 +7,8 @@
 - [ ] 1.2 Choose + wire MCP Go server library; minimal stdio server that lists zero tools
 
 ## 2. Storage
-- [ ] 2.1 Define SQLite schema: `repos`/`index` (snapshot = `index_id`), `nodes`, `edges`
-- [ ] 2.2 Migration/bootstrap on startup; idempotent open
+- [x] 2.1 Define SQLite schema: `repos`/`index` (snapshot = `index_id`), `nodes`, `edges`
+- [x] 2.2 Migration/bootstrap on startup; idempotent open
 
 ## 3. Graphify ingestion
 - [ ] 3.1 Parse `graph.json` (nodes/edges/hyperedges) per the Graphify schema

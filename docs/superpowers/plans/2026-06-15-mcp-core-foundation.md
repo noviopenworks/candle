@@ -97,7 +97,7 @@ git commit -m "chore: scaffold go module and version package"
 - Create: `internal/store/store.go`
 - Create: `internal/store/schema.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/store/store_test.go`:
 
@@ -136,12 +136,12 @@ func TestOpenIsIdempotent(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store/`
 Expected: FAIL — `undefined: Open`
 
-- [ ] **Step 3: Implement the store**
+- [x] **Step 3: Implement the store**
 
 Create `internal/store/store.go`:
 
@@ -255,12 +255,12 @@ CREATE INDEX IF NOT EXISTS idx_edges_relation ON edges(index_id, relation);
 `
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/store
