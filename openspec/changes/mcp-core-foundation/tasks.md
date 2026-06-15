@@ -13,7 +13,7 @@
 ## 3. Graphify ingestion
 - [x] 3.1 Parse `graph.json` (nodes/edges/hyperedges) per the Graphify schema
 - [x] 3.2 Loader: upsert nodes by Graphify `id`, edges by `(source,target,relation)`; idempotent re-ingest
-- [ ] 3.3 Support cross-repo merged graph input
+- [x] 3.3 Cross-repo handled as a query-time join (`store.NodesByLabelAllIndexes`); merged-graph input deferred
 - [x] 3.4 Tolerate missing/empty/partial graphs without erroring
 
 ## 4. Repo registry / resolution
@@ -32,6 +32,6 @@
 - [x] 6.2 `graph://…` resource handler (commit-pinned, graceful degrade)
 
 ## 7. Verification
-- [ ] 7.1 Ingest a sample repo graph; tools return expected results
-- [ ] 7.2 Empty/no-graph repo indexes cleanly and tools return empty (not errors)
-- [ ] 7.3 End-to-end: server starts over stdio, advertises tools, responds to a query
+- [x] 7.1 Ingest a sample repo graph; tools return expected results
+- [x] 7.2 Empty/no-graph repo indexes cleanly and tools return empty (not errors)
+- [x] 7.3 End-to-end: server starts over stdio, advertises tools, responds to a query

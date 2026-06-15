@@ -1776,18 +1776,18 @@ git commit -m "test(mcp): end-to-end stdio initialize + tools/list + tools/call"
 **Files:**
 - Modify: `openspec/changes/mcp-core-foundation/tasks.md`
 
-- [ ] **Step 1: Confirm degradation behaviors are covered by tests**
+- [x] **Step 1: Confirm degradation behaviors are covered by tests**
 
 Verify these tests exist and pass (add any missing as failing-first): empty graph (`TestParseEmpty`, ingest of empty nodes), missing graph file (`TestRunIngestsAndToleratesMissing`), unknown repo/symbol (`TestExplainSymbolUnknownReturnsEmpty`, `TestGraphNodeResourceUnknown`), malformed entries skipped (`TestLoadIsIdempotentAndSkipsMalformed`).
 
 Run: `go test ./...`
 Expected: PASS
 
-- [ ] **Step 2: Check off OpenSpec tasks.md**
+- [x] **Step 2: Check off OpenSpec tasks.md**
 
 Mark items 1.1–7.3 in `openspec/changes/mcp-core-foundation/tasks.md` as complete (`- [ ]` → `- [x]`), and update task 3.3 to reflect the design decision: cross-repo is a query-time join (`NodesByLabelAllIndexes`); merged-graph input is deferred.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add openspec/changes/mcp-core-foundation/tasks.md
