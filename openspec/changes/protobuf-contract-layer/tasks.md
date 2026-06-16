@@ -20,10 +20,10 @@
 - [ ] 3.4 ~~Cross-repo `consumed_by`~~ **DEFERRED to a future change** (out of scope; `explain_rpc` returns a deferred marker)
 
 ## 4. Tools
-- [ ] 4.1 `find_rpc` (lexical match + optional `stream_kind` filter)
-- [ ] 4.2 `explain_rpc` (proto facts + resolved messages + `implemented_by` + best-effort one-hop `calls` + deferred `consumed_by` marker)
-- [ ] 4.3 Extend `list_apis` with `{kind:"protobuf"}` entries (HTTP output unchanged)
-- [ ] 4.4 Extend `find_schema` with `{kind:"proto_message"}` entries
+- [x] 4.1 `find_rpc` (lexical match + optional `stream_kind` filter)
+- [x] 4.2 `explain_rpc` (proto facts + resolved messages + `implemented_by` + best-effort one-hop `calls` + deferred `consumed_by` marker)
+- [x] 4.3 Extend `list_apis` with `{kind:"protobuf"}` entries (HTTP output unchanged)
+- [x] 4.4 Extend `find_schema` with `{kind:"proto_message"}` entries
 
 ## 5. Resources
 - [ ] 5.1 `proto://…/file/<path>`

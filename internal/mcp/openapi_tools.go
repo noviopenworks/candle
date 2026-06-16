@@ -27,6 +27,13 @@ func (t *Tools) ListAPIs(repo string) ([]APIInfo, error) {
 	for _, sp := range specs {
 		out = append(out, APIInfo{Kind: sp.Kind, Name: sp.Name, Version: sp.Version, Path: sp.Path})
 	}
+	pfiles, err := t.s.ListProtoFiles(ri.IndexID)
+	if err != nil {
+		return nil, err
+	}
+	for _, pf := range pfiles {
+		out = append(out, APIInfo{Kind: "protobuf", Name: pf.Package, Version: "", Path: pf.Path})
+	}
 	return out, nil
 }
 
@@ -61,8 +68,8 @@ func (t *Tools) ExplainEndpoint(repo, method, path string) (store.HTTPOperation,
 	return op, nil
 }
 
-// FindSchema implements find_schema (OpenAPI schemas).
-func (t *Tools) FindSchema(repo, query string) ([]store.APISchema, error) {
+// FindSchema implements find_schema (OpenAPI schemas + proto messages).
+func (t *Tools) FindSchema(repo, query string) ([]SchemaInfo, error) {
 	ri, ok, err := t.reg.Resolve(repo)
 	if err != nil {
 		return nil, err
@@ -70,5 +77,20 @@ func (t *Tools) FindSchema(repo, query string) ([]store.APISchema, error) {
 	if !ok {
 		return nil, ErrNotFound
 	}
-	return t.s.FindSchemas(ri.IndexID, query)
+	out := []SchemaInfo{}
+	schemas, err := t.s.FindSchemas(ri.IndexID, query)
+	if err != nil {
+		return nil, err
+	}
+	for _, sc := range schemas {
+		out = append(out, SchemaInfo{Kind: "openapi_schema", Name: sc.Name, SpecPath: sc.SpecPath})
+	}
+	msgs, err := t.s.FindMessages(ri.IndexID, query)
+	if err != nil {
+		return nil, err
+	}
+	for _, m := range msgs {
+		out = append(out, SchemaInfo{Kind: "proto_message", Name: m.Name, SpecPath: m.ProtoPath})
+	}
+	return out, nil
 }

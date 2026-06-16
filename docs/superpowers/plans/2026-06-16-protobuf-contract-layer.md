@@ -1310,7 +1310,7 @@ Then mark tasks.md items 3.2 as `[x]`.
 - Create: `internal/mcp/proto_tools.go`
 - Test: `internal/mcp/proto_tools_test.go`
 
-- [ ] **Step 1: Write the failing tool test**
+- [x] **Step 1: Write the failing tool test**
 
 Create `internal/mcp/proto_tools_test.go`:
 
@@ -1417,12 +1417,12 @@ func TestFindSchemaIncludesProtoMessage(t *testing.T) {
 
 This test assumes `FindSchema` returns a slice of a kind-discriminated struct that includes a `Kind` field for both openapi and proto entries. Step 3 changes `FindSchema`'s return type accordingly; update `internal/mcp/openapi_tools_test.go` if it asserts the old `[]store.APISchema` return.
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `go test ./internal/mcp/ -run 'RPC|ListAPIsIncludesProto|FindSchemaIncludesProto' -v`
 Expected: FAIL — `FindRPC`, `ExplainRPC`, proto entries undefined.
 
-- [ ] **Step 3: Implement `internal/mcp/proto_tools.go` and extend ListAPIs/FindSchema**
+- [x] **Step 3: Implement `internal/mcp/proto_tools.go` and extend ListAPIs/FindSchema**
 
 Create `internal/mcp/proto_tools.go`:
 
@@ -1573,12 +1573,12 @@ func (t *Tools) FindSchema(repo, query string) ([]SchemaInfo, error) {
 
 Update `internal/mcp/resources.go` `SchemaResource` (which calls `FindSchemas`) to keep working — it uses `t.s.FindSchemas` directly (store method, unchanged), so no edit needed there. Update `internal/mcp/openapi_tools_test.go` if it asserts the old `FindSchema` return type (`[]store.APISchema`); change those assertions to the new `[]SchemaInfo` shape with `Kind == "openapi_schema"`.
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `go test ./internal/mcp/ -v`
 Expected: PASS (fix any `openapi_tools_test.go` assertions broken by the `FindSchema` return-type change).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp/proto_tools.go internal/mcp/openapi_tools.go internal/mcp/proto_tools_test.go internal/mcp/openapi_tools_test.go openspec/changes/protobuf-contract-layer/tasks.md
