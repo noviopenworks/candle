@@ -1856,7 +1856,7 @@ Then mark tasks.md items 5.1, 5.2, 5.3, 5.4 as `[x]`.
 **Files:**
 - Modify: `internal/mcp/e2e_test.go` (or the existing end-to-end test)
 
-- [ ] **Step 1: Add a regression assertion for unchanged HTTP output**
+- [x] **Step 1: Add a regression assertion for unchanged HTTP output**
 
 In `internal/mcp/e2e_test.go`, add a test that seeds a repo with BOTH an OpenAPI spec and a proto file, then asserts the OpenAPI-only results are unchanged:
 
@@ -1911,17 +1911,17 @@ func TestProtoDoesNotRegressHTTP(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run the full suite**
+- [x] **Step 2: Run the full suite**
 
 Run: `go test ./...`
 Expected: every package reports `ok`.
 
-- [ ] **Step 3: Build the binary**
+- [x] **Step 3: Build the binary**
 
 Run: `go build ./...`
 Expected: no output (success).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add internal/mcp/e2e_test.go openspec/changes/protobuf-contract-layer/tasks.md

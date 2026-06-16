@@ -32,8 +32,8 @@
 - [x] 5.4 `proto://…/message/<package>/<message>`
 
 ## 6. Verification
-- [ ] 6.1 Parser unit tests: cross-file imports, nested messages, enums, options, go_package, all four stream kinds
-- [ ] 6.2 Storage idempotency: re-index → identical row counts; impl links cleared
-- [ ] 6.3 Linker tests: HIGH-confidence match, streaming signature disambiguation, no false-positive on unrelated same-named method, ambiguous → LOW confidence
-- [ ] 6.4 Tool/resource tests: `find_rpc` filter, `explain_rpc` impl + one-hop calls + deferred marker, not-found behavior
-- [ ] 6.5 Regression: `list_apis`/`find_schema` HTTP output unchanged
+- [x] 6.1 Parser unit tests: cross-file imports, nested messages, enums, options, go_package, all four stream kinds
+- [x] 6.2 Storage idempotency: re-index → identical row counts; impl links cleared
+- [x] 6.3 Linker tests: HIGH-confidence match, streaming signature disambiguation, no false-positive on unrelated same-named method, ambiguous → LOW confidence
+- [x] 6.4 Tool/resource tests: `find_rpc` filter, `explain_rpc` impl + one-hop calls + deferred marker, not-found behavior
+- [x] 6.5 Regression: `list_apis`/`find_schema` HTTP output unchanged
