@@ -1,0 +1,33 @@
+syntax = "proto3";
+package acme.inventory;
+option go_package = "github.com/acme/inventory/gen";
+
+service InventoryService {
+  rpc ReserveProduct(ReserveProductRequest) returns (ReserveProductResponse);
+  rpc WatchStock(WatchStockRequest) returns (stream StockEvent);
+  rpc UploadCounts(stream CountRecord) returns (UploadSummary);
+  rpc Sync(stream SyncMsg) returns (stream SyncMsg);
+}
+
+message ReserveProductRequest {
+  string sku = 1;
+  int32 quantity = 2;
+}
+message ReserveProductResponse { bool reserved = 1; }
+message WatchStockRequest { string sku = 1; }
+message StockEvent { int32 level = 1; }
+message CountRecord { string sku = 1; }
+message UploadSummary { int32 total = 1; }
+message SyncMsg { string payload = 1; }
+
+message Warehouse {
+  message Bin { string code = 1; }
+  enum Kind { KIND_UNKNOWN = 0; KIND_COLD = 1; }
+  Bin primary_bin = 1;
+  Kind kind = 2;
+}
+
+enum Status {
+  STATUS_UNKNOWN = 0;
+  STATUS_OK = 1;
+}

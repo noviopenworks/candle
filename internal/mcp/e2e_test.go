@@ -10,6 +10,8 @@ import (
 	"time"
 
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
+
+	"github.com/vend-ai/intel-mcp/internal/store"
 )
 
 // TestEndToEndStdio builds the intel-mcp binary, ingests a fixture graph via the
@@ -142,6 +144,59 @@ func TestEndToEndStdio(t *testing.T) {
 	epBody := contentText(epRes.Content)
 	if !strings.Contains(epBody, "reserveProduct") {
 		t.Fatalf("explain_endpoint did not return operationId reserveProduct; got: %s", epBody)
+	}
+}
+
+// TestProtoDoesNotRegressHTTP proves that indexing protobuf alongside OpenAPI
+// does not change the shape or counts of the OpenAPI/HTTP tool output: list_apis
+// and find_schema still surface exactly one OpenAPI result each, plus the new
+// proto result, with stable kind discriminators.
+func TestProtoDoesNotRegressHTTP(t *testing.T) {
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	id, _ := s.UpsertIndex("acme", "inventory", "abc", "main", "/g")
+	// OpenAPI seed.
+	if err := s.ReplaceAPISpecs(id, []store.APISpecBundle{{
+		Spec:    store.APISpec{Kind: "openapi", Name: "Inventory API", Version: "1.0", Path: "api/openapi.yaml"},
+		Schemas: []store.APISchema{{Name: "ReserveProductRequest", Kind: "openapi_schema"}},
+	}}); err != nil {
+		t.Fatal(err)
+	}
+	// Proto seed.
+	if err := s.ReplaceProtoFiles(id, []store.ProtoFileBundle{{
+		File:     store.ProtoFile{Path: "proto/inventory.proto", Package: "acme.inventory"},
+		Messages: []store.ProtoMessage{{Name: "ReserveProductRequest", FullName: "acme.inventory.ReserveProductRequest"}},
+	}}); err != nil {
+		t.Fatal(err)
+	}
+	tools := NewTools(s)
+
+	apis, _ := tools.ListAPIs("acme/inventory")
+	var openapiCount, protoCount int
+	for _, a := range apis {
+		switch a.Kind {
+		case "openapi":
+			openapiCount++
+		case "protobuf":
+			protoCount++
+		}
+	}
+	if openapiCount != 1 || protoCount != 1 {
+		t.Fatalf("list_apis kinds: openapi=%d proto=%d", openapiCount, protoCount)
+	}
+
+	out, _ := tools.FindSchema("acme/inventory", "ReserveProductRequest")
+	var openapiSchema, protoMsg int
+	for _, sc := range out {
+		switch sc.Kind {
+		case "openapi_schema":
+			openapiSchema++
+		case "proto_message":
+			protoMsg++
+		}
+	}
+	if openapiSchema != 1 || protoMsg != 1 {
+		t.Fatalf("find_schema kinds: openapi=%d proto=%d", openapiSchema, protoMsg)
 	}
 }
 

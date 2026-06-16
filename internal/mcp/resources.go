@@ -94,6 +94,83 @@ func (t *Tools) SchemaResource(repo, name string) (string, error) {
 	return "", ErrNotFound
 }
 
+// ProtoFileResource returns JSON for proto://…/file/<path>.
+func (t *Tools) ProtoFileResource(repo, path string) (string, error) {
+	ri, ok, err := t.reg.Resolve(repo)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", ErrNotFound
+	}
+	files, err := t.s.ListProtoFiles(ri.IndexID)
+	if err != nil {
+		return "", err
+	}
+	for _, f := range files {
+		if f.Path == path {
+			return mustJSON(f), nil
+		}
+	}
+	return "", ErrNotFound
+}
+
+// ProtoRPCResource returns JSON for proto://…/rpc/<pkg>/<service>/<rpc>.
+func (t *Tools) ProtoRPCResource(repo, pkg, service, rpc string) (string, error) {
+	out, err := t.ExplainRPC(repo, service, rpc)
+	if err != nil {
+		return "", err
+	}
+	return mustJSON(out), nil
+}
+
+// ProtoServiceResource returns JSON for proto://…/service/<pkg>/<service>.
+func (t *Tools) ProtoServiceResource(repo, pkg, service string) (string, error) {
+	ri, ok, err := t.reg.Resolve(repo)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", ErrNotFound
+	}
+	rpcs, err := t.s.FindRPCs(ri.IndexID, "", "")
+	if err != nil {
+		return "", err
+	}
+	var matched []store.ProtoRPCResult
+	for _, r := range rpcs {
+		if r.Service == service {
+			matched = append(matched, r)
+		}
+	}
+	if len(matched) == 0 {
+		return "", ErrNotFound
+	}
+	return mustJSON(map[string]any{"service": service, "package": pkg, "rpcs": matched}), nil
+}
+
+// ProtoMessageResource returns JSON for proto://…/message/<pkg>/<message>.
+func (t *Tools) ProtoMessageResource(repo, pkg, message string) (string, error) {
+	ri, ok, err := t.reg.Resolve(repo)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", ErrNotFound
+	}
+	msgs, err := t.s.FindMessages(ri.IndexID, message)
+	if err != nil {
+		return "", err
+	}
+	full := pkg + "." + message
+	for _, m := range msgs {
+		if m.Name == message || m.FullName == full || m.FullName == message {
+			return mustJSON(m), nil
+		}
+	}
+	return "", ErrNotFound
+}
+
 // SpecResource returns the JSON for a spec behind
 // openapi://org/name/commit/<sha>/spec/<path>: the spec metadata plus its operations.
 func (t *Tools) SpecResource(repo, path string) (string, error) {

@@ -24,6 +24,8 @@ var ToolNames = []string{
 	"find_endpoint",
 	"explain_endpoint",
 	"find_schema",
+	"find_rpc",
+	"explain_rpc",
 }
 
 // NewServer builds the MCP server backed by the store, registering all base
@@ -45,6 +47,8 @@ func NewServer(s *store.Store) *mcpsdk.Server {
 	registerFindEndpoint(srv, tools)
 	registerExplainEndpoint(srv, tools)
 	registerFindSchema(srv, tools)
+	registerFindRPC(srv, tools)
+	registerExplainRPC(srv, tools)
 	registerResources(srv, tools)
 
 	return srv
@@ -223,6 +227,44 @@ func registerFindSchema(srv *mcpsdk.Server, tools *Tools) {
 	})
 }
 
+type findRPCArgs struct {
+	Repo       string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Query      string `json:"query" jsonschema:"lexical match: NL / service / rpc / full name"`
+	StreamKind string `json:"stream_kind" jsonschema:"optional filter: unary|server_stream|client_stream|bidi"`
+}
+
+func registerFindRPC(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "find_rpc",
+		Description: "Find gRPC RPCs in a repo by lexical match, optionally filtered by stream_kind.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args findRPCArgs) (*mcpsdk.CallToolResult, any, error) {
+		rpcs, err := tools.FindRPC(args.Repo, args.Query, args.StreamKind)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(rpcs)), nil, nil
+	})
+}
+
+type explainRPCArgs struct {
+	Repo    string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Service string `json:"service" jsonschema:"gRPC service name"`
+	RPC     string `json:"rpc" jsonschema:"RPC method name"`
+}
+
+func registerExplainRPC(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "explain_rpc",
+		Description: "Explain a gRPC RPC: proto facts, messages, same-repo implementation, one-hop calls.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args explainRPCArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.ExplainRPC(args.Repo, args.Service, args.RPC)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(out)), nil, nil
+	})
+}
+
 // toolErr maps a not-found into a tool-level error result (IsError) rather than
 // a protocol error, so unknown repos/symbols degrade gracefully.
 func toolErr(err error) (*mcpsdk.CallToolResult, any, error) {
@@ -305,6 +347,50 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		}
 		return resourceText(req.Params.URI, body), nil
 	})
+
+	srv.AddResourceTemplate(&mcpsdk.ResourceTemplate{
+		Name:        "proto",
+		Description: "A protobuf artifact (file/service/rpc/message) as JSON, commit-pinned.",
+		MIMEType:    "application/json",
+		URITemplate: "proto://{org}/{name}/commit/{sha}/{kind}/{ref}",
+	}, func(_ context.Context, req *mcpsdk.ReadResourceRequest) (*mcpsdk.ReadResourceResult, error) {
+		repo, kind, ref, err := parseProtoURI(req.Params.URI)
+		if err != nil {
+			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+		}
+		var body string
+		switch kind {
+		case "file":
+			body, err = tools.ProtoFileResource(repo, ref)
+		case "service":
+			if p := strings.SplitN(ref, "/", 2); len(p) == 2 {
+				body, err = tools.ProtoServiceResource(repo, p[0], p[1])
+			} else {
+				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+			}
+		case "rpc":
+			if p := strings.SplitN(ref, "/", 3); len(p) == 3 {
+				body, err = tools.ProtoRPCResource(repo, p[0], p[1], p[2])
+			} else {
+				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+			}
+		case "message":
+			if p := strings.SplitN(ref, "/", 2); len(p) == 2 {
+				body, err = tools.ProtoMessageResource(repo, p[0], p[1])
+			} else {
+				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+			}
+		default:
+			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+		}
+		if err != nil {
+			if err == ErrNotFound {
+				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+			}
+			return nil, err
+		}
+		return resourceText(req.Params.URI, body), nil
+	})
 }
 
 func resourceText(uri, body string) *mcpsdk.ReadResourceResult {
@@ -340,6 +426,16 @@ func parseOpenAPIURI(uri string) (repo, kind, ref string, err error) {
 	// org / name / commit / <sha> / <kind> / <ref...>
 	if len(parts) < 6 || parts[2] != "commit" {
 		return "", "", "", fmt.Errorf("malformed openapi uri %q", uri)
+	}
+	return parts[0] + "/" + parts[1], parts[4], strings.Join(parts[5:], "/"), nil
+}
+
+// parseProtoURI parses proto://org/name/commit/<sha>/<kind>/<ref...>.
+func parseProtoURI(uri string) (repo, kind, ref string, err error) {
+	rest := strings.TrimPrefix(uri, "proto://")
+	parts := strings.Split(rest, "/")
+	if len(parts) < 6 || parts[2] != "commit" {
+		return "", "", "", fmt.Errorf("malformed proto uri %q", uri)
 	}
 	return parts[0] + "/" + parts[1], parts[4], strings.Join(parts[5:], "/"), nil
 }

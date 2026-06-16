@@ -58,6 +58,53 @@ func TestRunIndexesOpenAPI(t *testing.T) {
 	}
 }
 
+func TestRunIndexesProtos(t *testing.T) {
+	dir := t.TempDir()
+	graphPath := filepath.Join(dir, "graph.json")
+	os.WriteFile(graphPath, []byte(`{"nodes":[{"id":"n1","label":"ReserveProduct","source_file":"x.go"}],"edges":[],"hyperedges":[]}`), 0o644)
+
+	roots, err := filepath.Abs("../proto/testdata")
+	if err != nil {
+		t.Fatalf("abs: %v", err)
+	}
+
+	cfg := &config.Config{Repos: []config.RepoConfig{
+		{Repo: "acme/inventory", Graph: graphPath},
+	}}
+	cfg.Repos[0].Proto.Roots = []string{roots}
+	cfg.Repos[0].Proto.Files = []string{"inventory.proto"}
+
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+
+	if _, err := Run(s, cfg); err != nil {
+		t.Fatalf("run: %v", err)
+	}
+
+	// Run created the index with empty commit/branch; UpsertIndex is idempotent
+	// and returns the existing id.
+	id, err := s.UpsertIndex("acme", "inventory", "", "", graphPath)
+	if err != nil {
+		t.Fatalf("upsert index: %v", err)
+	}
+
+	rpcs, err := s.FindRPCs(id, "reserve", "")
+	if err != nil {
+		t.Fatalf("find rpcs: %v", err)
+	}
+	if len(rpcs) != 1 {
+		t.Fatalf("expected 1 rpc matching 'reserve', got %d", len(rpcs))
+	}
+
+	impls, err := s.ProtoRPCImpls(id, "acme.inventory.InventoryService.ReserveProduct")
+	if err != nil {
+		t.Fatalf("proto rpc impls: %v", err)
+	}
+	if len(impls) < 1 {
+		t.Fatalf("expected at least 1 impl link, got %d", len(impls))
+	}
+}
+
 // TestRunToleratesBadOpenAPISpecs verifies that a missing spec file and a
 // Swagger 2.0 spec are each skipped with a warning while the repo's graph is
 // still indexed and the run does not abort.

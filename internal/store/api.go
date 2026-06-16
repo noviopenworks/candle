@@ -108,6 +108,20 @@ func parseList(s string) []string {
 	return out
 }
 
+func jsonBlob(v any) string {
+	b, _ := json.Marshal(v)
+	return string(b)
+}
+
+func parseFields(s string) []ProtoField {
+	var out []ProtoField
+	if s == "" {
+		return out
+	}
+	_ = json.Unmarshal([]byte(s), &out)
+	return out
+}
+
 // ListAPISpecs returns specs for indexID.
 func (s *Store) ListAPISpecs(indexID int64) ([]APISpecRow, error) {
 	rows, err := s.DB.Query(`SELECT id, index_id, kind, COALESCE(name,''), COALESCE(version,''), path FROM api_specs WHERE index_id=?`, indexID)

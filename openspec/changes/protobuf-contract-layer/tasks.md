@@ -1,35 +1,39 @@
 # Tasks — protobuf-contract-layer
 
-> Open-phase outline. Refined against the Design Doc + delta specs.
+> Refined against design doc `docs/superpowers/specs/2026-06-16-protobuf-contract-layer-design.md`
+> and delta specs. Scope: parse + same-repo linking; cross-repo `consumed_by` deferred.
 
 ## 1. Storage
-- [ ] 1.1 Add `proto_files`, `proto_services`, `proto_rpcs`, `proto_messages` tables (index_id-scoped); migration
+- [x] 1.1 Add `proto_files`, `proto_services`, `proto_rpcs`, `proto_messages`, `proto_enums`, `proto_rpc_impls` tables (index_id-scoped) to `schema.go`
+- [x] 1.2 `internal/store/proto.go`: bundle types + `ReplaceProtoFiles` (idempotent per index_id); impl-link write/read; find/lookup queries
 
 ## 2. Protobuf parsing
-- [ ] 2.1 Discover `.proto` files (proto/api/internal globs)
-- [ ] 2.2 Parse with protobuf grammar library; resolve imports across files
-- [ ] 2.3 Extract services, RPCs, messages, fields, enums, options, generated Go package
-- [ ] 2.4 Normalize into storage
+- [x] 2.1 Add `proto: { roots, files }` block to `RepoConfig` (`internal/config`)
+- [x] 2.2 `internal/proto`: bufbuild/protocompile compiler with SourceResolver over roots + well-known types; expand directory entries
+- [x] 2.3 Extract services, RPCs (request/response message names + `stream_kind`), messages (fields), enums (values), file package + go_package + imports
+- [x] 2.4 Normalize into store bundles; tolerate missing/malformed/unresolvable files with warnings
 
 ## 3. Contract → code linking
-- [ ] 3.1 RPC→server-impl linker (reuse shared linker; gRPC `RegisterXServer`/method patterns)
-- [ ] 3.2 `uses_message` (request/response → message) edges
-- [ ] 3.3 `calls` walk from server impl into domain service
-- [ ] 3.4 Cross-repo `consumed_by` via merged graph client call-site detection
+- [x] 3.1 `internal/link` (new shared package): RPC→server-impl matcher — name + service association + streaming-aware signature check; confidence tiers + match_reason
+- [x] 3.2 Run linker in `ingest.Run` after `graph.Load`; persist `proto_rpc_impls`
+- [x] 3.3 `uses_message` via resolvable request/response message references (no separate table)
+> **3.4 Cross-repo `consumed_by` — DEFERRED to a future change** (out of scope for this change; `explain_rpc` returns an explicit deferred marker). Not a task in this change's scope.
 
 ## 4. Tools
-- [ ] 4.1 `find_rpc`
-- [ ] 4.2 `explain_rpc` (impl + calls + consumed_by)
-- [ ] 4.3 Extend `list_apis` with protobuf entries
-- [ ] 4.4 Extend `find_schema` with proto messages
+- [x] 4.1 `find_rpc` (lexical match + optional `stream_kind` filter)
+- [x] 4.2 `explain_rpc` (proto facts + resolved messages + `implemented_by` + best-effort one-hop `calls` + deferred `consumed_by` marker)
+- [x] 4.3 Extend `list_apis` with `{kind:"protobuf"}` entries (HTTP output unchanged)
+- [x] 4.4 Extend `find_schema` with `{kind:"proto_message"}` entries
 
 ## 5. Resources
-- [ ] 5.1 `proto://…/file/<path>`
-- [ ] 5.2 `proto://…/service/<package>/<service>`
-- [ ] 5.3 `proto://…/rpc/<package>/<service>/<rpc>`
-- [ ] 5.4 `proto://…/message/<package>/<message>`
+- [x] 5.1 `proto://…/file/<path>`
+- [x] 5.2 `proto://…/service/<package>/<service>`
+- [x] 5.3 `proto://…/rpc/<package>/<service>/<rpc>`
+- [x] 5.4 `proto://…/message/<package>/<message>`
 
 ## 6. Verification
-- [ ] 6.1 Sample repo: protos parsed, RPCs/messages indexed, `find_rpc` works
-- [ ] 6.2 `explain_rpc` returns server impl + consumed_by on a multi-repo fixture
-- [ ] 6.3 `list_apis`/`find_schema` still return HTTP results unchanged (no regression)
+- [x] 6.1 Parser unit tests: cross-file imports, nested messages, enums, options, go_package, all four stream kinds
+- [x] 6.2 Storage idempotency: re-index → identical row counts; impl links cleared
+- [x] 6.3 Linker tests: HIGH-confidence match, streaming signature disambiguation, no false-positive on unrelated same-named method, ambiguous → LOW confidence
+- [x] 6.4 Tool/resource tests: `find_rpc` filter, `explain_rpc` impl + one-hop calls + deferred marker, not-found behavior
+- [x] 6.5 Regression: `list_apis`/`find_schema` HTTP output unchanged
