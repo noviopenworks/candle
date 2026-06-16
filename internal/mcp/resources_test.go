@@ -93,6 +93,32 @@ func TestProtoResources(t *testing.T) {
 	}
 }
 
+func TestLibResources(t *testing.T) {
+	tools := seedGoDepTools(t)
+	body, err := tools.LibraryResource("git.acme.local/platform/auth")
+	if err != nil || !strings.Contains(body, "NewClient") {
+		t.Fatalf("lib resource: %q err=%v", body, err)
+	}
+	symBody, err := tools.LibrarySymbolResource("git.acme.local/platform/auth", "NewClient")
+	if err != nil || !strings.Contains(symBody, "constructor") {
+		t.Fatalf("symbol resource: %q err=%v", symBody, err)
+	}
+	if _, err := tools.LibrarySymbolResource("git.acme.local/platform/auth", "Nope"); err != ErrNotFound {
+		t.Fatalf("want ErrNotFound, got %v", err)
+	}
+}
+
+func TestParseLibURI(t *testing.T) {
+	mod, kind, ref, err := parseLibURI("lib://git.acme.local/platform/auth/symbol/NewClient")
+	if err != nil || mod != "git.acme.local/platform/auth" || kind != "symbol" || ref != "NewClient" {
+		t.Fatalf("parse: mod=%q kind=%q ref=%q err=%v", mod, kind, ref, err)
+	}
+	mod2, kind2, _, err := parseLibURI("lib://git.acme.local/platform/auth")
+	if err != nil || mod2 != "git.acme.local/platform/auth" || kind2 != "" {
+		t.Fatalf("parse bare: mod=%q kind=%q err=%v", mod2, kind2, err)
+	}
+}
+
 func TestParseProtoURI(t *testing.T) {
 	repo, kind, ref, err := parseProtoURI("proto://acme/inventory/commit/abc/rpc/acme.inventory/InventoryService/ReserveProduct")
 	if err != nil || repo != "acme/inventory" || kind != "rpc" || ref != "acme.inventory/InventoryService/ReserveProduct" {

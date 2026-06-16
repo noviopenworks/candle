@@ -30,7 +30,7 @@
 - [x] 6.2 `find_library_consumers` (single-repo: version + used packages + used symbols; deferred cross-repo marker)
 
 ## 7. Resources
-- [ ] 7.1 `lib://<module-path>` + `/version/`, `/package/`, `/symbol/` variants (single-index provider lookup)
+- [x] 7.1 `lib://<module-path>` + `/version/`, `/package/`, `/symbol/` variants (single-index provider lookup)
 
 ## 8. Verification
 - [ ] 8.1 Parser unit tests: require/replace/indirect, go.work `use`, go.sum cross-check, export extraction, README/doc synopsis

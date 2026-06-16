@@ -1677,7 +1677,7 @@ Mark tasks.md 6.1, 6.2 `[x]`.
 - Modify: `internal/mcp/server.go`
 - Test: `internal/mcp/resources_test.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Add to `internal/mcp/resources_test.go` (reuse `seedGoDepTools`):
 
@@ -1711,11 +1711,11 @@ func TestParseLibURI(t *testing.T) {
 
 Add `"strings"` to test imports if needed.
 
-- [ ] **Step 2: Run, verify FAIL**
+- [x] **Step 2: Run, verify FAIL**
 
 Run: `go test ./internal/mcp/ -run 'LibResources|ParseLibURI' -v` → FAIL.
 
-- [ ] **Step 3: Implement resource methods in `internal/mcp/resources.go`**
+- [x] **Step 3: Implement resource methods in `internal/mcp/resources.go`**
 
 ```go
 // LibraryResource returns JSON for lib://<module-path> (provider library + exports).
@@ -1769,7 +1769,7 @@ func (t *Tools) LibrarySymbolResource(modulePath, symbol string) (string, error)
 }
 ```
 
-- [ ] **Step 4: Register tools, resource, parser in `internal/mcp/server.go`**
+- [x] **Step 4: Register tools, resource, parser in `internal/mcp/server.go`**
 
 1. Add to `ToolNames` after `"explain_rpc"`:
 ```go
@@ -1873,11 +1873,11 @@ func parseLibURI(uri string) (modulePath, kind, ref string, err error) {
 	})
 ```
 
-- [ ] **Step 5: Run, verify PASS**
+- [x] **Step 5: Run, verify PASS**
 
 Run: `go test ./internal/mcp/ -v` → PASS (update `e2e_test.go` only if it asserts exact `ToolNames` length — it iterates, so new tools must be registered, which they are). `go test ./...`, `go build ./...`, `go vet ./...`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/mcp/resources.go internal/mcp/server.go internal/mcp/resources_test.go openspec/changes/go-private-library-layer/tasks.md
