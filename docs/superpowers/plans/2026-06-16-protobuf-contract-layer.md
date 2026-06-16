@@ -1173,7 +1173,7 @@ Then mark tasks.md items 3.1 and 3.3 as `[x]`.
 - Modify: `internal/ingest/ingest.go`
 - Test: `internal/ingest/ingest_test.go`
 
-- [ ] **Step 1: Write the failing ingest test**
+- [x] **Step 1: Write the failing ingest test**
 
 Add to `internal/ingest/ingest_test.go` (reuse existing test helpers there for building a config + graph file; follow the existing test's setup style). The test must:
 
@@ -1207,12 +1207,12 @@ func TestRunIndexesProtos(t *testing.T) {
 
 Note: if `UpsertIndexLookup` does not exist, resolve the index id via the existing registry/list path used elsewhere in `ingest_test.go` (e.g. `store.UpsertIndex` returns the id; call it with the same args Run used, which is idempotent). Use `filepath.Abs` to build `protoTestdataDir()` pointing at `../proto/testdata`. Keep this test aligned with the helpers already present in the file rather than inventing new store methods.
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `go test ./internal/ingest/ -run TestRunIndexesProtos -v`
 Expected: FAIL — protos not parsed yet.
 
-- [ ] **Step 3: Wire proto parsing + linking into `ingest.Run`**
+- [x] **Step 3: Wire proto parsing + linking into `ingest.Run`**
 
 In `internal/ingest/ingest.go`, add imports for `github.com/vend-ai/intel-mcp/internal/proto` and `github.com/vend-ai/intel-mcp/internal/link`. After the existing OpenAPI block (`s.ReplaceAPISpecs(indexID, bundles)`), add:
 
@@ -1289,12 +1289,12 @@ func collectRPCs(files []proto.File) []link.RPC {
 }
 ```
 
-- [ ] **Step 4: Run the test to verify it passes**
+- [x] **Step 4: Run the test to verify it passes**
 
 Run: `go test ./internal/ingest/ -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/ingest/ openspec/changes/protobuf-contract-layer/tasks.md
