@@ -2,6 +2,7 @@
 change: go-private-library-layer
 design-doc: docs/superpowers/specs/2026-06-16-go-private-library-layer-design.md
 base-ref: b023b33ddfc354de7b0bdf0fa6c374ce2527dcb8
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 # Go Private-Library Layer Implementation Plan
@@ -14,6 +15,7 @@ base-ref: b023b33ddfc354de7b0bdf0fa6c374ce2527dcb8
 
 **Tech Stack:** Go 1.26, modernc.org/sqlite, golang.org/x/mod, go/ast+go/parser (stdlib), modelcontextprotocol/go-sdk, spf13/viper.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Conventions (read before starting)
@@ -47,6 +49,7 @@ base-ref: b023b33ddfc354de7b0bdf0fa6c374ce2527dcb8
 - Modify `internal/mcp/server.go` — register tools/resources; extend `ToolNames`; `parseLibURI`.
 - Modify `internal/mcp/resources_test.go`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 1: Storage schema and tables
@@ -458,6 +461,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 1.1, 1.2 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 2: Manifest go config
@@ -528,6 +532,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 2.1 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 3: Module parsing (go.mod / go.work / go.sum)
@@ -827,6 +832,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 2.2, 2.3, 2.4 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 4: Provider export extraction
@@ -1067,6 +1073,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 3.1, 3.2 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 5: Consumer usage extraction
@@ -1273,6 +1280,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 4.1, 4.2 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 6: Export → code-node linker
@@ -1373,6 +1381,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 5.1 `[x]` (linker portion; ingest wiring in Task 7).
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 7: Ingest wiring
@@ -1501,6 +1510,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Confirm tasks.md 5.1 stays `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 8: MCP tools (find_private_library, find_library_consumers)
@@ -1668,6 +1678,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 6.1, 6.2 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 9: lib:// resources + server registration
@@ -1887,6 +1898,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 7.1 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Task 10: Verification and regression
@@ -1948,6 +1960,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 Mark tasks.md 8.1–8.6 `[x]`.
 
+archived-with: 2026-06-16-go-private-library-layer
 ---
 
 ## Self-Review Notes

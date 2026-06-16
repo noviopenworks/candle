@@ -2,6 +2,8 @@
 comet_change: go-private-library-layer
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-16-go-private-library-layer
+status: final
 ---
 
 # Go Private-Library Layer — Technical Design
