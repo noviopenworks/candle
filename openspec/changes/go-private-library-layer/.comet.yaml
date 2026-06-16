@@ -1,5 +1,5 @@
 workflow: full
-phase: build
+phase: verify
 context_compression: off
 build_mode: subagent-driven-development
 build_pause: null
@@ -19,3 +19,5 @@ verified_at: null
 archived: false
 handoff_context: openspec/changes/go-private-library-layer/.comet/handoff/design-context.json
 handoff_hash: 9e56ba455d1d56c0873ac5740f56b640873875ba559e33d7e8f6257127cc1336
+build_command: go build ./...
+verify_command: go test ./...
