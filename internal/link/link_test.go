@@ -87,6 +87,30 @@ func TestMatchRPCsAmbiguousLowConfidence(t *testing.T) {
 	}
 }
 
+func TestMatchExports(t *testing.T) {
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	id, _ := s.UpsertIndex("acme", "auth", "abc", "main", "/g")
+	mustNode(t, s, id, "n1", "NewClient", "auth/auth.go")
+	mustNode(t, s, id, "n2", "Verify", "auth/auth.go")
+
+	exports := []Export{
+		{PackagePath: "git.acme.local/platform/auth", Symbol: "NewClient", SourceHint: "auth/"},
+		{PackagePath: "git.acme.local/platform/auth", Symbol: "Ghost"},
+	}
+	linked := MatchExports(s, id, exports)
+	byID := map[string]string{} // symbol -> node_id
+	for _, e := range linked {
+		byID[e.Symbol] = e.NodeID
+	}
+	if byID["NewClient"] != "n1" {
+		t.Fatalf("NewClient should link to n1: %+v", linked)
+	}
+	if byID["Ghost"] != "" {
+		t.Fatalf("Ghost should have no node: %+v", linked)
+	}
+}
+
 func mustNode(t *testing.T, s *store.Store, indexID int64, id, label, file string) {
 	t.Helper()
 	if _, err := s.DB.Exec(`INSERT INTO nodes(index_id, node_id, label, file_type, source_file) VALUES(?,?,?,?,?)`,

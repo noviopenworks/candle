@@ -1281,7 +1281,7 @@ Mark tasks.md 4.1, 4.2 `[x]`.
 - Modify: `internal/link/link.go`
 - Test: `internal/link/link_test.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Add to `internal/link/link_test.go`:
 
@@ -1313,11 +1313,11 @@ func TestMatchExports(t *testing.T) {
 
 (`mustNode` already exists in this test file from the RPC linker task.)
 
-- [ ] **Step 2: Run, verify FAIL**
+- [x] **Step 2: Run, verify FAIL**
 
 Run: `go test ./internal/link/ -run TestMatchExports -v` → FAIL (`Export`, `MatchExports` undefined).
 
-- [ ] **Step 3: Implement in `internal/link/link.go`**
+- [x] **Step 3: Implement in `internal/link/link.go`**
 
 Append to `internal/link/link.go`:
 
@@ -1359,11 +1359,11 @@ func MatchExports(s *store.Store, indexID int64, exports []Export) []Export {
 
 (`strings` and `store` are already imported in link.go.)
 
-- [ ] **Step 4: Run, verify PASS**
+- [x] **Step 4: Run, verify PASS**
 
 Run: `go test ./internal/link/ -v` → PASS. `go build ./...`, `go vet ./internal/link/`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/link/ openspec/changes/go-private-library-layer/tasks.md

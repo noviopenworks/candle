@@ -23,7 +23,7 @@
 - [x] 4.2 Resolve used symbols via `alias.Symbol` selector scan with file/line → `private_library_usages`
 
 ## 5. Graph linking
-- [ ] 5.1 `internal/link` export matcher: link each export to a code node by label (package-file scoped when possible); store `node_id`; run in `ingest.Run` after `graph.Load`
+- [x] 5.1 `internal/link` export matcher: link each export to a code node by label (package-file scoped when possible); store `node_id`; run in `ingest.Run` after `graph.Load`
 
 ## 6. Tools
 - [ ] 6.1 `find_private_library` (module/package path, doc synopsis, README match; path-only for provider-less deps)
