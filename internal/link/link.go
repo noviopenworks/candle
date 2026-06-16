@@ -78,6 +78,10 @@ func score(n store.NodeRow, r RPC, serviceRegistered bool) (float64, string) {
 // signatureMatches best-effort reads the impl source and checks the method's
 // parameter shape against the RPC stream_kind. Unreadable source returns false
 // (the caller keeps the lower-confidence name/service match).
+// Precondition: sourceFile (the graph node's source_file) is read directly from
+// the filesystem, so the HIGH-confidence signature tier only fires when that path
+// is readable from the process's working directory; otherwise the match degrades
+// to the name/service (MEDIUM) tier.
 func signatureMatches(sourceFile, rpcName, streamKind string) bool {
 	if sourceFile == "" {
 		return false

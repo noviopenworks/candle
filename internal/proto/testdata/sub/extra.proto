@@ -1,0 +1,7 @@
+syntax = "proto3";
+package acme.extra;
+service ExtraService {
+  rpc Ping(PingRequest) returns (PingResponse);
+}
+message PingRequest { string id = 1; }
+message PingResponse { bool ok = 1; }

@@ -3,6 +3,10 @@ package proto
 import (
 	"context"
 	"fmt"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/bufbuild/protocompile"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -76,6 +80,7 @@ func ParseFiles(roots, files []string) ([]File, []string, error) {
 	compiler := protocompile.Compiler{
 		Resolver: protocompile.WithStandardImports(&protocompile.SourceResolver{ImportPaths: roots}),
 	}
+	files = expandEntries(roots, files)
 	out := make([]File, 0, len(files))
 	for _, rel := range files {
 		fds, err := compiler.Compile(context.Background(), rel)
@@ -88,6 +93,50 @@ func ParseFiles(roots, files []string) ([]File, []string, error) {
 		}
 	}
 	return out, warns, nil
+}
+
+// expandEntries replaces any files entry that resolves to a directory (under one
+// of roots) with the import-relative, slash-separated paths of the .proto files
+// beneath it. Entries that resolve to a file, or that aren't found under any root,
+// are passed through unchanged so the existing missing-file warning path still
+// triggers in ParseFiles. Results are de-duplicated, preserving first-seen order.
+func expandEntries(roots, files []string) []string {
+	out := make([]string, 0, len(files))
+	seen := make(map[string]struct{})
+	add := func(p string) {
+		if _, ok := seen[p]; ok {
+			return
+		}
+		seen[p] = struct{}{}
+		out = append(out, p)
+	}
+	for _, entry := range files {
+		expanded := false
+		for _, root := range roots {
+			info, err := os.Stat(filepath.Join(root, entry))
+			if err != nil || !info.IsDir() {
+				continue
+			}
+			dir := filepath.Join(root, entry)
+			_ = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+				if err != nil || d.IsDir() || !strings.HasSuffix(path, ".proto") {
+					return nil
+				}
+				rel, relErr := filepath.Rel(root, path)
+				if relErr != nil {
+					return nil
+				}
+				add(filepath.ToSlash(rel))
+				return nil
+			})
+			expanded = true
+			break
+		}
+		if !expanded {
+			add(entry)
+		}
+	}
+	return out
 }
 
 func normalizeFile(path string, fd protoreflect.FileDescriptor) File {

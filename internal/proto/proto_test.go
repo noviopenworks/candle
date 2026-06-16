@@ -91,6 +91,30 @@ func TestParseNestedTypes(t *testing.T) {
 	}
 }
 
+func TestParseDirectoryEntry(t *testing.T) {
+	// "sub" is a DIRECTORY entry relative to the root "testdata"; it must expand
+	// to the .proto files beneath it.
+	files, warns, err := ParseFiles([]string{"testdata"}, []string{"sub"})
+	if err != nil {
+		t.Fatalf("parse: %v (warns=%v)", err, warns)
+	}
+	var extra *File
+	for i := range files {
+		if files[i].Package == "acme.extra" {
+			extra = &files[i]
+		}
+	}
+	if extra == nil {
+		t.Fatalf("acme.extra file not found; files=%+v warns=%v", files, warns)
+	}
+	if len(extra.Services) != 1 || extra.Services[0].Name != "ExtraService" {
+		t.Fatalf("services: %+v", extra.Services)
+	}
+	if len(extra.Services[0].RPCs) != 1 || extra.Services[0].RPCs[0].Name != "Ping" {
+		t.Fatalf("rpcs: %+v", extra.Services[0].RPCs)
+	}
+}
+
 func TestParseMissingFileWarns(t *testing.T) {
 	files, warns, err := ParseFiles([]string{"testdata"}, []string{"nope.proto"})
 	if err != nil {
