@@ -10,9 +10,9 @@
 
 ## 2. Dependency parsing
 - [x] 2.1 Add per-repo `go: { modules, private_prefixes }` block to `RepoConfig` (`internal/config`)
-- [ ] 2.2 `internal/godep`: parse `go.mod` (require/replace + indirect) and `go.work` (`use`) with `x/mod/modfile`
-- [ ] 2.3 Cross-check versions via `go.sum` (mismatch → warning)
-- [ ] 2.4 Per-repo private classification by module-path prefix; public deps shallow
+- [x] 2.2 `internal/godep`: parse `go.mod` (require/replace + indirect) and `go.work` (`use`) with `x/mod/modfile`
+- [x] 2.3 Cross-check versions via `go.sum` (mismatch → warning)
+- [x] 2.4 Per-repo private classification by module-path prefix; public deps shallow
 
 ## 3. Provider side (exports)
 - [ ] 3.1 Extract exported funcs/constructors/types/interfaces/consts/vars via `go/ast` for private modules the repo defines; package doc synopsis + README

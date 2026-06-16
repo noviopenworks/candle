@@ -539,11 +539,11 @@ Mark tasks.md 2.1 `[x]`.
 - Create: `internal/godep/testdata/provider/go.mod`, `internal/godep/testdata/consumer/go.mod`, `internal/godep/testdata/consumer/go.sum`
 - Modify: `go.mod` / `go.sum` (add golang.org/x/mod)
 
-- [ ] **Step 1: Add the x/mod dependency**
+- [x] **Step 1: Add the x/mod dependency**
 
 Run: `go get golang.org/x/mod@latest`
 
-- [ ] **Step 2: Create fixtures**
+- [x] **Step 2: Create fixtures**
 
 `internal/godep/testdata/provider/go.mod`:
 ```
@@ -570,7 +570,7 @@ git.acme.local/platform/auth v1.2.0 h1:abc=
 git.acme.local/platform/auth v1.2.0/go.mod h1:def=
 ```
 
-- [ ] **Step 3: Write the failing test**
+- [x] **Step 3: Write the failing test**
 
 Create `internal/godep/godep_test.go`:
 
@@ -602,11 +602,11 @@ func TestParseConsumerModule(t *testing.T) {
 }
 ```
 
-- [ ] **Step 4: Run, verify FAIL**
+- [x] **Step 4: Run, verify FAIL**
 
 Run: `go test ./internal/godep/ -run TestParseConsumerModule -v` → FAIL (undefined).
 
-- [ ] **Step 5: Implement `internal/godep/godep.go` (types + orchestrator)**
+- [x] **Step 5: Implement `internal/godep/godep.go` (types + orchestrator)**
 
 ```go
 package godep
@@ -707,7 +707,7 @@ func mergeResults(dst, src *Result) {
 func readFile(path string) ([]byte, error) { return os.ReadFile(path) }
 ```
 
-- [ ] **Step 6: Implement `internal/godep/modfile.go`**
+- [x] **Step 6: Implement `internal/godep/modfile.go`**
 
 ```go
 package godep
@@ -813,11 +813,11 @@ func extractExports(dir, modulePath string) (*Library, []string) { return &Libra
 func extractUsages(dir string, deps []Dependency) ([]Usage, []string) { return nil, nil }
 ```
 
-- [ ] **Step 7: Run, verify PASS; tidy**
+- [x] **Step 7: Run, verify PASS; tidy**
 
 Run: `go mod tidy && go test ./internal/godep/ -v` → PASS. Then `go build ./...`, `go vet ./internal/godep/`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add internal/godep/ go.mod go.sum openspec/changes/go-private-library-layer/tasks.md
