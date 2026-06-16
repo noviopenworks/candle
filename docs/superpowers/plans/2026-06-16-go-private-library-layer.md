@@ -1894,7 +1894,7 @@ Mark tasks.md 7.1 `[x]`.
 **Files:**
 - Modify: `internal/mcp/e2e_test.go`
 
-- [ ] **Step 1: Add a coexistence regression test**
+- [x] **Step 1: Add a coexistence regression test**
 
 Add to `internal/mcp/e2e_test.go` a test seeding OpenAPI + proto + Go data in one index and asserting each tool surface is intact:
 
@@ -1930,7 +1930,7 @@ func TestGoDepDoesNotRegressOthers(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Full verification**
+- [x] **Step 2: Full verification**
 
 Run and confirm all clean:
 - `go test ./... -count=1` → every package ok
@@ -1938,7 +1938,7 @@ Run and confirm all clean:
 - `go vet ./...` → no issues
 - `gofmt -l internal/ cmd/` → no files listed
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add internal/mcp/e2e_test.go openspec/changes/go-private-library-layer/tasks.md

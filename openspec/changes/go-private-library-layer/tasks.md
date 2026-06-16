@@ -33,11 +33,11 @@
 - [x] 7.1 `lib://<module-path>` + `/version/`, `/package/`, `/symbol/` variants (single-index provider lookup)
 
 ## 8. Verification
-- [ ] 8.1 Parser unit tests: require/replace/indirect, go.work `use`, go.sum cross-check, export extraction, README/doc synopsis
-- [ ] 8.2 Consumer tests: import + selector usage resolution with file/line
-- [ ] 8.3 Classification: private deep-indexed, public shallow
-- [ ] 8.4 Linker: export → code node match; unmatched → null node_id
-- [ ] 8.5 Tool/resource tests: find_private_library, find_library_consumers (deferred marker, not-found), lib:// provider lookup
-- [ ] 8.6 Idempotency: re-index → identical row counts
+- [x] 8.1 Parser unit tests: require/replace/indirect, go.work `use`, go.sum cross-check, export extraction, README/doc synopsis
+- [x] 8.2 Consumer tests: import + selector usage resolution with file/line
+- [x] 8.3 Classification: private deep-indexed, public shallow
+- [x] 8.4 Linker: export → code node match; unmatched → null node_id
+- [x] 8.5 Tool/resource tests: find_private_library, find_library_consumers (deferred marker, not-found), lib:// provider lookup
+- [x] 8.6 Idempotency: re-index → identical row counts
 
 > **Cross-repo consumer aggregation — DEFERRED to a future change** (out of scope; `find_library_consumers` returns a deferred marker for the cross-repo dimension). Not a task in this change's scope.

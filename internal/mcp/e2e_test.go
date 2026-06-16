@@ -200,6 +200,36 @@ func TestProtoDoesNotRegressHTTP(t *testing.T) {
 	}
 }
 
+func TestGoDepDoesNotRegressOthers(t *testing.T) {
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	id, _ := s.UpsertIndex("acme", "web", "abc", "main", "/g")
+	if err := s.ReplaceAPISpecs(id, []store.APISpecBundle{{
+		Spec: store.APISpec{Kind: "openapi", Name: "Web API", Version: "1.0", Path: "api/openapi.yaml"},
+	}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(id, store.GoDepBundle{
+		Dependencies: []store.Dependency{{ModulePath: "git.acme.local/platform/auth", Version: "v1", Ecosystem: "go", IsPrivate: true, Direct: true}},
+		Libraries: []store.PrivateLibraryBundle{{
+			Library: store.PrivateLibrary{ModulePath: "git.acme.local/platform/auth"},
+			Exports: []store.PrivateExport{{PackagePath: "git.acme.local/platform/auth", Symbol: "NewClient", Kind: "constructor"}},
+		}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	tools := NewTools(s)
+
+	apis, _ := tools.ListAPIs("acme/web")
+	if len(apis) != 1 || apis[0].Kind != "openapi" {
+		t.Fatalf("list_apis regressed: %+v", apis)
+	}
+	libs, _ := tools.FindPrivateLibrary("acme/web", "auth")
+	if len(libs) != 1 {
+		t.Fatalf("find_private_library: %+v", libs)
+	}
+}
+
 func contentText(content []mcpsdk.Content) string {
 	var b strings.Builder
 	for _, c := range content {
