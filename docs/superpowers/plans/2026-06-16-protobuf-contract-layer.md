@@ -547,7 +547,7 @@ Then mark tasks.md items 1.1 and 1.2 as `[x]`.
 - Modify: `internal/config/config.go:11-18`
 - Test: `internal/config/config_test.go`
 
-- [ ] **Step 1: Write the failing config test**
+- [x] **Step 1: Write the failing config test**
 
 Add to `internal/config/config_test.go`:
 
@@ -580,12 +580,12 @@ func TestProtoConfigParses(t *testing.T) {
 
 Ensure the test file imports `os`, `path/filepath`, and `testing` (add any missing imports).
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `go test ./internal/config/ -run TestProtoConfig -v`
 Expected: FAIL — `r.Proto` undefined.
 
-- [ ] **Step 3: Add the proto block to `RepoConfig`**
+- [x] **Step 3: Add the proto block to `RepoConfig`**
 
 In `internal/config/config.go`, modify the `RepoConfig` struct (currently ending after the `OpenAPI` field) to add:
 
@@ -598,12 +598,12 @@ In `internal/config/config.go`, modify the `RepoConfig` struct (currently ending
 
 Place it immediately after the `OpenAPI []string` field, inside the struct.
 
-- [ ] **Step 4: Run the test to verify it passes**
+- [x] **Step 4: Run the test to verify it passes**
 
 Run: `go test ./internal/config/ -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/config/config.go internal/config/config_test.go openspec/changes/protobuf-contract-layer/tasks.md

@@ -15,6 +15,11 @@ type RepoConfig struct {
 	Branch string `mapstructure:"branch"`
 
 	OpenAPI []string `mapstructure:"openapi"`
+
+	Proto struct {
+		Roots []string `mapstructure:"roots"`
+		Files []string `mapstructure:"files"`
+	} `mapstructure:"proto"`
 }
 
 // Config is the parsed manifest.

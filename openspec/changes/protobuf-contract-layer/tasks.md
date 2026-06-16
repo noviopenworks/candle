@@ -8,7 +8,7 @@
 - [x] 1.2 `internal/store/proto.go`: bundle types + `ReplaceProtoFiles` (idempotent per index_id); impl-link write/read; find/lookup queries
 
 ## 2. Protobuf parsing
-- [ ] 2.1 Add `proto: { roots, files }` block to `RepoConfig` (`internal/config`)
+- [x] 2.1 Add `proto: { roots, files }` block to `RepoConfig` (`internal/config`)
 - [ ] 2.2 `internal/proto`: bufbuild/protocompile compiler with SourceResolver over roots + well-known types; expand directory entries
 - [ ] 2.3 Extract services, RPCs (request/response message names + `stream_kind`), messages (fields), enums (values), file package + go_package + imports
 - [ ] 2.4 Normalize into store bundles; tolerate missing/malformed/unresolvable files with warnings
