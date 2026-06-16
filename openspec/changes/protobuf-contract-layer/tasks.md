@@ -26,10 +26,10 @@
 - [x] 4.4 Extend `find_schema` with `{kind:"proto_message"}` entries
 
 ## 5. Resources
-- [ ] 5.1 `proto://…/file/<path>`
-- [ ] 5.2 `proto://…/service/<package>/<service>`
-- [ ] 5.3 `proto://…/rpc/<package>/<service>/<rpc>`
-- [ ] 5.4 `proto://…/message/<package>/<message>`
+- [x] 5.1 `proto://…/file/<path>`
+- [x] 5.2 `proto://…/service/<package>/<service>`
+- [x] 5.3 `proto://…/rpc/<package>/<service>/<rpc>`
+- [x] 5.4 `proto://…/message/<package>/<message>`
 
 ## 6. Verification
 - [ ] 6.1 Parser unit tests: cross-file imports, nested messages, enums, options, go_package, all four stream kinds

@@ -77,6 +77,29 @@ func TestSpecResource(t *testing.T) {
 	}
 }
 
+func TestProtoResources(t *testing.T) {
+	tools := seedProtoTools(t)
+
+	rpcBody, err := tools.ProtoRPCResource("acme/inventory", "acme.inventory", "InventoryService", "ReserveProduct")
+	if err != nil || !strings.Contains(rpcBody, "ReserveProduct") {
+		t.Fatalf("rpc resource: %q err=%v", rpcBody, err)
+	}
+	msgBody, err := tools.ProtoMessageResource("acme/inventory", "acme.inventory", "ReserveProductRequest")
+	if err != nil || !strings.Contains(msgBody, "sku") {
+		t.Fatalf("message resource: %q err=%v", msgBody, err)
+	}
+	if _, err := tools.ProtoMessageResource("acme/inventory", "acme.inventory", "Nope"); err != ErrNotFound {
+		t.Fatalf("want ErrNotFound, got %v", err)
+	}
+}
+
+func TestParseProtoURI(t *testing.T) {
+	repo, kind, ref, err := parseProtoURI("proto://acme/inventory/commit/abc/rpc/acme.inventory/InventoryService/ReserveProduct")
+	if err != nil || repo != "acme/inventory" || kind != "rpc" || ref != "acme.inventory/InventoryService/ReserveProduct" {
+		t.Fatalf("parse: repo=%q kind=%q ref=%q err=%v", repo, kind, ref, err)
+	}
+}
+
 func TestParseOpenAPIURI(t *testing.T) {
 	repo, kind, ref, err := parseOpenAPIURI("openapi://org/svc/commit/abc/spec/api/openapi.yaml")
 	if err != nil {

@@ -1595,7 +1595,7 @@ Then mark tasks.md items 4.1, 4.2, 4.3, 4.4 as `[x]`.
 - Modify: `internal/mcp/server.go`
 - Test: `internal/mcp/resources_test.go`
 
-- [ ] **Step 1: Write the failing resource test**
+- [x] **Step 1: Write the failing resource test**
 
 Add to `internal/mcp/resources_test.go` (follow the file's existing seeding style; reuse `seedProtoTools` from `proto_tools_test.go` since it's the same package):
 
@@ -1626,12 +1626,12 @@ func TestParseProtoURI(t *testing.T) {
 
 Add `"strings"` to the test imports if not present.
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `go test ./internal/mcp/ -run 'ProtoResources|ParseProtoURI' -v`
 Expected: FAIL — resource methods + parser undefined.
 
-- [ ] **Step 3: Implement the proto resources**
+- [x] **Step 3: Implement the proto resources**
 
 Add to `internal/mcp/resources.go`:
 
@@ -1728,7 +1728,7 @@ func parseProtoURI(uri string) (repo, kind, ref string, err error) {
 }
 ```
 
-- [ ] **Step 4: Register the proto tools and resources**
+- [x] **Step 4: Register the proto tools and resources**
 
 In `internal/mcp/server.go`:
 
@@ -1836,12 +1836,12 @@ func registerExplainRPC(srv *mcpsdk.Server, tools *Tools) {
 	})
 ```
 
-- [ ] **Step 5: Run the tests to verify they pass**
+- [x] **Step 5: Run the tests to verify they pass**
 
 Run: `go test ./internal/mcp/ -v`
 Expected: PASS. If `e2e_test.go` asserts `ToolNames` length/content, update it to include `find_rpc` and `explain_rpc`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/mcp/resources.go internal/mcp/server.go internal/mcp/resources_test.go internal/mcp/e2e_test.go openspec/changes/protobuf-contract-layer/tasks.md
