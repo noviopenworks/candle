@@ -91,4 +91,54 @@ CREATE INDEX IF NOT EXISTS idx_http_ops_spec    ON http_operations(api_spec_id);
 CREATE INDEX IF NOT EXISTS idx_http_ops_opid    ON http_operations(operation_id);
 CREATE INDEX IF NOT EXISTS idx_api_schemas_spec ON api_schemas(api_spec_id);
 CREATE INDEX IF NOT EXISTS idx_api_specs_index  ON api_specs(index_id);
+CREATE TABLE IF NOT EXISTS proto_files (
+  id         INTEGER PRIMARY KEY,
+  index_id   INTEGER NOT NULL REFERENCES indexes(id),
+  path       TEXT NOT NULL,
+  package    TEXT,
+  go_package TEXT,
+  imports    TEXT
+);
+CREATE TABLE IF NOT EXISTS proto_services (
+  id            INTEGER PRIMARY KEY,
+  proto_file_id INTEGER NOT NULL REFERENCES proto_files(id),
+  name          TEXT NOT NULL,
+  full_name     TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS proto_rpcs (
+  id               INTEGER PRIMARY KEY,
+  proto_service_id INTEGER NOT NULL REFERENCES proto_services(id),
+  name             TEXT NOT NULL,
+  full_name        TEXT NOT NULL,
+  request_message  TEXT,
+  response_message TEXT,
+  stream_kind      TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS proto_messages (
+  id            INTEGER PRIMARY KEY,
+  proto_file_id INTEGER NOT NULL REFERENCES proto_files(id),
+  name          TEXT NOT NULL,
+  full_name     TEXT NOT NULL,
+  fields        TEXT
+);
+CREATE TABLE IF NOT EXISTS proto_enums (
+  id            INTEGER PRIMARY KEY,
+  proto_file_id INTEGER NOT NULL REFERENCES proto_files(id),
+  name          TEXT NOT NULL,
+  full_name     TEXT NOT NULL,
+  "values"      TEXT
+);
+CREATE TABLE IF NOT EXISTS proto_rpc_impls (
+  id           INTEGER PRIMARY KEY,
+  proto_rpc_id INTEGER NOT NULL REFERENCES proto_rpcs(id),
+  node_id      TEXT NOT NULL,
+  confidence   REAL NOT NULL,
+  match_reason TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_proto_files_index ON proto_files(index_id);
+CREATE INDEX IF NOT EXISTS idx_proto_services_file ON proto_services(proto_file_id);
+CREATE INDEX IF NOT EXISTS idx_proto_rpcs_service ON proto_rpcs(proto_service_id);
+CREATE INDEX IF NOT EXISTS idx_proto_messages_file ON proto_messages(proto_file_id);
+CREATE INDEX IF NOT EXISTS idx_proto_enums_file ON proto_enums(proto_file_id);
+CREATE INDEX IF NOT EXISTS idx_proto_rpc_impls_rpc ON proto_rpc_impls(proto_rpc_id);
 `

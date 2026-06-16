@@ -4,8 +4,8 @@
 > and delta specs. Scope: parse + same-repo linking; cross-repo `consumed_by` deferred.
 
 ## 1. Storage
-- [ ] 1.1 Add `proto_files`, `proto_services`, `proto_rpcs`, `proto_messages`, `proto_enums`, `proto_rpc_impls` tables (index_id-scoped) to `schema.go`
-- [ ] 1.2 `internal/store/proto.go`: bundle types + `ReplaceProtoFiles` (idempotent per index_id); impl-link write/read; find/lookup queries
+- [x] 1.1 Add `proto_files`, `proto_services`, `proto_rpcs`, `proto_messages`, `proto_enums`, `proto_rpc_impls` tables (index_id-scoped) to `schema.go`
+- [x] 1.2 `internal/store/proto.go`: bundle types + `ReplaceProtoFiles` (idempotent per index_id); impl-link write/read; find/lookup queries
 
 ## 2. Protobuf parsing
 - [ ] 2.1 Add `proto: { roots, files }` block to `RepoConfig` (`internal/config`)

@@ -54,7 +54,7 @@ base-ref: 9973fcb38d6a2d6ef5f36abab3244a1c80f85a84
 - Create: `internal/store/proto.go`
 - Test: `internal/store/proto_test.go`
 
-- [ ] **Step 1: Add proto tables to the schema**
+- [x] **Step 1: Add proto tables to the schema**
 
 In `internal/store/schema.go`, append the following inside the `schemaSQL` backtick string, before the closing `` ` ``:
 
@@ -111,7 +111,7 @@ CREATE INDEX IF NOT EXISTS idx_proto_enums_file ON proto_enums(proto_file_id);
 CREATE INDEX IF NOT EXISTS idx_proto_rpc_impls_rpc ON proto_rpc_impls(proto_rpc_id);
 ```
 
-- [ ] **Step 2: Write the failing storage test**
+- [x] **Step 2: Write the failing storage test**
 
 Create `internal/store/proto_test.go`:
 
@@ -177,12 +177,12 @@ func TestProtoStorageAndIdempotent(t *testing.T) {
 }
 ```
 
-- [ ] **Step 3: Run the test to verify it fails**
+- [x] **Step 3: Run the test to verify it fails**
 
 Run: `go test ./internal/store/ -run TestProtoStorage -v`
 Expected: FAIL — `ProtoFileBundle`, `ReplaceProtoFiles`, etc. undefined.
 
-- [ ] **Step 4: Implement `internal/store/proto.go`**
+- [x] **Step 4: Implement `internal/store/proto.go`**
 
 Create `internal/store/proto.go`:
 
@@ -526,12 +526,12 @@ func parseFields(s string) []ProtoField {
 }
 ```
 
-- [ ] **Step 5: Run the test to verify it passes**
+- [x] **Step 5: Run the test to verify it passes**
 
 Run: `go test ./internal/store/ -v`
 Expected: PASS (including existing API tests).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/store/schema.go internal/store/proto.go internal/store/api.go internal/store/proto_test.go openspec/changes/protobuf-contract-layer/tasks.md
