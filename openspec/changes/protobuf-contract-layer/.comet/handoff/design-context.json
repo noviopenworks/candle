@@ -1,0 +1,16 @@
+{
+  "change": "protobuf-contract-layer",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "ef40027461aa61c57d26a5e87e0e38e72f263fc32e6e1716ed8f5ebc5a3b8b68",
+  "files": [
+    { "path": "openspec/changes/protobuf-contract-layer/proposal.md", "sha256": "5ba1293ba587c0f12c01c260df3d3b9eaf97324a5ab1d021c64b7fa14d5eaa8d" },
+    { "path": "openspec/changes/protobuf-contract-layer/design.md", "sha256": "a33bb7e9cdc7c4daf23cc01262c8314e525707673b8980cb0d512f275556c5ee" },
+    { "path": "openspec/changes/protobuf-contract-layer/tasks.md", "sha256": "02ceead1d9d5ab2e03b7eb6d7ef99abb9695cc4f8fc4fe227b294d28aaabc247" },
+    { "path": "openspec/changes/protobuf-contract-layer/specs/openapi-tools/spec.md", "sha256": "82666f6fdf9960602ebdf66102e02117d4890c79dcb1d609c3fa4478fcc663d8" },
+    { "path": "openspec/changes/protobuf-contract-layer/specs/protobuf-index/spec.md", "sha256": "fa71320ea99238359bbf8e5c88ebb5470497226498e7eba3909de533c8fd44c8" },
+    { "path": "openspec/changes/protobuf-contract-layer/specs/protobuf-tools/spec.md", "sha256": "76a71289d3ce0346ea7c9b69e87df6bcded07b682478a0ddb50ab4ce20556c3d" }
+  ]
+}
