@@ -9,9 +9,9 @@
 
 ## 2. Protobuf parsing
 - [x] 2.1 Add `proto: { roots, files }` block to `RepoConfig` (`internal/config`)
-- [ ] 2.2 `internal/proto`: bufbuild/protocompile compiler with SourceResolver over roots + well-known types; expand directory entries
-- [ ] 2.3 Extract services, RPCs (request/response message names + `stream_kind`), messages (fields), enums (values), file package + go_package + imports
-- [ ] 2.4 Normalize into store bundles; tolerate missing/malformed/unresolvable files with warnings
+- [x] 2.2 `internal/proto`: bufbuild/protocompile compiler with SourceResolver over roots + well-known types; expand directory entries
+- [x] 2.3 Extract services, RPCs (request/response message names + `stream_kind`), messages (fields), enums (values), file package + go_package + imports
+- [x] 2.4 Normalize into store bundles; tolerate missing/malformed/unresolvable files with warnings
 
 ## 3. Contract → code linking
 - [ ] 3.1 `internal/link` (new shared package): RPC→server-impl matcher — name + service association + streaming-aware signature check; confidence tiers + match_reason

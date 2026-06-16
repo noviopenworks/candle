@@ -621,7 +621,7 @@ Then mark tasks.md item 2.1 as `[x]`.
 - Create: `internal/proto/testdata/inventory.proto`
 - Modify: `go.mod` / `go.sum` (add bufbuild/protocompile)
 
-- [ ] **Step 1: Add the protocompile dependency**
+- [x] **Step 1: Add the protocompile dependency**
 
 Run:
 ```bash
@@ -629,7 +629,7 @@ go get github.com/bufbuild/protocompile@latest
 ```
 Expected: `go.mod` gains `github.com/bufbuild/protocompile`.
 
-- [ ] **Step 2: Create the fixture proto**
+- [x] **Step 2: Create the fixture proto**
 
 Create `internal/proto/testdata/inventory.proto`:
 
@@ -662,7 +662,7 @@ enum Status {
 }
 ```
 
-- [ ] **Step 3: Write the failing parser test**
+- [x] **Step 3: Write the failing parser test**
 
 Create `internal/proto/proto_test.go`:
 
@@ -736,12 +736,12 @@ func TestParseMissingFileWarns(t *testing.T) {
 }
 ```
 
-- [ ] **Step 4: Run the test to verify it fails**
+- [x] **Step 4: Run the test to verify it fails**
 
 Run: `go test ./internal/proto/ -v`
 Expected: FAIL — `ParseFiles`, `RPC`, `Message` undefined.
 
-- [ ] **Step 5: Implement `internal/proto/proto.go`**
+- [x] **Step 5: Implement `internal/proto/proto.go`**
 
 Create `internal/proto/proto.go`:
 
@@ -938,7 +938,7 @@ func normalizeEnum(ed protoreflect.EnumDescriptor) Enum {
 }
 ```
 
-- [ ] **Step 6: Tidy modules and run the test**
+- [x] **Step 6: Tidy modules and run the test**
 
 Run:
 ```bash
@@ -947,7 +947,7 @@ go test ./internal/proto/ -v
 ```
 Expected: PASS. (`google.golang.org/protobuf` is pulled in transitively by protocompile; `go mod tidy` resolves it.)
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add internal/proto/ go.mod go.sum openspec/changes/protobuf-contract-layer/tasks.md
