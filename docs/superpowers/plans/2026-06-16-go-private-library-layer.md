@@ -1381,7 +1381,7 @@ Mark tasks.md 5.1 `[x]` (linker portion; ingest wiring in Task 7).
 - Modify: `internal/ingest/ingest.go`
 - Test: `internal/ingest/ingest_test.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Add to `internal/ingest/ingest_test.go`:
 
@@ -1412,11 +1412,11 @@ func TestRunIndexesGoDeps(t *testing.T) {
 
 Note: the consumer fixture imports `git.acme.local/platform/auth`; `extractUsages` records the `NewClient`/`Verify` selector usages regardless of whether the imported source is present (it parses the consumer file only). Resolve the index id via the idempotent `UpsertIndex` (Run created it with empty commit/branch).
 
-- [ ] **Step 2: Run, verify FAIL**
+- [x] **Step 2: Run, verify FAIL**
 
 Run: `go test ./internal/ingest/ -run TestRunIndexesGoDeps -v` → FAIL.
 
-- [ ] **Step 3: Wire the Go pass into `ingest.Run`**
+- [x] **Step 3: Wire the Go pass into `ingest.Run`**
 
 In `internal/ingest/ingest.go`, add `"github.com/vend-ai/intel-mcp/internal/godep"` to imports. After the protobuf block (after `s.LinkRPCImpls(...)`), add:
 
@@ -1487,11 +1487,11 @@ func lastPathSeg(p string) string {
 
 Add `"strings"` to the ingest imports if not present.
 
-- [ ] **Step 4: Run, verify PASS**
+- [x] **Step 4: Run, verify PASS**
 
 Run: `go test ./internal/ingest/ -v` → PASS. `go test ./...`, `go build ./...`, `go vet ./internal/ingest/`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/ingest/ openspec/changes/go-private-library-layer/tasks.md

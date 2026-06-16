@@ -105,6 +105,29 @@ func TestRunIndexesProtos(t *testing.T) {
 	}
 }
 
+func TestRunIndexesGoDeps(t *testing.T) {
+	dir := t.TempDir()
+	graphPath := filepath.Join(dir, "g.json")
+	if err := os.WriteFile(graphPath, []byte(`{"nodes":[],"edges":[],"hyperedges":[]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	root, _ := filepath.Abs("../godep/testdata/consumer")
+	cfg := &config.Config{Repos: []config.RepoConfig{{Repo: "acme/web", Graph: graphPath}}}
+	cfg.Repos[0].Go.Modules = []string{filepath.Join(root, "go.mod")}
+	cfg.Repos[0].Go.PrivatePrefixes = []string{"git.acme.local/"}
+
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	if _, err := Run(s, cfg); err != nil {
+		t.Fatalf("run: %v", err)
+	}
+	id, _ := s.UpsertIndex("acme", "web", "", "", graphPath)
+	usages, err := s.PrivateUsagesByModule(id, "git.acme.local/platform/auth")
+	if err != nil || len(usages) == 0 {
+		t.Fatalf("usages: %+v err=%v", usages, err)
+	}
+}
+
 // TestRunToleratesBadOpenAPISpecs verifies that a missing spec file and a
 // Swagger 2.0 spec are each skipped with a warning while the repo's graph is
 // still indexed and the run does not abort.
