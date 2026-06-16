@@ -26,8 +26,8 @@
 - [x] 5.1 `internal/link` export matcher: link each export to a code node by label (package-file scoped when possible); store `node_id`; run in `ingest.Run` after `graph.Load`
 
 ## 6. Tools
-- [ ] 6.1 `find_private_library` (module/package path, doc synopsis, README match; path-only for provider-less deps)
-- [ ] 6.2 `find_library_consumers` (single-repo: version + used packages + used symbols; deferred cross-repo marker)
+- [x] 6.1 `find_private_library` (module/package path, doc synopsis, README match; path-only for provider-less deps)
+- [x] 6.2 `find_library_consumers` (single-repo: version + used packages + used symbols; deferred cross-repo marker)
 
 ## 7. Resources
 - [ ] 7.1 `lib://<module-path>` + `/version/`, `/package/`, `/symbol/` variants (single-index provider lookup)

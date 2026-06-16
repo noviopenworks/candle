@@ -1509,7 +1509,7 @@ Confirm tasks.md 5.1 stays `[x]`.
 - Create: `internal/mcp/godep_tools.go`
 - Test: `internal/mcp/godep_tools_test.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/mcp/godep_tools_test.go`:
 
@@ -1566,11 +1566,11 @@ func TestFindLibraryConsumers(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run, verify FAIL**
+- [x] **Step 2: Run, verify FAIL**
 
 Run: `go test ./internal/mcp/ -run 'PrivateLibrary|LibraryConsumers' -v` → FAIL.
 
-- [ ] **Step 3: Implement `internal/mcp/godep_tools.go`**
+- [x] **Step 3: Implement `internal/mcp/godep_tools.go`**
 
 ```go
 package mcp
@@ -1654,11 +1654,11 @@ func (t *Tools) FindLibraryConsumers(repo, modulePath string) (LibraryConsumers,
 }
 ```
 
-- [ ] **Step 4: Run, verify PASS**
+- [x] **Step 4: Run, verify PASS**
 
 Run: `go test ./internal/mcp/ -v` → PASS. `go build ./...`, `go vet ./internal/mcp/`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp/godep_tools.go internal/mcp/godep_tools_test.go openspec/changes/go-private-library-layer/tasks.md
