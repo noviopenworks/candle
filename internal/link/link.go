@@ -117,3 +117,37 @@ func signatureMatches(sourceFile, rpcName, streamKind string) bool {
 	}
 	return false
 }
+
+// Export is the subset of a private-library export the linker needs. SourceHint
+// is an optional path fragment (e.g. package dir) used to prefer a co-located node.
+type Export struct {
+	PackagePath string
+	Symbol      string
+	SourceHint  string
+	NodeID      string // filled by MatchExports
+}
+
+// MatchExports links each export to a code node by exact symbol name within the
+// index, preferring a node whose source_file contains SourceHint. Unmatched
+// exports keep an empty NodeID. Returns the exports with NodeID populated.
+func MatchExports(s *store.Store, indexID int64, exports []Export) []Export {
+	out := make([]Export, len(exports))
+	copy(out, exports)
+	for i := range out {
+		nodes, err := s.NodesByLabel(indexID, out[i].Symbol)
+		if err != nil || len(nodes) == 0 {
+			continue
+		}
+		pick := nodes[0].NodeID
+		if out[i].SourceHint != "" {
+			for _, n := range nodes {
+				if strings.Contains(n.SourceFile, out[i].SourceHint) {
+					pick = n.NodeID
+					break
+				}
+			}
+		}
+		out[i].NodeID = pick
+	}
+	return out
+}

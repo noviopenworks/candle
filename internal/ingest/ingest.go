@@ -3,8 +3,10 @@ package ingest
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/vend-ai/intel-mcp/internal/config"
+	"github.com/vend-ai/intel-mcp/internal/godep"
 	"github.com/vend-ai/intel-mcp/internal/graph"
 	"github.com/vend-ai/intel-mcp/internal/link"
 	"github.com/vend-ai/intel-mcp/internal/openapi"
@@ -78,6 +80,18 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 		if err := s.LinkRPCImpls(indexID, links); err != nil {
 			return rep, err
 		}
+
+		// Go private libraries.
+		gres, gwarns, gerr := godep.Parse(r.Go.Modules, r.Go.PrivatePrefixes)
+		if gerr != nil {
+			rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: go: %v", r.Repo, gerr))
+		}
+		for _, w := range gwarns {
+			rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: go %s", r.Repo, w))
+		}
+		if err := s.ReplaceGoDeps(indexID, toGoDepBundle(s, indexID, gres)); err != nil {
+			return rep, err
+		}
 	}
 	return rep, nil
 }
@@ -141,4 +155,51 @@ func collectRPCs(files []proto.File) []link.RPC {
 		}
 	}
 	return out
+}
+
+func toGoDepBundle(s *store.Store, indexID int64, res *godep.Result) store.GoDepBundle {
+	var b store.GoDepBundle
+	if res == nil {
+		return b
+	}
+	for _, d := range res.Dependencies {
+		b.Dependencies = append(b.Dependencies, store.Dependency{
+			ModulePath: d.ModulePath, Version: d.Version, Ecosystem: "go",
+			IsPrivate: d.IsPrivate, Direct: d.Direct})
+	}
+	if res.Library != nil {
+		var le []link.Export
+		for _, e := range res.Library.Exports {
+			le = append(le, link.Export{PackagePath: e.PackagePath, Symbol: e.Symbol, SourceHint: lastPathSeg(e.PackagePath)})
+		}
+		linked := link.MatchExports(s, indexID, le)
+		nodeBySym := map[string]string{}
+		for _, l := range linked {
+			if l.NodeID != "" {
+				nodeBySym[l.Symbol] = l.NodeID
+			}
+		}
+		var exps []store.PrivateExport
+		for _, e := range res.Library.Exports {
+			exps = append(exps, store.PrivateExport{
+				PackagePath: e.PackagePath, Symbol: e.Symbol, Kind: e.Kind, Doc: e.Doc, NodeID: nodeBySym[e.Symbol]})
+		}
+		b.Libraries = append(b.Libraries, store.PrivateLibraryBundle{
+			Library: store.PrivateLibrary{ModulePath: res.Library.ModulePath, Readme: res.Library.Readme, DocSynopsis: res.Library.DocSynopsis},
+			Exports: exps,
+		})
+	}
+	for _, u := range res.Usages {
+		b.Usages = append(b.Usages, store.PrivateUsage{
+			ModulePath: u.ModulePath, Version: u.Version, PackagePath: u.PackagePath,
+			Symbol: u.Symbol, File: u.File, Line: u.Line})
+	}
+	return b
+}
+
+func lastPathSeg(p string) string {
+	if i := strings.LastIndex(p, "/"); i >= 0 {
+		return p[i+1:]
+	}
+	return p
 }

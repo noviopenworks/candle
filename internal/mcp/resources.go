@@ -171,6 +171,56 @@ func (t *Tools) ProtoMessageResource(repo, pkg, message string) (string, error) 
 	return "", ErrNotFound
 }
 
+// LibraryResource returns JSON for lib://<module-path> (provider library + exports).
+func (t *Tools) LibraryResource(modulePath string) (string, error) {
+	lib, ok, err := t.s.PrivateLibraryByModule(modulePath)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", ErrNotFound
+	}
+	return mustJSON(lib), nil
+}
+
+// LibraryPackageResource returns JSON for lib://<module-path>/package/<pkg>.
+func (t *Tools) LibraryPackageResource(modulePath, pkg string) (string, error) {
+	lib, ok, err := t.s.PrivateLibraryByModule(modulePath)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", ErrNotFound
+	}
+	var exps []store.PrivateExport
+	for _, e := range lib.Exports {
+		if e.PackagePath == pkg {
+			exps = append(exps, e)
+		}
+	}
+	if len(exps) == 0 {
+		return "", ErrNotFound
+	}
+	return mustJSON(map[string]any{"module_path": modulePath, "package": pkg, "exports": exps}), nil
+}
+
+// LibrarySymbolResource returns JSON for lib://<module-path>/symbol/<symbol>.
+func (t *Tools) LibrarySymbolResource(modulePath, symbol string) (string, error) {
+	lib, ok, err := t.s.PrivateLibraryByModule(modulePath)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", ErrNotFound
+	}
+	for _, e := range lib.Exports {
+		if e.Symbol == symbol {
+			return mustJSON(e), nil
+		}
+	}
+	return "", ErrNotFound
+}
+
 // SpecResource returns the JSON for a spec behind
 // openapi://org/name/commit/<sha>/spec/<path>: the spec metadata plus its operations.
 func (t *Tools) SpecResource(repo, path string) (string, error) {

@@ -26,6 +26,8 @@ var ToolNames = []string{
 	"find_schema",
 	"find_rpc",
 	"explain_rpc",
+	"find_private_library",
+	"find_library_consumers",
 }
 
 // NewServer builds the MCP server backed by the store, registering all base
@@ -49,6 +51,8 @@ func NewServer(s *store.Store) *mcpsdk.Server {
 	registerFindSchema(srv, tools)
 	registerFindRPC(srv, tools)
 	registerExplainRPC(srv, tools)
+	registerFindPrivateLibrary(srv, tools)
+	registerFindLibraryConsumers(srv, tools)
 	registerResources(srv, tools)
 
 	return srv
@@ -265,6 +269,42 @@ func registerExplainRPC(srv *mcpsdk.Server, tools *Tools) {
 	})
 }
 
+type findPrivateLibraryArgs struct {
+	Repo  string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Query string `json:"query" jsonschema:"lexical match: name / module path / purpose"`
+}
+
+func registerFindPrivateLibrary(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "find_private_library",
+		Description: "Find internal Go libraries by name, module path, package path, or purpose.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args findPrivateLibraryArgs) (*mcpsdk.CallToolResult, any, error) {
+		libs, err := tools.FindPrivateLibrary(args.Repo, args.Query)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(libs)), nil, nil
+	})
+}
+
+type findLibraryConsumersArgs struct {
+	Repo   string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Module string `json:"module" jsonschema:"module path of the private library"`
+}
+
+func registerFindLibraryConsumers(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "find_library_consumers",
+		Description: "Show how a repo consumes a private Go module: version and used symbols.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args findLibraryConsumersArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.FindLibraryConsumers(args.Repo, args.Module)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(out)), nil, nil
+	})
+}
+
 // toolErr maps a not-found into a tool-level error result (IsError) rather than
 // a protocol error, so unknown repos/symbols degrade gracefully.
 func toolErr(err error) (*mcpsdk.CallToolResult, any, error) {
@@ -391,6 +431,36 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		}
 		return resourceText(req.Params.URI, body), nil
 	})
+
+	srv.AddResourceTemplate(&mcpsdk.ResourceTemplate{
+		Name:        "lib",
+		Description: "A private Go library (module/package/symbol) as JSON.",
+		MIMEType:    "application/json",
+		URITemplate: "lib://{module}",
+	}, func(_ context.Context, req *mcpsdk.ReadResourceRequest) (*mcpsdk.ReadResourceResult, error) {
+		mod, kind, ref, err := parseLibURI(req.Params.URI)
+		if err != nil {
+			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+		}
+		var body string
+		switch kind {
+		case "", "version":
+			body, err = tools.LibraryResource(mod)
+		case "package":
+			body, err = tools.LibraryPackageResource(mod, ref)
+		case "symbol":
+			body, err = tools.LibrarySymbolResource(mod, ref)
+		default:
+			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+		}
+		if err != nil {
+			if err == ErrNotFound {
+				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
+			}
+			return nil, err
+		}
+		return resourceText(req.Params.URI, body), nil
+	})
 }
 
 func resourceText(uri, body string) *mcpsdk.ReadResourceResult {
@@ -428,6 +498,21 @@ func parseOpenAPIURI(uri string) (repo, kind, ref string, err error) {
 		return "", "", "", fmt.Errorf("malformed openapi uri %q", uri)
 	}
 	return parts[0] + "/" + parts[1], parts[4], strings.Join(parts[5:], "/"), nil
+}
+
+// parseLibURI parses lib://<module-path>[/version/<v>][/package/<p>][/symbol/<s>].
+// Returns the module path, an optional kind (version|package|symbol), and its ref.
+func parseLibURI(uri string) (modulePath, kind, ref string, err error) {
+	rest := strings.TrimPrefix(uri, "lib://")
+	for _, k := range []string{"/version/", "/package/", "/symbol/"} {
+		if i := strings.Index(rest, k); i >= 0 {
+			return rest[:i], strings.Trim(k, "/"), rest[i+len(k):], nil
+		}
+	}
+	if rest == "" {
+		return "", "", "", fmt.Errorf("malformed lib uri %q", uri)
+	}
+	return rest, "", "", nil
 }
 
 // parseProtoURI parses proto://org/name/commit/<sha>/<kind>/<ref...>.

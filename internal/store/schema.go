@@ -141,4 +141,45 @@ CREATE INDEX IF NOT EXISTS idx_proto_rpcs_service ON proto_rpcs(proto_service_id
 CREATE INDEX IF NOT EXISTS idx_proto_messages_file ON proto_messages(proto_file_id);
 CREATE INDEX IF NOT EXISTS idx_proto_enums_file ON proto_enums(proto_file_id);
 CREATE INDEX IF NOT EXISTS idx_proto_rpc_impls_rpc ON proto_rpc_impls(proto_rpc_id);
+CREATE TABLE IF NOT EXISTS dependencies (
+  id          INTEGER PRIMARY KEY,
+  index_id    INTEGER NOT NULL REFERENCES indexes(id),
+  module_path TEXT NOT NULL,
+  version     TEXT,
+  ecosystem   TEXT NOT NULL,
+  is_private  INTEGER NOT NULL,
+  direct      INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS private_libraries (
+  id           INTEGER PRIMARY KEY,
+  index_id     INTEGER NOT NULL REFERENCES indexes(id),
+  module_path  TEXT NOT NULL,
+  readme       TEXT,
+  doc_synopsis TEXT
+);
+CREATE TABLE IF NOT EXISTS private_library_exports (
+  id                 INTEGER PRIMARY KEY,
+  private_library_id INTEGER NOT NULL REFERENCES private_libraries(id),
+  package_path       TEXT NOT NULL,
+  symbol             TEXT NOT NULL,
+  kind               TEXT NOT NULL,
+  doc                TEXT,
+  node_id            TEXT
+);
+CREATE TABLE IF NOT EXISTS private_library_usages (
+  id           INTEGER PRIMARY KEY,
+  index_id     INTEGER NOT NULL REFERENCES indexes(id),
+  module_path  TEXT NOT NULL,
+  version      TEXT,
+  package_path TEXT NOT NULL,
+  symbol       TEXT,
+  file         TEXT,
+  line         INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_dependencies_index ON dependencies(index_id);
+CREATE INDEX IF NOT EXISTS idx_private_libs_index ON private_libraries(index_id);
+CREATE INDEX IF NOT EXISTS idx_private_libs_module ON private_libraries(module_path);
+CREATE INDEX IF NOT EXISTS idx_private_exports_lib ON private_library_exports(private_library_id);
+CREATE INDEX IF NOT EXISTS idx_private_usages_index ON private_library_usages(index_id);
+CREATE INDEX IF NOT EXISTS idx_private_usages_module ON private_library_usages(index_id, module_path);
 `

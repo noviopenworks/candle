@@ -58,6 +58,31 @@ func TestProtoConfigParses(t *testing.T) {
 	}
 }
 
+func TestGoConfigParses(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "manifest.yaml")
+	yaml := "repos:\n" +
+		"  - repo: acme/web\n" +
+		"    graph: /tmp/g.json\n" +
+		"    go:\n" +
+		"      modules: [go.mod]\n" +
+		"      private_prefixes: [git.acme.local/]\n"
+	if err := os.WriteFile(path, []byte(yaml), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := Load(path)
+	if err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	r := cfg.Repos[0]
+	if len(r.Go.Modules) != 1 || r.Go.Modules[0] != "go.mod" {
+		t.Fatalf("modules: %+v", r.Go.Modules)
+	}
+	if len(r.Go.PrivatePrefixes) != 1 || r.Go.PrivatePrefixes[0] != "git.acme.local/" {
+		t.Fatalf("prefixes: %+v", r.Go.PrivatePrefixes)
+	}
+}
+
 func TestInvalidRepoIdentity(t *testing.T) {
 	_, err := (RepoConfig{Repo: "noslash"}).validate()
 	if err == nil {
