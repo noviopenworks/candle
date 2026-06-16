@@ -2,6 +2,8 @@
 comet_change: protobuf-contract-layer
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-16-protobuf-contract-layer
+status: final
 ---
 
 # Protobuf Contract Layer — Technical Design

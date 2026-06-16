@@ -16,7 +16,7 @@ verification_report: docs/superpowers/reports/2026-06-16-protobuf-contract-layer
 branch_status: handled
 created_at: 2026-06-15
 verified_at: 2026-06-16
-archived: false
+archived: true
 handoff_context: openspec/changes/protobuf-contract-layer/.comet/handoff/design-context.json
 handoff_hash: ef40027461aa61c57d26a5e87e0e38e72f263fc32e6e1716ed8f5ebc5a3b8b68
 build_command: go build ./...

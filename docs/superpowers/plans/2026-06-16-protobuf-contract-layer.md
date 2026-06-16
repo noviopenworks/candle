@@ -2,6 +2,7 @@
 change: protobuf-contract-layer
 design-doc: docs/superpowers/specs/2026-06-16-protobuf-contract-layer-design.md
 base-ref: 9973fcb38d6a2d6ef5f36abab3244a1c80f85a84
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 # Protobuf Contract Layer Implementation Plan
@@ -14,6 +15,7 @@ base-ref: 9973fcb38d6a2d6ef5f36abab3244a1c80f85a84
 
 **Tech Stack:** Go 1.26, modernc.org/sqlite, bufbuild/protocompile, modelcontextprotocol/go-sdk, spf13/viper.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Conventions (read before starting)
@@ -45,6 +47,7 @@ base-ref: 9973fcb38d6a2d6ef5f36abab3244a1c80f85a84
 - Modify `internal/mcp/server.go` — register tools/resources; extend `ToolNames`.
 - Modify `internal/mcp/resources_test.go` / `e2e_test.go` — resource + regression coverage.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 1: Storage schema and proto tables
@@ -539,6 +542,7 @@ git commit -m "feat(store): proto contract tables and queries"
 ```
 Then mark tasks.md items 1.1 and 1.2 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 2: Manifest proto config
@@ -611,6 +615,7 @@ git commit -m "feat(config): proto roots/files manifest block"
 ```
 Then mark tasks.md item 2.1 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 3: Protobuf parser (`internal/proto`)
@@ -955,6 +960,7 @@ git commit -m "feat(proto): protocompile parser for services/rpcs/messages/enums
 ```
 Then mark tasks.md items 2.2, 2.3, 2.4 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 4: RPC→impl linker (`internal/link`)
@@ -1165,6 +1171,7 @@ git commit -m "feat(link): shared RPC-to-impl linker with confidence tiers"
 ```
 Then mark tasks.md items 3.1 and 3.3 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 5: Ingest wiring
@@ -1302,6 +1309,7 @@ git commit -m "feat(ingest): parse and link protos after graph load"
 ```
 Then mark tasks.md items 3.2 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 6: MCP tools (find_rpc, explain_rpc, list_apis/find_schema extensions)
@@ -1586,6 +1594,7 @@ git commit -m "feat(mcp): find_rpc/explain_rpc and protobuf list_apis/find_schem
 ```
 Then mark tasks.md items 4.1, 4.2, 4.3, 4.4 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 7: MCP proto resources + server registration
@@ -1849,6 +1858,7 @@ git commit -m "feat(mcp): proto:// resources and tool/resource registration"
 ```
 Then mark tasks.md items 5.1, 5.2, 5.3, 5.4 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Task 8: Verification and regression
@@ -1929,6 +1939,7 @@ git commit -m "test: proto/HTTP coexistence regression"
 ```
 Then mark tasks.md items 6.1, 6.2, 6.3, 6.4, 6.5 as `[x]`.
 
+archived-with: 2026-06-16-protobuf-contract-layer
 ---
 
 ## Self-Review Notes
