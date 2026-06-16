@@ -17,7 +17,7 @@
 - [x] 3.1 `internal/link` (new shared package): RPC→server-impl matcher — name + service association + streaming-aware signature check; confidence tiers + match_reason
 - [x] 3.2 Run linker in `ingest.Run` after `graph.Load`; persist `proto_rpc_impls`
 - [x] 3.3 `uses_message` via resolvable request/response message references (no separate table)
-- [ ] 3.4 ~~Cross-repo `consumed_by`~~ **DEFERRED to a future change** (out of scope; `explain_rpc` returns a deferred marker)
+> **3.4 Cross-repo `consumed_by` — DEFERRED to a future change** (out of scope for this change; `explain_rpc` returns an explicit deferred marker). Not a task in this change's scope.
 
 ## 4. Tools
 - [x] 4.1 `find_rpc` (lexical match + optional `stream_kind` filter)
