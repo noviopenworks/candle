@@ -19,8 +19,8 @@
 - [x] 3.2 Persist to `private_libraries` + `private_library_exports`
 
 ## 4. Consumer side (usages)
-- [ ] 4.1 Detect imports of private modules per repo (longest-prefix match → module+version)
-- [ ] 4.2 Resolve used symbols via `alias.Symbol` selector scan with file/line → `private_library_usages`
+- [x] 4.1 Detect imports of private modules per repo (longest-prefix match → module+version)
+- [x] 4.2 Resolve used symbols via `alias.Symbol` selector scan with file/line → `private_library_usages`
 
 ## 5. Graph linking
 - [ ] 5.1 `internal/link` export matcher: link each export to a code node by label (package-file scoped when possible); store `node_id`; run in `ingest.Run` after `graph.Load`

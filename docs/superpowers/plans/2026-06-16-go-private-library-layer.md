@@ -1077,7 +1077,7 @@ Mark tasks.md 3.1, 3.2 `[x]`.
 - Test: `internal/godep/usages_test.go`
 - Create: `internal/godep/testdata/consumer/main.go`
 
-- [ ] **Step 1: Create consumer source fixture**
+- [x] **Step 1: Create consumer source fixture**
 
 `internal/godep/testdata/consumer/main.go`:
 ```go
@@ -1097,7 +1097,7 @@ func main() {
 }
 ```
 
-- [ ] **Step 2: Write the failing test**
+- [x] **Step 2: Write the failing test**
 
 Create `internal/godep/usages_test.go`:
 
@@ -1138,11 +1138,11 @@ func TestExtractUsages(t *testing.T) {
 }
 ```
 
-- [ ] **Step 3: Run, verify FAIL** (stub returns nil)
+- [x] **Step 3: Run, verify FAIL** (stub returns nil)
 
 Run: `go test ./internal/godep/ -run TestExtractUsages -v` → FAIL.
 
-- [ ] **Step 4: Remove the stub and implement `internal/godep/usages.go`**
+- [x] **Step 4: Remove the stub and implement `internal/godep/usages.go`**
 
 Delete the `extractUsages` stub line from `modfile.go`. Create `internal/godep/usages.go`:
 
@@ -1259,11 +1259,11 @@ func longestPrefixModule(importPath string, mods []Dependency) (Dependency, bool
 }
 ```
 
-- [ ] **Step 5: Run, verify PASS**
+- [x] **Step 5: Run, verify PASS**
 
 Run: `go test ./internal/godep/ -v` → PASS. `go build ./...`, `go vet ./internal/godep/`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/godep/ openspec/changes/go-private-library-layer/tasks.md

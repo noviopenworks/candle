@@ -92,6 +92,3 @@ func readGoSum(path string) map[string]struct{} {
 	}
 	return out
 }
-
-// TEMPORARY STUB — replaced in Task 5.
-func extractUsages(dir string, deps []Dependency) ([]Usage, []string) { return nil, nil }
