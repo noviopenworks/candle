@@ -1,0 +1,15 @@
+{
+  "change": "go-private-library-layer",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "9e56ba455d1d56c0873ac5740f56b640873875ba559e33d7e8f6257127cc1336",
+  "files": [
+    { "path": "openspec/changes/go-private-library-layer/proposal.md", "sha256": "ca14e0bd29ac21f06c014738cda1b4dfbe7cbe586ef2e4ca86019599a4adcb8e" },
+    { "path": "openspec/changes/go-private-library-layer/design.md", "sha256": "80d72ea9edbcac354fb8b8f87eebfd44d9df75818b3bbb7d601d4b091675f18c" },
+    { "path": "openspec/changes/go-private-library-layer/tasks.md", "sha256": "4deadde2e6decac86da259cf1a02e77536f1fcc7a28b51ab8f8da359a401d691" },
+    { "path": "openspec/changes/go-private-library-layer/specs/go-dependency-index/spec.md", "sha256": "34d1e40720a4df5d7c6e9bd3ccef39cb4bfc56a69e4bb298f061559365e11c5a" },
+    { "path": "openspec/changes/go-private-library-layer/specs/private-library-tools/spec.md", "sha256": "42b75b1caa229ccde07660fc69c48b79f6935c214040242650900145c7192052" }
+  ]
+}

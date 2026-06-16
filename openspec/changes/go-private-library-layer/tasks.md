@@ -1,31 +1,43 @@
 # Tasks — go-private-library-layer
 
-> Open-phase outline. Refined against the Design Doc + delta specs.
+> Refined against design doc `docs/superpowers/specs/2026-06-16-go-private-library-layer-design.md`
+> and delta specs. Scope: provider exports + consumer usages (go/ast, no build), single-repo
+> find_library_consumers; cross-repo consumer aggregation deferred.
 
 ## 1. Storage
-- [ ] 1.1 Add `dependencies` (ecosystem, is_private), `private_library_exports`, `private_library_usages` tables; migration
+- [ ] 1.1 Add `dependencies` (ecosystem, is_private, direct), `private_libraries`, `private_library_exports` (with `node_id`), `private_library_usages` tables to `schema.go`
+- [ ] 1.2 `internal/store/godep.go`: bundle types + `ReplaceGoDeps` (idempotent per index_id); find/lookup queries
 
 ## 2. Dependency parsing
-- [ ] 2.1 Parse `go.mod`/`go.work` with `x/mod/modfile`; record require/replace + versions
-- [ ] 2.2 Cross-check versions via `go.sum`
-- [ ] 2.3 Config-driven private classification (internal module-path prefixes via viper)
+- [ ] 2.1 Add per-repo `go: { modules, private_prefixes }` block to `RepoConfig` (`internal/config`)
+- [ ] 2.2 `internal/godep`: parse `go.mod` (require/replace + indirect) and `go.work` (`use`) with `x/mod/modfile`
+- [ ] 2.3 Cross-check versions via `go.sum` (mismatch → warning)
+- [ ] 2.4 Per-repo private classification by module-path prefix; public deps shallow
 
 ## 3. Provider side (exports)
-- [ ] 3.1 Extract exported packages/functions/types/interfaces/constructors for private modules
-- [ ] 3.2 Persist to `private_library_exports`
+- [ ] 3.1 Extract exported funcs/constructors/types/interfaces/consts/vars via `go/ast` for private modules the repo defines; package doc synopsis + README
+- [ ] 3.2 Persist to `private_libraries` + `private_library_exports`
 
 ## 4. Consumer side (usages)
-- [ ] 4.1 Detect imports of private modules per repo (with version)
-- [ ] 4.2 Resolve used exported symbols (design-phase fidelity) with file/line → `private_library_usages`
+- [ ] 4.1 Detect imports of private modules per repo (longest-prefix match → module+version)
+- [ ] 4.2 Resolve used symbols via `alias.Symbol` selector scan with file/line → `private_library_usages`
 
-## 5. Tools
-- [ ] 5.1 `find_private_library` (name / module-path / purpose)
-- [ ] 5.2 `find_library_consumers` (repos + versions + used_symbols)
+## 5. Graph linking
+- [ ] 5.1 `internal/link` export matcher: link each export to a code node by label (package-file scoped when possible); store `node_id`; run in `ingest.Run` after `graph.Load`
 
-## 6. Resources
-- [ ] 6.1 `lib://<module-path>` and `/version/`, `/package/`, `/symbol/` variants
+## 6. Tools
+- [ ] 6.1 `find_private_library` (module/package path, doc synopsis, README match; path-only for provider-less deps)
+- [ ] 6.2 `find_library_consumers` (single-repo: version + used packages + used symbols; deferred cross-repo marker)
 
-## 7. Verification
-- [ ] 7.1 Provider repo: exports indexed correctly
-- [ ] 7.2 Consumer repos: `find_library_consumers` lists repos + versions + used symbols on a multi-repo fixture
-- [ ] 7.3 Public deps are classified non-private and not deeply indexed
+## 7. Resources
+- [ ] 7.1 `lib://<module-path>` + `/version/`, `/package/`, `/symbol/` variants (single-index provider lookup)
+
+## 8. Verification
+- [ ] 8.1 Parser unit tests: require/replace/indirect, go.work `use`, go.sum cross-check, export extraction, README/doc synopsis
+- [ ] 8.2 Consumer tests: import + selector usage resolution with file/line
+- [ ] 8.3 Classification: private deep-indexed, public shallow
+- [ ] 8.4 Linker: export → code node match; unmatched → null node_id
+- [ ] 8.5 Tool/resource tests: find_private_library, find_library_consumers (deferred marker, not-found), lib:// provider lookup
+- [ ] 8.6 Idempotency: re-index → identical row counts
+
+> **Cross-repo consumer aggregation — DEFERRED to a future change** (out of scope; `find_library_consumers` returns a deferred marker for the cross-repo dimension). Not a task in this change's scope.
