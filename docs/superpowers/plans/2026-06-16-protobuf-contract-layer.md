@@ -965,7 +965,7 @@ Then mark tasks.md items 2.2, 2.3, 2.4 as `[x]`.
 
 The linker matches RPCs to gRPC server-method nodes in the same index. Signals: method-name match, service registration presence, and a best-effort source-signature streaming check.
 
-- [ ] **Step 1: Write the failing linker test**
+- [x] **Step 1: Write the failing linker test**
 
 Create `internal/link/link_test.go`:
 
@@ -1034,12 +1034,12 @@ func mustNode(t *testing.T, s *store.Store, indexID int64, id, label, file strin
 }
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `go test ./internal/link/ -v`
 Expected: FAIL — `RPC`, `MatchRPCs` undefined.
 
-- [ ] **Step 3: Implement `internal/link/link.go`**
+- [x] **Step 3: Implement `internal/link/link.go`**
 
 Create `internal/link/link.go`:
 
@@ -1152,12 +1152,12 @@ func signatureMatches(sourceFile, rpcName, streamKind string) bool {
 }
 ```
 
-- [ ] **Step 4: Run the test to verify it passes**
+- [x] **Step 4: Run the test to verify it passes**
 
 Run: `go test ./internal/link/ -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/link/ openspec/changes/protobuf-contract-layer/tasks.md
