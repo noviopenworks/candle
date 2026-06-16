@@ -15,8 +15,8 @@
 - [x] 2.4 Per-repo private classification by module-path prefix; public deps shallow
 
 ## 3. Provider side (exports)
-- [ ] 3.1 Extract exported funcs/constructors/types/interfaces/consts/vars via `go/ast` for private modules the repo defines; package doc synopsis + README
-- [ ] 3.2 Persist to `private_libraries` + `private_library_exports`
+- [x] 3.1 Extract exported funcs/constructors/types/interfaces/consts/vars via `go/ast` for private modules the repo defines; package doc synopsis + README
+- [x] 3.2 Persist to `private_libraries` + `private_library_exports`
 
 ## 4. Consumer side (usages)
 - [ ] 4.1 Detect imports of private modules per repo (longest-prefix match → module+version)

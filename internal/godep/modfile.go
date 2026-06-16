@@ -93,8 +93,5 @@ func readGoSum(path string) map[string]struct{} {
 	return out
 }
 
-// TEMPORARY STUBS — replaced in Tasks 4 and 5.
-func extractExports(dir, modulePath string) (*Library, []string) {
-	return &Library{ModulePath: modulePath}, nil
-}
+// TEMPORARY STUB — replaced in Task 5.
 func extractUsages(dir string, deps []Dependency) ([]Usage, []string) { return nil, nil }

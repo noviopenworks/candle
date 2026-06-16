@@ -837,7 +837,7 @@ Mark tasks.md 2.2, 2.3, 2.4 `[x]`.
 - Test: `internal/godep/exports_test.go`
 - Create: `internal/godep/testdata/provider/auth.go`, `internal/godep/testdata/provider/README.md`
 
-- [ ] **Step 1: Create provider source fixtures**
+- [x] **Step 1: Create provider source fixtures**
 
 `internal/godep/testdata/provider/auth.go`:
 ```go
@@ -866,7 +866,7 @@ func internalHelper() {}
 Authentication helpers for platform services.
 ```
 
-- [ ] **Step 2: Write the failing test**
+- [x] **Step 2: Write the failing test**
 
 Create `internal/godep/exports_test.go`:
 
@@ -918,11 +918,11 @@ func indexOf(s, sub string) int {
 }
 ```
 
-- [ ] **Step 3: Run, verify FAIL** (stub returns empty Library)
+- [x] **Step 3: Run, verify FAIL** (stub returns empty Library)
 
 Run: `go test ./internal/godep/ -run TestExtractExports -v` → FAIL.
 
-- [ ] **Step 4: Remove the stub and implement `internal/godep/exports.go`**
+- [x] **Step 4: Remove the stub and implement `internal/godep/exports.go`**
 
 Delete the `extractExports` stub line from `modfile.go`. Create `internal/godep/exports.go`:
 
@@ -1053,11 +1053,11 @@ func docText(g *ast.CommentGroup) string {
 }
 ```
 
-- [ ] **Step 5: Run, verify PASS**
+- [x] **Step 5: Run, verify PASS**
 
 Run: `go test ./internal/godep/ -v` → PASS (all godep tests). `go build ./...`, `go vet ./internal/godep/`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/godep/ openspec/changes/go-private-library-layer/tasks.md
