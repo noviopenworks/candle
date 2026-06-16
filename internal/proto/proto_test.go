@@ -51,8 +51,43 @@ func TestParseInventory(t *testing.T) {
 	if req == nil || len(req.Fields) != 2 || req.Fields[0].Name != "sku" {
 		t.Fatalf("message fields: %+v", req)
 	}
-	if len(f.Enums) != 1 || f.Enums[0].Name != "Status" || len(f.Enums[0].Values) != 2 {
+	var status *Enum
+	for i := range f.Enums {
+		if f.Enums[i].FullName == "acme.inventory.Status" {
+			status = &f.Enums[i]
+		}
+	}
+	if status == nil || status.Name != "Status" || len(status.Values) != 2 {
 		t.Fatalf("enums: %+v", f.Enums)
+	}
+}
+
+func TestParseNestedTypes(t *testing.T) {
+	files, warns, err := ParseFiles([]string{"testdata"}, []string{"inventory.proto"})
+	if err != nil {
+		t.Fatalf("parse: %v (warns=%v)", err, warns)
+	}
+	if len(files) != 1 {
+		t.Fatalf("want 1 file, got %d", len(files))
+	}
+	f := files[0]
+	foundMsg := false
+	for _, m := range f.Messages {
+		if m.FullName == "acme.inventory.Warehouse.Bin" {
+			foundMsg = true
+		}
+	}
+	if !foundMsg {
+		t.Fatalf("nested message acme.inventory.Warehouse.Bin not found; messages=%+v", f.Messages)
+	}
+	foundEnum := false
+	for _, e := range f.Enums {
+		if e.FullName == "acme.inventory.Warehouse.Kind" {
+			foundEnum = true
+		}
+	}
+	if !foundEnum {
+		t.Fatalf("nested enum acme.inventory.Warehouse.Kind not found; enums=%+v", f.Enums)
 	}
 }
 

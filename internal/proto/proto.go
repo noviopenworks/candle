@@ -103,15 +103,33 @@ func normalizeFile(path string, fd protoreflect.FileDescriptor) File {
 	for i := 0; i < svcs.Len(); i++ {
 		f.Services = append(f.Services, normalizeService(svcs.Get(i)))
 	}
+	// Walk top-level messages and recurse into their nested messages/enums so
+	// every type is flattened into File.Messages/File.Enums keyed by its dotted
+	// FullName. Nested types include synthetic map-entry messages that map fields
+	// generate.
 	msgs := fd.Messages()
 	for i := 0; i < msgs.Len(); i++ {
-		f.Messages = append(f.Messages, normalizeMessage(msgs.Get(i)))
+		collectMessages(&f, msgs.Get(i))
 	}
 	ens := fd.Enums()
 	for i := 0; i < ens.Len(); i++ {
 		f.Enums = append(f.Enums, normalizeEnum(ens.Get(i)))
 	}
 	return f
+}
+
+// collectMessages appends md and all of its nested messages and enums (to
+// arbitrary depth) to f.
+func collectMessages(f *File, md protoreflect.MessageDescriptor) {
+	f.Messages = append(f.Messages, normalizeMessage(md))
+	nested := md.Messages()
+	for i := 0; i < nested.Len(); i++ {
+		collectMessages(f, nested.Get(i))
+	}
+	ens := md.Enums()
+	for i := 0; i < ens.Len(); i++ {
+		f.Enums = append(f.Enums, normalizeEnum(ens.Get(i)))
+	}
 }
 
 func normalizeService(sd protoreflect.ServiceDescriptor) Service {

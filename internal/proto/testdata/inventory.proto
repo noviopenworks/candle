@@ -20,6 +20,13 @@ message CountRecord { string sku = 1; }
 message UploadSummary { int32 total = 1; }
 message SyncMsg { string payload = 1; }
 
+message Warehouse {
+  message Bin { string code = 1; }
+  enum Kind { KIND_UNKNOWN = 0; KIND_COLD = 1; }
+  Bin primary_bin = 1;
+  Kind kind = 2;
+}
+
 enum Status {
   STATUS_UNKNOWN = 0;
   STATUS_OK = 1;
