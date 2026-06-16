@@ -1,6 +1,6 @@
 ## MODIFIED Requirements
 
-### Requirement: list_apis lists API contracts
+### Requirement: list_apis lists OpenAPI contracts
 The system SHALL provide `list_apis` returning the API contracts indexed for a repo, each carrying a `kind` discriminator. It SHALL return OpenAPI specs as `{kind:"openapi", …}` entries and protobuf files as `{kind:"protobuf", …}` entries, so additional contract kinds can be added without breaking the output shape.
 
 #### Scenario: Indexed OpenAPI specs are listed
@@ -11,7 +11,7 @@ The system SHALL provide `list_apis` returning the API contracts indexed for a r
 - **WHEN** `list_apis` is called for a repo with one indexed protobuf file
 - **THEN** it returns an entry `{kind:"protobuf", name, version, path}` for that file alongside any OpenAPI entries
 
-### Requirement: find_schema locates schemas and messages
+### Requirement: find_schema locates OpenAPI schemas
 The system SHALL provide `find_schema` that returns OpenAPI schemas and protobuf messages matching a query by name, each carrying a `kind` discriminator.
 
 #### Scenario: OpenAPI schema found by name
