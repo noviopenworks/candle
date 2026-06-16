@@ -106,6 +106,13 @@ func TestLibResources(t *testing.T) {
 	if _, err := tools.LibrarySymbolResource("git.acme.local/platform/auth", "Nope"); err != ErrNotFound {
 		t.Fatalf("want ErrNotFound, got %v", err)
 	}
+	pkgBody, err := tools.LibraryPackageResource("git.acme.local/platform/auth", "git.acme.local/platform/auth")
+	if err != nil || !strings.Contains(pkgBody, "NewClient") {
+		t.Fatalf("package resource: %q err=%v", pkgBody, err)
+	}
+	if _, err := tools.LibraryPackageResource("git.acme.local/platform/auth", "git.acme.local/platform/auth/unknown"); err != ErrNotFound {
+		t.Fatalf("want ErrNotFound for unknown package, got %v", err)
+	}
 }
 
 func TestParseLibURI(t *testing.T) {

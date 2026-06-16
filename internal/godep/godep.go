@@ -45,8 +45,13 @@ type Usage struct {
 type Result struct {
 	ModulePath   string
 	Dependencies []Dependency
-	Library      *Library // set when the repo's own module is private
-	Usages       []Usage
+	// Library: single provider module per Result; in a go.work workspace
+	// defining multiple private modules, only the first module's exports are
+	// indexed (mergeResults keeps the first). Consumer usages accumulate across
+	// all workspace modules. Multi-provider export indexing is a future
+	// enhancement.
+	Library *Library // set when the repo's own module is private
+	Usages  []Usage
 }
 
 func isPrivate(modulePath string, prefixes []string) bool {

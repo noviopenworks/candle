@@ -32,6 +32,28 @@ func TestFindPrivateLibrary(t *testing.T) {
 	}
 }
 
+func TestFindPrivateLibraryPathOnly(t *testing.T) {
+	s, _ := store.Open(":memory:")
+	id, _ := s.UpsertIndex("acme", "web", "abc", "main", "/g")
+	bundle := store.GoDepBundle{
+		Dependencies: []store.Dependency{{ModulePath: "git.acme.local/platform/other", Version: "v0.3.0", Ecosystem: "go", IsPrivate: true, Direct: true}},
+	}
+	if err := s.ReplaceGoDeps(id, bundle); err != nil {
+		t.Fatal(err)
+	}
+	tools := NewTools(s)
+	got, err := tools.FindPrivateLibrary("acme/web", "other")
+	if err != nil {
+		t.Fatalf("find: %v", err)
+	}
+	if len(got) != 1 {
+		t.Fatalf("want 1 result, got %d: %+v", len(got), got)
+	}
+	if got[0].ModulePath != "git.acme.local/platform/other" || got[0].ExportCount != 0 {
+		t.Fatalf("path-only fallback result: %+v", got[0])
+	}
+}
+
 func TestFindLibraryConsumers(t *testing.T) {
 	tools := seedGoDepTools(t)
 	out, err := tools.FindLibraryConsumers("acme/web", "git.acme.local/platform/auth")

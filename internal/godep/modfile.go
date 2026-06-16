@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"golang.org/x/mod/modfile"
+	"golang.org/x/mod/module"
 )
 
 // parseModuleDir parses one module rooted at dir (go.mod at modPath) and returns
@@ -25,12 +26,25 @@ func parseModuleDir(dir, modPath string, privatePrefixes []string) (*Result, []s
 	}
 	res := &Result{ModulePath: mf.Module.Mod.Path}
 	sums := readGoSum(filepath.Join(dir, "go.sum"))
+	// replace directives keyed by the original (Old) module path. A local
+	// filesystem replacement (=> ../auth) has an empty New.Version.
+	replaces := map[string]module.Version{}
+	for _, r := range mf.Replace {
+		replaces[r.Old.Path] = r.New
+	}
 	for _, req := range mf.Require {
 		d := Dependency{
 			ModulePath: req.Mod.Path,
 			Version:    req.Mod.Version,
 			IsPrivate:  isPrivate(req.Mod.Path, privatePrefixes),
 			Direct:     !req.Indirect,
+		}
+		// Apply a replace targeting this module: reflect the replacement
+		// version (empty for a local path replacement). Keep the dependency
+		// keyed by the ORIGINAL module path so consumer import resolution and
+		// IsPrivate classification (based on the original path) stay correct.
+		if newMod, ok := replaces[req.Mod.Path]; ok {
+			d.Version = newMod.Version
 		}
 		if len(sums) > 0 {
 			if _, ok := sums[req.Mod.Path+" "+req.Mod.Version]; !ok {

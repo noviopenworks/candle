@@ -49,8 +49,11 @@ func extractUsages(dir string, deps []Dependency) ([]Usage, []string) {
 }
 
 func fileUsages(fset *token.FileSet, f *ast.File, path string, privateMods []Dependency) []Usage {
-	// alias -> (module, version, packagePath) for private imports in this file.
-	type imp struct{ module, version, pkg string }
+	// alias -> (module, version, packagePath, import line) for private imports.
+	type imp struct {
+		module, version, pkg string
+		line                 int
+	}
 	aliases := map[string]imp{}
 	for _, spec := range f.Imports {
 		pkgPath := strings.Trim(spec.Path.Value, `"`)
@@ -62,12 +65,13 @@ func fileUsages(fset *token.FileSet, f *ast.File, path string, privateMods []Dep
 		if spec.Name != nil {
 			alias = spec.Name.Name
 		}
-		aliases[alias] = imp{module: dep.ModulePath, version: dep.Version, pkg: pkgPath}
+		aliases[alias] = imp{module: dep.ModulePath, version: dep.Version, pkg: pkgPath, line: fset.Position(spec.Pos()).Line}
 	}
 	if len(aliases) == 0 {
 		return nil
 	}
 	var out []Usage
+	used := map[string]bool{} // aliases that produced at least one selector usage
 	ast.Inspect(f, func(n ast.Node) bool {
 		sel, ok := n.(*ast.SelectorExpr)
 		if !ok {
@@ -81,6 +85,7 @@ func fileUsages(fset *token.FileSet, f *ast.File, path string, privateMods []Dep
 		if !ok {
 			return true
 		}
+		used[id.Name] = true
 		out = append(out, Usage{
 			ModulePath:  im.module,
 			Version:     im.version,
@@ -91,6 +96,22 @@ func fileUsages(fset *token.FileSet, f *ast.File, path string, privateMods []Dep
 		})
 		return true
 	})
+	// Spec scenario: a private import referencing NO exported symbol (including
+	// a blank/side-effect import `import _ "..."`) is still recorded as an
+	// import of the module, with an empty Symbol.
+	for alias, im := range aliases {
+		if used[alias] {
+			continue
+		}
+		out = append(out, Usage{
+			ModulePath:  im.module,
+			Version:     im.version,
+			PackagePath: im.pkg,
+			Symbol:      "",
+			File:        path,
+			Line:        im.line,
+		})
+	}
 	return out
 }
 
