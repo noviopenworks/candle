@@ -5,8 +5,8 @@
 > find_library_consumers; cross-repo consumer aggregation deferred.
 
 ## 1. Storage
-- [ ] 1.1 Add `dependencies` (ecosystem, is_private, direct), `private_libraries`, `private_library_exports` (with `node_id`), `private_library_usages` tables to `schema.go`
-- [ ] 1.2 `internal/store/godep.go`: bundle types + `ReplaceGoDeps` (idempotent per index_id); find/lookup queries
+- [x] 1.1 Add `dependencies` (ecosystem, is_private, direct), `private_libraries`, `private_library_exports` (with `node_id`), `private_library_usages` tables to `schema.go`
+- [x] 1.2 `internal/store/godep.go`: bundle types + `ReplaceGoDeps` (idempotent per index_id); find/lookup queries
 
 ## 2. Dependency parsing
 - [ ] 2.1 Add per-repo `go: { modules, private_prefixes }` block to `RepoConfig` (`internal/config`)

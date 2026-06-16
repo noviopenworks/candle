@@ -56,7 +56,7 @@ base-ref: b023b33ddfc354de7b0bdf0fa6c374ce2527dcb8
 - Create: `internal/store/godep.go`
 - Test: `internal/store/godep_test.go`
 
-- [ ] **Step 1: Add tables to schema**
+- [x] **Step 1: Add tables to schema**
 
 In `internal/store/schema.go`, append inside the `schemaSQL` string before the closing backtick:
 
@@ -104,7 +104,7 @@ CREATE INDEX IF NOT EXISTS idx_private_usages_index ON private_library_usages(in
 CREATE INDEX IF NOT EXISTS idx_private_usages_module ON private_library_usages(index_id, module_path);
 ```
 
-- [ ] **Step 2: Write the failing storage test**
+- [x] **Step 2: Write the failing storage test**
 
 Create `internal/store/godep_test.go`:
 
@@ -169,12 +169,12 @@ func TestGoDepStorageAndIdempotent(t *testing.T) {
 }
 ```
 
-- [ ] **Step 3: Run the test, verify it FAILS**
+- [x] **Step 3: Run the test, verify it FAILS**
 
 Run: `go test ./internal/store/ -run TestGoDep -v`
 Expected: FAIL — `GoDepBundle` etc. undefined.
 
-- [ ] **Step 4: Implement `internal/store/godep.go`**
+- [x] **Step 4: Implement `internal/store/godep.go`**
 
 ```go
 package store
@@ -444,11 +444,11 @@ func (s *Store) PrivateLibraryByModule(modulePath string) (PrivateLibraryRow, bo
 }
 ```
 
-- [ ] **Step 5: Run the test, verify it PASSES**
+- [x] **Step 5: Run the test, verify it PASSES**
 
 Run: `go test ./internal/store/ -v` → PASS (all store tests). Then `go build ./...`, `go vet ./internal/store/`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/store/schema.go internal/store/godep.go internal/store/godep_test.go openspec/changes/go-private-library-layer/tasks.md
