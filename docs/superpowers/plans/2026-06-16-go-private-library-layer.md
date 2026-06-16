@@ -466,7 +466,7 @@ Mark tasks.md 1.1, 1.2 `[x]`.
 - Modify: `internal/config/config.go`
 - Test: `internal/config/config_test.go`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Add to `internal/config/config_test.go`:
 
@@ -499,11 +499,11 @@ func TestGoConfigParses(t *testing.T) {
 
 Ensure `os`, `path/filepath`, `testing` are imported.
 
-- [ ] **Step 2: Run, verify FAIL**
+- [x] **Step 2: Run, verify FAIL**
 
 Run: `go test ./internal/config/ -run TestGoConfig -v` → FAIL (`r.Go` undefined).
 
-- [ ] **Step 3: Add the go block to `RepoConfig`**
+- [x] **Step 3: Add the go block to `RepoConfig`**
 
 In `internal/config/config.go`, add to the `RepoConfig` struct after the `Proto` block:
 
@@ -514,11 +514,11 @@ In `internal/config/config.go`, add to the `RepoConfig` struct after the `Proto`
 	} `mapstructure:"go"`
 ```
 
-- [ ] **Step 4: Run, verify PASS**
+- [x] **Step 4: Run, verify PASS**
 
 Run: `go test ./internal/config/ -v` → PASS. Then `go build ./...`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/config/config.go internal/config/config_test.go openspec/changes/go-private-library-layer/tasks.md

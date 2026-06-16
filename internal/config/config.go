@@ -20,6 +20,11 @@ type RepoConfig struct {
 		Roots []string `mapstructure:"roots"`
 		Files []string `mapstructure:"files"`
 	} `mapstructure:"proto"`
+
+	Go struct {
+		Modules         []string `mapstructure:"modules"`
+		PrivatePrefixes []string `mapstructure:"private_prefixes"`
+	} `mapstructure:"go"`
 }
 
 // Config is the parsed manifest.

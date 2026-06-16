@@ -9,7 +9,7 @@
 - [x] 1.2 `internal/store/godep.go`: bundle types + `ReplaceGoDeps` (idempotent per index_id); find/lookup queries
 
 ## 2. Dependency parsing
-- [ ] 2.1 Add per-repo `go: { modules, private_prefixes }` block to `RepoConfig` (`internal/config`)
+- [x] 2.1 Add per-repo `go: { modules, private_prefixes }` block to `RepoConfig` (`internal/config`)
 - [ ] 2.2 `internal/godep`: parse `go.mod` (require/replace + indirect) and `go.work` (`use`) with `x/mod/modfile`
 - [ ] 2.3 Cross-check versions via `go.sum` (mismatch → warning)
 - [ ] 2.4 Per-repo private classification by module-path prefix; public deps shallow
