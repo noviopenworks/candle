@@ -3,7 +3,7 @@ package registry
 import (
 	"strings"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // RepoInfo describes a resolved repo snapshot.

@@ -3,7 +3,7 @@ package mcp
 import (
 	"encoding/json"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // mustJSON marshals v to indented JSON, returning an error message string on

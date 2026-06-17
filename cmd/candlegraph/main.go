@@ -7,15 +7,15 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/vend-ai/intel-mcp/internal/config"
-	"github.com/vend-ai/intel-mcp/internal/ingest"
-	"github.com/vend-ai/intel-mcp/internal/mcp"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/config"
+	"github.com/noviopenworks/candlegraph/internal/ingest"
+	"github.com/noviopenworks/candlegraph/internal/mcp"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func main() {
 	var dbPath, manifest string
-	root := &cobra.Command{Use: "intel-mcp"}
+	root := &cobra.Command{Use: "candlegraph"}
 	root.PersistentFlags().StringVar(&dbPath, "db", "intel.db", "SQLite database path")
 	root.PersistentFlags().StringVar(&manifest, "config", "manifest.yaml", "repo manifest path")
 

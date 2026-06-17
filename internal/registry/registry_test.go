@@ -3,7 +3,7 @@ package registry
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func TestResolveExactAndFuzzy(t *testing.T) {

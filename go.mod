@@ -1,4 +1,4 @@
-module github.com/vend-ai/intel-mcp
+module github.com/noviopenworks/candlegraph
 
 go 1.26.3
 

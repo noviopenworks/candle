@@ -1,6 +1,6 @@
 package mcp
 
-import "github.com/vend-ai/intel-mcp/internal/store"
+import "github.com/noviopenworks/candlegraph/internal/store"
 
 const consumersDeferred = "deferred: cross-repo consumer aggregation not available in this change"
 

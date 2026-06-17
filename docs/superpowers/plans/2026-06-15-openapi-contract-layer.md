@@ -11,7 +11,7 @@ archived-with: 2026-06-15-openapi-contract-layer
 
 **Goal:** Parse OpenAPI 3.x specs into SQLite (tied to the foundation's `index_id`) and serve them via four MCP tools and `openapi://` resources. Pure contract serving — no handler linking.
 
-**Architecture:** Builds on the archived `mcp-core-foundation` (module `github.com/vend-ai/intel-mcp`). Adds: `internal/config` manifest field `OpenAPI`, new `api_specs`/`http_operations`/`api_schemas` tables in `internal/store`, an `internal/openapi` parser (`kin-openapi`), store CRUD + queries, an ingest step, four pure tool functions, and `openapi://` resources registered in the existing MCP server.
+**Architecture:** Builds on the archived `mcp-core-foundation` (module `github.com/noviopenworks/candlegraph`). Adds: `internal/config` manifest field `OpenAPI`, new `api_specs`/`http_operations`/`api_schemas` tables in `internal/store`, an `internal/openapi` parser (`kin-openapi`), store CRUD + queries, an ingest step, four pure tool functions, and `openapi://` resources registered in the existing MCP server.
 
 **Tech Stack:** Go, `modernc.org/sqlite`, `github.com/getkin/kin-openapi/openapi3`, official MCP Go SDK, cobra/viper (all already wired by the foundation).
 
@@ -786,7 +786,7 @@ Expected: FAIL — specs not indexed (0 operations).
 
 - [x] **Step 3: Implement — add spec indexing after graph load**
 
-In `internal/ingest/ingest.go`, after the successful `graph.Load(...)` for a repo, resolve specs and store them. Add imports `github.com/vend-ai/intel-mcp/internal/openapi` and `path/filepath`, and after `rep.Indexed++` insert:
+In `internal/ingest/ingest.go`, after the successful `graph.Load(...)` for a repo, resolve specs and store them. Add imports `github.com/noviopenworks/candlegraph/internal/openapi` and `path/filepath`, and after `rep.Indexed++` insert:
 
 ```go
 		// OpenAPI specs (pure contract serving).
@@ -855,7 +855,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func seedAPITools(t *testing.T) *Tools {
@@ -921,7 +921,7 @@ Create `internal/mcp/openapi_tools.go`:
 ```go
 package mcp
 
-import "github.com/vend-ai/intel-mcp/internal/store"
+import "github.com/noviopenworks/candlegraph/internal/store"
 
 // APIInfo is one entry in list_apis output (kind-discriminated for future contract kinds).
 type APIInfo struct {

@@ -15,7 +15,7 @@ archived-with: 2026-06-15-mcp-core-foundation
 
 **Tech Stack:** Go, `modernc.org/sqlite` (pure Go, no cgo), `github.com/modelcontextprotocol/go-sdk` (MCP), `github.com/spf13/cobra` (CLI), `github.com/spf13/viper` (config).
 
-**Module path:** `github.com/vend-ai/intel-mcp` (local/private; not published — adjust if a real remote is chosen).
+**Module path:** `github.com/noviopenworks/candlegraph` (local/private; not published — adjust if a real remote is chosen).
 
 **Conventions:** Each task is TDD (failing test → run-fail → implement → run-pass → commit). Run all tests with `go test ./...`. The store uses an in-memory or temp-file DB in tests.
 
@@ -26,7 +26,7 @@ archived-with: 2026-06-15-mcp-core-foundation
 
 **Files:**
 - Create: `go.mod`
-- Create: `cmd/intel-mcp/main.go`
+- Create: `cmd/candlegraph/main.go`
 - Create: `internal/version/version_test.go`
 - Create: `internal/version/version.go`
 
@@ -48,7 +48,7 @@ func TestString(t *testing.T) {
 
 - [x] **Step 2: Run test to verify it fails**
 
-Run: `go mod init github.com/vend-ai/intel-mcp && go test ./internal/version/`
+Run: `go mod init github.com/noviopenworks/candlegraph && go test ./internal/version/`
 Expected: FAIL — `undefined: String`
 
 - [x] **Step 3: Implement minimal code**
@@ -62,7 +62,7 @@ package version
 func String() string { return "0.1.0-dev" }
 ```
 
-Create `cmd/intel-mcp/main.go` (placeholder, fleshed out in Task 9/12):
+Create `cmd/candlegraph/main.go` (placeholder, fleshed out in Task 9/12):
 
 ```go
 package main
@@ -70,11 +70,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/vend-ai/intel-mcp/internal/version"
+	"github.com/noviopenworks/candlegraph/internal/version"
 )
 
 func main() {
-	fmt.Println("intel-mcp", version.String())
+	fmt.Println("candlegraph", version.String())
 }
 ```
 
@@ -543,7 +543,7 @@ package graph
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func TestLoadIsIdempotentAndSkipsMalformed(t *testing.T) {
@@ -591,7 +591,7 @@ Create `internal/graph/loader.go`:
 ```go
 package graph
 
-import "github.com/vend-ai/intel-mcp/internal/store"
+import "github.com/noviopenworks/candlegraph/internal/store"
 
 // LoadResult reports how many rows were ingested.
 type LoadResult struct {
@@ -1050,7 +1050,7 @@ package registry
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func TestResolveExactAndFuzzy(t *testing.T) {
@@ -1094,7 +1094,7 @@ package registry
 import (
 	"strings"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // RepoInfo describes a resolved repo snapshot.
@@ -1200,7 +1200,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func seedTools(t *testing.T) *Tools {
@@ -1275,8 +1275,8 @@ package mcp
 import (
 	"errors"
 
-	"github.com/vend-ai/intel-mcp/internal/registry"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/registry"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // ErrNotFound is returned when a repo, symbol, or file cannot be resolved.
@@ -1414,8 +1414,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/config"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/config"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func TestRunIngestsAndToleratesMissing(t *testing.T) {
@@ -1462,9 +1462,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/vend-ai/intel-mcp/internal/config"
-	"github.com/vend-ai/intel-mcp/internal/graph"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/config"
+	"github.com/noviopenworks/candlegraph/internal/graph"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // Report summarizes an ingestion run.
@@ -1528,7 +1528,7 @@ archived-with: 2026-06-15-mcp-core-foundation
 - Create: `internal/mcp/server.go`
 - Create: `internal/mcp/resources.go`
 - Create: `internal/mcp/resources_test.go`
-- Modify: `cmd/intel-mcp/main.go`
+- Modify: `cmd/candlegraph/main.go`
 
 - [x] **Step 1: Write the failing test (resources are pure → testable)**
 
@@ -1637,13 +1637,13 @@ import (
 	"context"
 
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // Serve runs the MCP stdio server backed by the store until ctx is cancelled.
 func Serve(ctx context.Context, s *store.Store) error {
 	tools := NewTools(s)
-	srv := mcpsdk.NewServer("intel-mcp", "0.1.0-dev", nil)
+	srv := mcpsdk.NewServer("candlegraph", "0.1.0-dev", nil)
 
 	// Register each base tool; each handler unmarshals args, calls the pure
 	// method on `tools`, and marshals the result to the SDK's content type.
@@ -1660,7 +1660,7 @@ func Serve(ctx context.Context, s *store.Store) error {
 
 Implement the `registerX` helpers in the same file, each thin (parse args → call `tools.X` → marshal). Keep all SDK types confined to this file.
 
-Replace `cmd/intel-mcp/main.go` with a cobra root plus `serve` and `index` commands:
+Replace `cmd/candlegraph/main.go` with a cobra root plus `serve` and `index` commands:
 
 ```go
 package main
@@ -1671,15 +1671,15 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/vend-ai/intel-mcp/internal/config"
-	"github.com/vend-ai/intel-mcp/internal/ingest"
-	"github.com/vend-ai/intel-mcp/internal/mcp"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/config"
+	"github.com/noviopenworks/candlegraph/internal/ingest"
+	"github.com/noviopenworks/candlegraph/internal/mcp"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func main() {
 	var dbPath, manifest string
-	root := &cobra.Command{Use: "intel-mcp"}
+	root := &cobra.Command{Use: "candlegraph"}
 	root.PersistentFlags().StringVar(&dbPath, "db", "intel.db", "SQLite database path")
 	root.PersistentFlags().StringVar(&manifest, "config", "manifest.yaml", "repo manifest path")
 

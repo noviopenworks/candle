@@ -3,7 +3,7 @@ package graph
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func TestLoadIsIdempotentAndSkipsMalformed(t *testing.T) {

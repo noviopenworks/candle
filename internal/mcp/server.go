@@ -7,8 +7,8 @@ import (
 
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
-	"github.com/vend-ai/intel-mcp/internal/version"
+	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/version"
 )
 
 // ToolNames lists every base tool the server advertises, in registration order.
@@ -36,7 +36,7 @@ var ToolNames = []string{
 func NewServer(s *store.Store) *mcpsdk.Server {
 	tools := NewTools(s)
 	srv := mcpsdk.NewServer(&mcpsdk.Implementation{
-		Name:    "intel-mcp",
+		Name:    "candlegraph",
 		Version: version.String(),
 	}, nil)
 
