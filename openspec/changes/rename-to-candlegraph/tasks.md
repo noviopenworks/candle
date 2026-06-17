@@ -23,4 +23,4 @@
 - [x] 4.1 `go build ./...` passes
 - [x] 4.2 `go vet ./...` passes
 - [x] 4.3 `go test ./...` passes (all packages)
-- [x] 4.4 `grep -r intel-mcp` over tracked files (excluding `graphify-out/`) returns zero hits
+- [x] 4.4 `git grep` for prior names over tracked source/config (excluding `graphify-out/` and this change's own docs) returns zero hits

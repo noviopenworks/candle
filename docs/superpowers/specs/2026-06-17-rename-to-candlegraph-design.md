@@ -56,7 +56,7 @@ Order-sensitive, two-pass textual replacement across tracked files, plus a histo
 - `go build ./...` — compiles under the new module path.
 - `go vet ./...` — clean.
 - `go test ./...` — all 11 packages pass, including the mcp e2e test that compiles the renamed binary.
-- `grep -r intel-mcp` over tracked files excluding `graphify-out/` — zero hits (asserts requirement 3 of `module-identity`).
+- `git grep` for `intel-mcp` / `vend-ai` / `candlegraph/intel-mcp` over tracked source and config — excluding `graphify-out/` and this change's own docs (which quote the prior names) — zero hits (asserts requirement 3 of `module-identity`).
 
 ## Risks / Trade-offs
 

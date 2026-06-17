@@ -35,7 +35,7 @@ base-ref: 31d9cf50e80c11469c3b565ea04a3285ec04f6f3
 ## Task 4 — Verification
 
 - `go build ./...`, `go vet ./...`, `go test ./...` (all packages) pass.
-- `git grep` for `intel-mcp` / `vend-ai` / `candlegraph/intel-mcp` over tracked files (excluding `graphify-out/`) returns zero hits.
+- `git grep` for `intel-mcp` / `vend-ai` / `candlegraph/intel-mcp` over tracked source/config (excluding `graphify-out/` and this change's own docs) returns zero hits.
 
 ## Commit strategy
 
