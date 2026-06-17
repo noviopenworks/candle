@@ -30,7 +30,8 @@ func TestMatchRPCsConfidence(t *testing.T) {
 		{FullName: "acme.inventory.InventoryService.Sync", Service: "InventoryService", Name: "Sync", StreamKind: "bidi"},
 		{FullName: "acme.inventory.InventoryService.Ghost", Service: "InventoryService", Name: "Ghost", StreamKind: "unary"},
 	}
-	links, err := MatchRPCs(s, id, rpcs)
+	// root="" => AST unavailable, falls back to the existing string-scan.
+	links, err := MatchRPCs(s, id, rpcs, "")
 	if err != nil {
 		t.Fatalf("match: %v", err)
 	}
@@ -73,7 +74,7 @@ func TestMatchRPCsAmbiguousLowConfidence(t *testing.T) {
 	rpcs := []RPC{
 		{FullName: "acme.other.OtherService.Handle", Service: "OtherService", Name: "Handle", StreamKind: "unary"},
 	}
-	links, err := MatchRPCs(s, id, rpcs)
+	links, err := MatchRPCs(s, id, rpcs, "")
 	if err != nil {
 		t.Fatalf("match: %v", err)
 	}
@@ -98,7 +99,7 @@ func TestMatchExports(t *testing.T) {
 		{PackagePath: "git.acme.local/platform/auth", Symbol: "NewClient", SourceHint: "auth/"},
 		{PackagePath: "git.acme.local/platform/auth", Symbol: "Ghost"},
 	}
-	linked := MatchExports(s, id, exports)
+	linked := MatchExports(s, id, exports, "")
 	byID := map[string]string{} // symbol -> node_id
 	for _, e := range linked {
 		byID[e.Symbol] = e.NodeID

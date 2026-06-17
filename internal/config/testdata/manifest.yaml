@@ -3,6 +3,7 @@ repos:
     graph: /abs/inventory/graphify-out/graph.json
     commit: abc123
     branch: main
+    root: /abs/inventory
     openapi:
       - api/openapi.yaml
   - repo: org/warehouse-service

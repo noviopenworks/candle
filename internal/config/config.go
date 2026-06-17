@@ -13,6 +13,7 @@ type RepoConfig struct {
 	Graph  string `mapstructure:"graph"`
 	Commit string `mapstructure:"commit"`
 	Branch string `mapstructure:"branch"`
+	Root   string `mapstructure:"root"`
 
 	OpenAPI []string `mapstructure:"openapi"`
 
