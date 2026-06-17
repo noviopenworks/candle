@@ -2,6 +2,8 @@
 comet_change: rename-to-candlegraph
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-17-rename-to-candlegraph
+status: final
 ---
 
 # Rename to candlegraph — Technical Design

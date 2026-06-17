@@ -2,6 +2,7 @@
 change: rename-to-candlegraph
 design-doc: docs/superpowers/specs/2026-06-17-rename-to-candlegraph-design.md
 base-ref: 31d9cf50e80c11469c3b565ea04a3285ec04f6f3
+archived-with: 2026-06-17-rename-to-candlegraph
 ---
 
 # Implementation Plan — rename-to-candlegraph

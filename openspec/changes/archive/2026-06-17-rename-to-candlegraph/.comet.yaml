@@ -16,7 +16,7 @@ verification_report: docs/superpowers/reports/2026-06-17-rename-to-candlegraph-v
 branch_status: handled
 created_at: 2026-06-17
 verified_at: 2026-06-17
-archived: false
+archived: true
 handoff_context: openspec/changes/rename-to-candlegraph/.comet/handoff/design-context.json
 handoff_hash: 7a6de8832cbfceee25f22685d0c97dc974a151cb1e0c7aeefb33b7e1f86b011d
 direct_override: true
