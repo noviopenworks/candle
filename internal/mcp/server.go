@@ -342,7 +342,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		Name:        "graph-node",
 		Description: "A single graph node as JSON, commit-pinned.",
 		MIMEType:    "application/json",
-		URITemplate: "graph://{org}/{name}/commit/{sha}/node/{nodeID}",
+		URITemplate: "graph://{org}/{name}/commit/{sha}/node/{+nodeID}",
 	}, func(_ context.Context, req *mcpsdk.ReadResourceRequest) (*mcpsdk.ReadResourceResult, error) {
 		repo, nodeID, err := parseGraphNodeURI(req.Params.URI)
 		if err != nil {
@@ -362,7 +362,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		Name:        "openapi",
 		Description: "An OpenAPI artifact (operation/schema/spec) as JSON, commit-pinned.",
 		MIMEType:    "application/json",
-		URITemplate: "openapi://{org}/{name}/commit/{sha}/{kind}/{ref}",
+		URITemplate: "openapi://{org}/{name}/commit/{sha}/{kind}/{+ref}",
 	}, func(_ context.Context, req *mcpsdk.ReadResourceRequest) (*mcpsdk.ReadResourceResult, error) {
 		repo, kind, ref, err := parseOpenAPIURI(req.Params.URI)
 		if err != nil {
@@ -392,7 +392,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		Name:        "proto",
 		Description: "A protobuf artifact (file/service/rpc/message) as JSON, commit-pinned.",
 		MIMEType:    "application/json",
-		URITemplate: "proto://{org}/{name}/commit/{sha}/{kind}/{ref}",
+		URITemplate: "proto://{org}/{name}/commit/{sha}/{kind}/{+ref}",
 	}, func(_ context.Context, req *mcpsdk.ReadResourceRequest) (*mcpsdk.ReadResourceResult, error) {
 		repo, kind, ref, err := parseProtoURI(req.Params.URI)
 		if err != nil {
@@ -436,7 +436,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		Name:        "lib",
 		Description: "A private Go library (module/package/symbol) as JSON.",
 		MIMEType:    "application/json",
-		URITemplate: "lib://{module}",
+		URITemplate: "lib://{+module}",
 	}, func(_ context.Context, req *mcpsdk.ReadResourceRequest) (*mcpsdk.ReadResourceResult, error) {
 		mod, kind, ref, err := parseLibURI(req.Params.URI)
 		if err != nil {
