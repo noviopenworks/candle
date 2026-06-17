@@ -23,6 +23,20 @@ func TestLoadManifest(t *testing.T) {
 	}
 }
 
+func TestRepoRoot(t *testing.T) {
+	cfg, err := Load("testdata/manifest.yaml")
+	if err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	if got := cfg.Repos[0].Root; got != "/abs/inventory" {
+		t.Fatalf("expected root /abs/inventory, got %q", got)
+	}
+	// A repo entry that omits root must load fine with an empty Root.
+	if got := cfg.Repos[1].Root; got != "" {
+		t.Fatalf("expected empty root for repo without root, got %q", got)
+	}
+}
+
 func TestOpenAPIPaths(t *testing.T) {
 	cfg, err := Load("testdata/manifest.yaml")
 	if err != nil {

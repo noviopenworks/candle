@@ -6,8 +6,8 @@
 
 ## 1. Manifest source root
 
-- [ ] 1.1 Add optional `root` field to `RepoConfig` in `internal/config` (+ test)
-- [ ] 1.2 Validate `root` (absolute or repo-relative); empty is allowed
+- [x] 1.1 Add optional `root` field to `RepoConfig` in `internal/config` (+ test)
+- [x] 1.2 Validate `root` (absolute or repo-relative); empty is allowed
 
 ## 2. AST matcher in internal/link
 
