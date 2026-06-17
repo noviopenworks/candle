@@ -1,0 +1,44 @@
+# Example candlegraph manifest.
+#
+# Copy to the repo root as manifest.yaml and edit. Then:
+#   candlegraph index --db intel.db --config manifest.yaml
+#   candlegraph serve --db intel.db
+#
+# Field reference: ../docs/configuration.md
+
+repos:
+  # --- HTTP service with an OpenAPI contract ---------------------------------
+  - repo: org/inventory-service
+    graph: /abs/path/inventory/graphify-out/graph.json
+    commit: abc123            # optional: pins commit-addressable resource URIs
+    branch: main              # optional
+    openapi:
+      - api/openapi.yaml
+
+  # --- gRPC service with protobuf -------------------------------------------
+  - repo: org/reservation-service
+    graph: /abs/path/reservation/graphify-out/graph.json
+    branch: main
+    proto:
+      roots:                  # directories scanned for *.proto
+        - proto
+      files:                  # or list individual files
+        - internal/events/events.proto
+
+  # --- Go monorepo: provider of a private library ----------------------------
+  - repo: org/platform-libs
+    graph: /abs/path/platform-libs/graphify-out/graph.json
+    go:
+      modules:
+        - "."                 # module roots (dirs containing go.mod)
+      private_prefixes:
+        - github.com/org/      # module paths under here are "private"
+
+  # --- consumer of that library + its own OpenAPI ---------------------------
+  - repo: org/warehouse-service
+    graph: /abs/path/warehouse/graphify-out/graph.json
+    openapi:
+      - api/openapi.yaml
+    go:
+      modules: ["."]
+      private_prefixes: ["github.com/org/"]
