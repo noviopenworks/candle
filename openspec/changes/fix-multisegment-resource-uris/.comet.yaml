@@ -1,5 +1,5 @@
 workflow: hotfix
-phase: build
+phase: verify
 context_compression: off
 build_mode: direct
 build_pause: null
@@ -12,8 +12,8 @@ base_ref: 8ae82e3b0513dfeb13db8a992826930b558a40b1
 design_doc: null
 plan: null
 verify_result: pending
-verification_report: null
-branch_status: pending
+verification_report: docs/superpowers/reports/2026-06-17-fix-multisegment-resource-uris-verify.md
+branch_status: handled
 created_at: 2026-06-17
 verified_at: null
 archived: false
