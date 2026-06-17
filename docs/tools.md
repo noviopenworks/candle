@@ -1,0 +1,282 @@
+# MCP tools reference
+
+The server advertises **13 tools**, in this registration order:
+
+`list_repos` · `resolve_repo` · `query_repo` · `explain_symbol` ·
+`get_file_context` · `list_apis` · `find_endpoint` · `explain_endpoint` ·
+`find_schema` · `find_rpc` · `explain_rpc` · `find_private_library` ·
+`find_library_consumers`
+
+Every tool returns a single JSON text payload. Tools that take a `repo` resolve
+it internally; an unknown repo/symbol comes back as a **tool-level error result**
+(graceful `not found`) rather than a protocol error.
+
+> **JSON casing.** Example payloads below mirror the actual Go structs. Some
+> structs carry `json:` tags (snake_case, e.g. `module_path`); others serialize
+> with Go field names (e.g. `OperationID`, `SourceFile`). Each example uses the
+> real casing.
+
+---
+
+## Repo & code-graph tools
+
+### `list_repos`
+
+List all indexed repository snapshots with node counts. No arguments.
+
+**Response** — array of repo snapshots:
+
+```json
+[
+  {"IndexID": 1, "Repo": "org/inventory-service", "Branch": "main", "Commit": "abc123", "IngestedAt": "2026-06-17T10:00:00Z", "NodeCount": 412},
+  {"IndexID": 2, "Repo": "org/warehouse-service", "Branch": "", "Commit": "", "IngestedAt": "2026-06-17T10:00:01Z", "NodeCount": 188}
+]
+```
+
+### `resolve_repo`
+
+Resolve a repo query to a snapshot: exact match first, else fuzzy candidates.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `query` | string | repo identity (`org/name`) or fuzzy substring |
+
+**Response** — `{ "best": <snapshot or null>, "candidates": [<snapshots>] }`:
+
+```json
+{
+  "best": {"IndexID": 1, "Repo": "org/inventory-service", "Branch": "main", "Commit": "abc123", "IngestedAt": "2026-06-17T10:00:00Z", "NodeCount": 412},
+  "candidates": []
+}
+```
+
+For a fuzzy query like `"invent"`, `best` is null and `candidates` lists matches.
+
+### `query_repo`
+
+Structural node lookup in a repo by symbol label.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity (`org/name`) |
+| `name` | string | symbol label to look up |
+
+**Response** — array of `NodeRow`:
+
+```json
+[
+  {"IndexID": 1, "NodeID": "reservation_service_reserveproduct", "Label": "ReserveProduct", "FileType": "code", "SourceFile": "internal/reservation/service.go", "SourceLocation": ""}
+]
+```
+
+### `explain_symbol`
+
+Explain a symbol: its node plus callers and callees. `symbol` may be a node id
+**or** a label.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `symbol` | string | node id or label to explain |
+
+**Response** — `{ Node, Callers, Callees }`:
+
+```json
+{
+  "Node": {"IndexID": 1, "NodeID": "reservation_service_reserveproduct", "Label": "ReserveProduct", "FileType": "code", "SourceFile": "internal/reservation/service.go", "SourceLocation": ""},
+  "Callers": [
+    {"Source": "http_reservation_reserveproduct", "Target": "reservation_service_reserveproduct", "Relation": "calls"}
+  ],
+  "Callees": [
+    {"Source": "reservation_service_reserveproduct", "Target": "inventory_repo_decrement", "Relation": "calls"}
+  ]
+}
+```
+
+### `get_file_context`
+
+List the symbols defined in a given source file.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `file` | string | source file path |
+
+**Response** — array of `NodeRow` defined in that file.
+
+---
+
+## OpenAPI tools
+
+### `list_apis`
+
+List the API contracts indexed for a repo. Output is **kind-discriminated** —
+the same shape serves OpenAPI and protobuf, distinguished by `kind`.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+
+**Response** — array of `APIInfo`:
+
+```json
+[
+  {"kind": "openapi", "name": "Inventory API", "version": "1.2.0", "path": "api/openapi.yaml"},
+  {"kind": "proto",   "name": "reservation.v1", "version": "",      "path": "proto/reservation/v1/reservation.proto"}
+]
+```
+
+### `find_endpoint`
+
+Find HTTP operations by **lexical** match on path / method / operationId / summary.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `query` | string | NL / path / method / operationId |
+
+**Response** — array of matching `HTTPOperation` (see `explain_endpoint` shape).
+
+### `explain_endpoint`
+
+Explain an HTTP endpoint's full contract.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `method` | string | HTTP method (`GET`, `POST`, …) |
+| `path` | string | endpoint path template |
+
+**Response** — `HTTPOperation`:
+
+```json
+{
+  "Method": "POST",
+  "Path": "/v1/reservations",
+  "OperationID": "reserveProduct",
+  "Summary": "Reserve a product for an order",
+  "RequestSchema": "ReserveProductRequest",
+  "ResponseSchema": "Reservation",
+  "Security": ["bearerAuth"],
+  "Tags": ["reservations"],
+  "SpecPath": "api/openapi.yaml"
+}
+```
+
+### `find_schema`
+
+Find OpenAPI component schemas by name substring.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `query` | string | schema name substring |
+
+**Response** — array of schema descriptors (`kind`, `name`, `spec_path`).
+
+---
+
+## Protobuf tools
+
+### `find_rpc`
+
+Find gRPC RPCs by lexical match, optionally filtered by stream kind.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `query` | string | NL / service / rpc / full name |
+| `stream_kind` | string | optional: `unary` \| `server_stream` \| `client_stream` \| `bidi` |
+
+**Response** — array of matching RPCs (`ProtoRPCResult`).
+
+### `explain_rpc`
+
+Explain a gRPC RPC: proto facts, message fields, same-repo implementation, and
+one-hop calls.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `service` | string | gRPC service name |
+| `rpc` | string | RPC method name |
+
+**Response** — `RPCExplanation`:
+
+```json
+{
+  "rpc": {"Name": "ReserveProduct", "Service": "ReservationService", "ProtoPath": "proto/reservation/v1/reservation.proto"},
+  "request_message_fields": [
+    {"name": "product_id", "type": "string", "number": 1, "label": ""},
+    {"name": "quantity",   "type": "int32",  "number": 2, "label": ""}
+  ],
+  "response_message_fields": [
+    {"name": "reservation_id", "type": "string", "number": 1, "label": ""}
+  ],
+  "implemented_by": [
+    {"NodeID": "reservation_server_reserveproduct", "SourceFile": "internal/grpc/server.go"}
+  ],
+  "calls": [
+    {"Source": "reservation_server_reserveproduct", "Target": "reservation_service_reserveproduct", "Relation": "calls"}
+  ],
+  "consumed_by": ""
+}
+```
+
+> `consumed_by` is **deferred** in the MVP — cross-repo RPC consumer aggregation
+> is not yet populated. The field is present for forward compatibility.
+
+---
+
+## Private-library tools
+
+### `find_private_library`
+
+Find internal Go libraries by name, module path, package path, or purpose.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `query` | string | name / module path / purpose |
+
+**Response** — array of private-library descriptors.
+
+### `find_library_consumers`
+
+Show how a repo consumes a private Go module: the version pinned and the
+symbols actually used.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `module` | string | module path of the private library |
+
+**Response** — `LibraryConsumers`:
+
+```json
+{
+  "module_path": "github.com/org/platform-libs/auth",
+  "version": "v1.4.0",
+  "used_packages": ["auth", "auth/jwt"],
+  "used_symbols": [
+    {"ModulePath": "github.com/org/platform-libs/auth", "Version": "v1.4.0", "PackagePath": "auth", "Symbol": "ValidateToken", "File": "internal/mw/auth.go", "Line": 22}
+  ],
+  "consumed_across_repos": ""
+}
+```
+
+> `consumed_across_repos` is **deferred** (cross-repo aggregation), like
+> `explain_rpc`'s `consumed_by`.
+
+---
+
+## Error behavior
+
+- **Unknown repo / symbol / endpoint** → a tool-level error result with text
+  `not found` (the call "succeeds" at the protocol level but is marked `IsError`).
+- **Malformed input** → a protocol error.
+
+This lets agents probe for things that may not exist without aborting a session.
+
+See [examples.md](examples.md) for tool chains, and [resources.md](resources.md)
+for commit-pinned URI lookups of the same artifacts.
