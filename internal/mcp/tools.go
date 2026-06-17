@@ -3,8 +3,8 @@ package mcp
 import (
 	"errors"
 
-	"github.com/vend-ai/intel-mcp/internal/registry"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/registry"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // ErrNotFound is returned when a repo, symbol, or file cannot be resolved.

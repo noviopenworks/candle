@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/vend-ai/intel-mcp/internal/store"
+import "github.com/noviopenworks/candlegraph/internal/store"
 
 // LoadResult reports how many rows were ingested.
 type LoadResult struct {

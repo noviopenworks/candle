@@ -3,7 +3,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func seedGoDepTools(t *testing.T) *Tools {

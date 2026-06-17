@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/config"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/config"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func TestRunIngestsAndToleratesMissing(t *testing.T) {

@@ -5,13 +5,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/vend-ai/intel-mcp/internal/config"
-	"github.com/vend-ai/intel-mcp/internal/godep"
-	"github.com/vend-ai/intel-mcp/internal/graph"
-	"github.com/vend-ai/intel-mcp/internal/link"
-	"github.com/vend-ai/intel-mcp/internal/openapi"
-	"github.com/vend-ai/intel-mcp/internal/proto"
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/config"
+	"github.com/noviopenworks/candlegraph/internal/godep"
+	"github.com/noviopenworks/candlegraph/internal/graph"
+	"github.com/noviopenworks/candlegraph/internal/link"
+	"github.com/noviopenworks/candlegraph/internal/openapi"
+	"github.com/noviopenworks/candlegraph/internal/proto"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // Report summarizes an ingestion run.

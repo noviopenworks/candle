@@ -1,6 +1,6 @@
 package mcp
 
-import "github.com/vend-ai/intel-mcp/internal/store"
+import "github.com/noviopenworks/candlegraph/internal/store"
 
 // APIInfo is one entry in list_apis output (kind-discriminated for future contract kinds).
 type APIInfo struct {

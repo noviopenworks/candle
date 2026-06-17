@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // RPC is the subset of an RPC the linker needs.

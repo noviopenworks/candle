@@ -20,7 +20,7 @@ archived-with: 2026-06-16-protobuf-contract-layer
 
 ## Conventions (read before starting)
 
-- Module path: `github.com/vend-ai/intel-mcp`.
+- Module path: `github.com/noviopenworks/candlegraph`.
 - Store tests open `store.Open(":memory:")`; follow `internal/store/api_test.go`.
 - Pure tool logic lives in `internal/mcp/*_tools.go`; SDK registration lives in `internal/mcp/server.go`.
 - `stream_kind` is one of exactly: `unary`, `server_stream`, `client_stream`, `bidi`.
@@ -983,7 +983,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func TestMatchRPCsConfidence(t *testing.T) {
@@ -1059,7 +1059,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // RPC is the subset of an RPC the linker needs.
@@ -1221,7 +1221,7 @@ Expected: FAIL — protos not parsed yet.
 
 - [x] **Step 3: Wire proto parsing + linking into `ingest.Run`**
 
-In `internal/ingest/ingest.go`, add imports for `github.com/vend-ai/intel-mcp/internal/proto` and `github.com/vend-ai/intel-mcp/internal/link`. After the existing OpenAPI block (`s.ReplaceAPISpecs(indexID, bundles)`), add:
+In `internal/ingest/ingest.go`, add imports for `github.com/noviopenworks/candlegraph/internal/proto` and `github.com/noviopenworks/candlegraph/internal/link`. After the existing OpenAPI block (`s.ReplaceAPISpecs(indexID, bundles)`), add:
 
 ```go
 		// Protobuf contracts.
@@ -1328,7 +1328,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 func seedProtoTools(t *testing.T) *Tools {
@@ -1437,7 +1437,7 @@ Create `internal/mcp/proto_tools.go`:
 ```go
 package mcp
 
-import "github.com/vend-ai/intel-mcp/internal/store"
+import "github.com/noviopenworks/candlegraph/internal/store"
 
 // consumedByDeferred is the explicit marker returned until cross-repo consumer
 // linking ships in a later change.

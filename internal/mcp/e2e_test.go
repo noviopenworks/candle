@@ -11,10 +11,10 @@ import (
 
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/vend-ai/intel-mcp/internal/store"
+	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
-// TestEndToEndStdio builds the intel-mcp binary, ingests a fixture graph via the
+// TestEndToEndStdio builds the candlegraph binary, ingests a fixture graph via the
 // `index` subcommand, then launches `serve` as a real subprocess over the SDK's
 // stdio transport. It uses the SDK client (which performs the JSON-RPC
 // initialize handshake) to assert:
@@ -68,8 +68,8 @@ func TestEndToEndStdio(t *testing.T) {
 	}
 
 	// 2. Build the binary.
-	binPath := filepath.Join(tmp, "intel-mcp")
-	build := exec.Command("go", "build", "-o", binPath, "github.com/vend-ai/intel-mcp/cmd/intel-mcp")
+	binPath := filepath.Join(tmp, "candlegraph")
+	build := exec.Command("go", "build", "-o", binPath, "github.com/noviopenworks/candlegraph/cmd/candlegraph")
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build failed: %v\n%s", err, out)
 	}
