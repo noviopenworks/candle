@@ -19,15 +19,15 @@
 
 ## 3. Ingest wiring
 
-- [ ] 3.1 Resolve each repo's source root and pass it into the linker in `internal/ingest`
-- [ ] 3.2 Keep indexing successful when `root` is absent (warn, don't fail)
+- [x] 3.1 Resolve each repo's source root and pass it into the linker in `internal/ingest`
+- [x] 3.2 Keep indexing successful when `root` is absent (warn, don't fail)
 
 ## 4. Tests
 
-- [ ] 4.1 Unit fixtures: unary, server-stream, client-stream, multi-line signature, wrong receiver
-- [ ] 4.2 Unit: same-name-different-package export disambiguation
-- [ ] 4.3 Unit: unparseable/missing source → fallback tier (regression guard)
-- [ ] 4.4 Integration: ingest passes `root`; mcp e2e still green
+- [x] 4.1 Unit fixtures: unary, server-stream, client-stream, multi-line signature, wrong receiver
+- [x] 4.2 Unit: same-name-different-package export disambiguation
+- [x] 4.3 Unit: unparseable/missing source → fallback tier (regression guard)
+- [x] 4.4 Integration: ingest passes `root`; mcp e2e still green
 
 ## 5. Verification
 

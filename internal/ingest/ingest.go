@@ -73,8 +73,11 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 		if err := s.ReplaceProtoFiles(indexID, toProtoBundles(pfiles)); err != nil {
 			return rep, err
 		}
-		// TODO(task 4): resolve real source root
-		links, err := link.MatchRPCs(s, indexID, collectRPCs(pfiles), "")
+		rpcs := collectRPCs(pfiles)
+		if len(rpcs) > 0 && r.Root == "" {
+			rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: no source root configured; RPC links use heuristic (AST precision off)", r.Repo))
+		}
+		links, err := link.MatchRPCs(s, indexID, rpcs, r.Root)
 		if err != nil {
 			return rep, err
 		}
@@ -90,7 +93,10 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 		for _, w := range gwarns {
 			rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: go %s", r.Repo, w))
 		}
-		if err := s.ReplaceGoDeps(indexID, toGoDepBundle(s, indexID, gres)); err != nil {
+		if gres != nil && gres.Library != nil && len(gres.Library.Exports) > 0 && r.Root == "" {
+			rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: no source root configured; Go export links use heuristic (AST precision off)", r.Repo))
+		}
+		if err := s.ReplaceGoDeps(indexID, toGoDepBundle(s, indexID, gres, r.Root)); err != nil {
 			return rep, err
 		}
 	}
@@ -158,7 +164,7 @@ func collectRPCs(files []proto.File) []link.RPC {
 	return out
 }
 
-func toGoDepBundle(s *store.Store, indexID int64, res *godep.Result) store.GoDepBundle {
+func toGoDepBundle(s *store.Store, indexID int64, res *godep.Result, root string) store.GoDepBundle {
 	var b store.GoDepBundle
 	if res == nil {
 		return b
@@ -173,8 +179,7 @@ func toGoDepBundle(s *store.Store, indexID int64, res *godep.Result) store.GoDep
 		for _, e := range res.Library.Exports {
 			le = append(le, link.Export{PackagePath: e.PackagePath, Symbol: e.Symbol, SourceHint: lastPathSeg(e.PackagePath)})
 		}
-		// TODO(task 4): resolve real source root
-		linked := link.MatchExports(s, indexID, le, "")
+		linked := link.MatchExports(s, indexID, le, root)
 		nodeBySym := map[string]string{}
 		for _, l := range linked {
 			if l.NodeID != "" {

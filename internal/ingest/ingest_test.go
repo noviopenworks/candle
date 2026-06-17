@@ -3,6 +3,7 @@ package ingest
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/noviopenworks/candlegraph/internal/config"
@@ -125,6 +126,126 @@ func TestRunIndexesGoDeps(t *testing.T) {
 	usages, err := s.PrivateUsagesByModule(id, "git.acme.local/platform/auth")
 	if err != nil || len(usages) == 0 {
 		t.Fatalf("usages: %+v err=%v", usages, err)
+	}
+}
+
+// writeProtoRPCFixture builds a self-contained repo under dir: a proto file
+// defining a unary RPC, a Go server file implementing it, and a graph.json whose
+// node's source_file points (repo-relative) at that Go file. Returns the graph
+// path. The RPC full name is acme.inventory.InventoryService.ReserveProduct.
+func writeProtoRPCFixture(t *testing.T, dir string) (graphPath string) {
+	t.Helper()
+	// Go server implementing ReserveProduct as a unary method.
+	srcRel := filepath.Join("internal", "grpc", "server.go")
+	srcAbs := filepath.Join(dir, srcRel)
+	if err := os.MkdirAll(filepath.Dir(srcAbs), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	code := "package grpc\n" +
+		"import \"context\"\n" +
+		"type Server struct{}\n" +
+		"type pbReq struct{}\n" +
+		"type pbResp struct{}\n" +
+		"func (s *Server) ReserveProduct(ctx context.Context, req *pbReq) (*pbResp, error) { return nil, nil }\n"
+	if err := os.WriteFile(srcAbs, []byte(code), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Proto file defining the unary RPC plus the service registration symbol's
+	// presence is not required for the AST tier; AST is authoritative on its own.
+	protoRel := "inventory.proto"
+	proto := "syntax = \"proto3\";\n" +
+		"package acme.inventory;\n" +
+		"service InventoryService {\n" +
+		"  rpc ReserveProduct(ReserveProductRequest) returns (ReserveProductResponse);\n" +
+		"}\n" +
+		"message ReserveProductRequest { string sku = 1; }\n" +
+		"message ReserveProductResponse { bool reserved = 1; }\n"
+	if err := os.WriteFile(filepath.Join(dir, protoRel), []byte(proto), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// graph.json: node label matches the RPC name, source_file is repo-relative.
+	graphPath = filepath.Join(dir, "graph.json")
+	g := `{"nodes":[{"id":"n1","label":"ReserveProduct","file_type":"code","source_file":"internal/grpc/server.go"}],"edges":[],"hyperedges":[]}`
+	if err := os.WriteFile(graphPath, []byte(g), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	return graphPath
+}
+
+// TestRunLinksRPCWithASTRoot verifies that when a repo's source root is set,
+// ingestion resolves the RPC impl link via AST and records the HIGH/"ast" tier.
+func TestRunLinksRPCWithASTRoot(t *testing.T) {
+	dir := t.TempDir()
+	graphPath := writeProtoRPCFixture(t, dir)
+
+	cfg := &config.Config{Repos: []config.RepoConfig{
+		{Repo: "acme/inventory", Graph: graphPath, Root: dir},
+	}}
+	cfg.Repos[0].Proto.Roots = []string{dir}
+	cfg.Repos[0].Proto.Files = []string{"inventory.proto"}
+
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+
+	rep, err := Run(s, cfg)
+	if err != nil {
+		t.Fatalf("run: %v", err)
+	}
+	if rep.Indexed != 1 {
+		t.Fatalf("expected 1 indexed, got %+v", rep)
+	}
+
+	id, _ := s.UpsertIndex("acme", "inventory", "", "", graphPath)
+	impls, err := s.ProtoRPCImpls(id, "acme.inventory.InventoryService.ReserveProduct")
+	if err != nil {
+		t.Fatalf("impls: %v", err)
+	}
+	if len(impls) != 1 {
+		t.Fatalf("expected 1 impl link, got %d: %+v", len(impls), impls)
+	}
+	if impls[0].Confidence < 0.85 {
+		t.Fatalf("expected HIGH confidence (>=0.85) from AST, got %.2f (%s)", impls[0].Confidence, impls[0].MatchReason)
+	}
+	if !strings.Contains(impls[0].MatchReason, "ast") {
+		t.Fatalf("expected reason to mention ast, got %q", impls[0].MatchReason)
+	}
+}
+
+// TestRunLinksRPCWithoutRootDegrades verifies that with root empty the run still
+// succeeds and the link degrades off the AST tier (no "ast" in the reason).
+func TestRunLinksRPCWithoutRootDegrades(t *testing.T) {
+	dir := t.TempDir()
+	graphPath := writeProtoRPCFixture(t, dir)
+
+	cfg := &config.Config{Repos: []config.RepoConfig{
+		{Repo: "acme/inventory", Graph: graphPath}, // Root empty.
+	}}
+	cfg.Repos[0].Proto.Roots = []string{dir}
+	cfg.Repos[0].Proto.Files = []string{"inventory.proto"}
+
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+
+	rep, err := Run(s, cfg)
+	if err != nil {
+		t.Fatalf("run: %v", err)
+	}
+	if rep.Indexed != 1 {
+		t.Fatalf("expected 1 indexed, got %+v", rep)
+	}
+
+	id, _ := s.UpsertIndex("acme", "inventory", "", "", graphPath)
+	impls, err := s.ProtoRPCImpls(id, "acme.inventory.InventoryService.ReserveProduct")
+	if err != nil {
+		t.Fatalf("impls: %v", err)
+	}
+	if len(impls) != 1 {
+		t.Fatalf("expected 1 impl link, got %d: %+v", len(impls), impls)
+	}
+	if strings.Contains(impls[0].MatchReason, "ast") {
+		t.Fatalf("expected non-AST tier without root, got reason %q", impls[0].MatchReason)
 	}
 }
 
