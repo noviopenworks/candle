@@ -1,5 +1,5 @@
 workflow: full
-phase: build
+phase: verify
 context_compression: off
 build_mode: direct
 build_pause: null
@@ -11,9 +11,9 @@ auto_transition: true
 base_ref: 31d9cf50e80c11469c3b565ea04a3285ec04f6f3
 design_doc: docs/superpowers/specs/2026-06-17-rename-to-candlegraph-design.md
 plan: docs/superpowers/plans/2026-06-17-rename-to-candlegraph.md
-verify_result: fail
-verification_report: null
-branch_status: pending
+verify_result: pending
+verification_report: docs/superpowers/reports/2026-06-17-rename-to-candlegraph-verify.md
+branch_status: handled
 created_at: 2026-06-17
 verified_at: null
 archived: false
