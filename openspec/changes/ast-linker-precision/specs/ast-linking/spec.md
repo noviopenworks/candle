@@ -46,9 +46,9 @@ against this root for AST parsing.
 
 ### Requirement: Graceful fallback without source
 
-When source is unavailable (no `root`, unreadable file, or unparseable Go), the
-linker SHALL fall back to the existing name + service-registration heuristic and
-record the link at its corresponding non-HIGH tier, without error and without
+The linker SHALL fall back to the existing name + service-registration heuristic
+when source is unavailable (no `root`, unreadable file, or unparseable Go),
+recording the link at its corresponding non-HIGH tier, without error and without
 dropping the candidate.
 
 #### Scenario: no regression when source is missing
