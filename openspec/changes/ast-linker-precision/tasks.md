@@ -11,11 +11,11 @@
 
 ## 2. AST matcher in internal/link
 
-- [ ] 2.1 Add a source-root parameter to the link entrypoints (`MatchRPCs`, `MatchExports`)
-- [ ] 2.2 Implement `astSignatureMatch`: parse the candidate file with `go/parser`, find the `FuncDecl` (Name == rpc, receiver present), classify unary vs streaming from params/returns
-- [ ] 2.3 Recalibrate `score`: AST-confirmed → HIGH; name+service → MEDIUM; name → LOW; reason string reflects AST vs heuristic
-- [ ] 2.4 Fallback path: when root absent / file unreadable / unparseable, use existing string-scan/name-service tiers (no regression)
-- [ ] 2.5 AST-confirm `MatchExports`: prefer the node whose declaration is in the export's package
+- [x] 2.1 Add a source-root parameter to the link entrypoints (`MatchRPCs`, `MatchExports`)
+- [x] 2.2 Implement `astSignatureMatch`: parse the candidate file with `go/parser`, find the `FuncDecl` (Name == rpc, receiver present), classify unary vs streaming from params/returns
+- [x] 2.3 Recalibrate `score`: AST-confirmed → HIGH; name+service → MEDIUM; name → LOW; reason string reflects AST vs heuristic
+- [x] 2.4 Fallback path: when root absent / file unreadable / unparseable, use existing string-scan/name-service tiers (no regression)
+- [x] 2.5 AST-confirm `MatchExports`: prefer the node whose declaration is in the export's package
 
 ## 3. Ingest wiring
 
