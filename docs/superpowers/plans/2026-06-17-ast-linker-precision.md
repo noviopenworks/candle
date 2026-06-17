@@ -2,6 +2,7 @@
 change: ast-linker-precision
 design-doc: docs/superpowers/specs/2026-06-17-ast-linker-precision-design.md
 base-ref: 477b557f615273defda18fc960aaf3a755cfde3a
+archived-with: 2026-06-17-ast-linker-precision
 ---
 
 # Implementation Plan — ast-linker-precision

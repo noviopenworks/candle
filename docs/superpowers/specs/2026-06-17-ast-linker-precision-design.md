@@ -2,6 +2,8 @@
 comet_change: ast-linker-precision
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-17-ast-linker-precision
+status: final
 ---
 
 # AST-backed linker precision — Technical Design
