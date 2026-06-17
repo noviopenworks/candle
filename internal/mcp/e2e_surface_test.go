@@ -266,23 +266,12 @@ func (c *Client) Verify(token string) bool { return token != "" }
 	mustContain("repo resource", readRes("repo://org/inventory"), "org/inventory")
 	mustContain("openapi resource", readRes("openapi://org/inventory/commit/abc/operation/reserveProduct"), "reserveProduct")
 
-	// KNOWN LIMITATION (characterization guard): the proto/lib resource templates
-	// use a single `{ref}`/`{module}` variable, and the SDK's RFC 6570 matching
-	// will not expand a variable across "/". So multi-segment refs — proto
-	// rpc/service/file and lib module paths (which contain slashes) — are
-	// currently unreachable via resources/read even though the server's URI
-	// parsers handle them and the design advertises these URIs. They return an
-	// error today. When the resource router is fixed to support multi-segment
-	// refs, flip these to mustContain assertions.
-	mustErr := func(uri string) {
-		t.Helper()
-		if _, err := session.ReadResource(ctx, &mcpsdk.ReadResourceParams{URI: uri}); err == nil {
-			t.Fatalf("expected %q unreachable (known multi-segment limitation), but it resolved", uri)
-		}
-	}
-	mustErr("proto://org/inventory/commit/abc/rpc/acme.inventory/InventoryService/ReserveProduct")
-	mustErr("proto://org/inventory/commit/abc/file/proto/inventory.proto")
-	mustErr("lib://git.acme.local/platform/auth")
+	// Multi-segment refs route too: the resource templates use RFC 6570 reserved
+	// expansion ({+ref}/{+module}), so refs containing "/" — proto rpc/file and
+	// lib module paths — match and reach their handlers.
+	mustContain("proto rpc resource", readRes("proto://org/inventory/commit/abc/rpc/acme.inventory/InventoryService/ReserveProduct"), "ReserveProduct")
+	mustContain("proto file resource", readRes("proto://org/inventory/commit/abc/file/inventory.proto"), "acme.inventory")
+	mustContain("lib resource", readRes("lib://git.acme.local/platform/auth"), "git.acme.local/platform/auth")
 
 	// Error path: unknown repo → tool-level IsError.
 	errRes, err := session.CallTool(ctx, &mcpsdk.CallToolParams{
