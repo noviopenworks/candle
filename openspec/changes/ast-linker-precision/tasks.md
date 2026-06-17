@@ -31,7 +31,7 @@
 
 ## 5. Verification
 
-- [ ] 5.1 `go build ./...` passes
-- [ ] 5.2 `go vet ./...` passes
-- [ ] 5.3 `go test ./...` passes (all packages)
-- [ ] 5.4 A repo without `root` produces identical link tiers to pre-change behavior
+- [x] 5.1 `go build ./...` passes
+- [x] 5.2 `go vet ./...` passes
+- [x] 5.3 `go test ./...` passes (all packages)
+- [x] 5.4 A repo without `root` produces identical link tiers to pre-change behavior
