@@ -194,7 +194,7 @@ git commit -m "feat(registry): scope-aware registry (allow-set of index ids)"
 - Consumes: `config.Config`/`config.RepoConfig` (`Org()`, `Name()`, `Commit`), store `indexes`/`repos`.
 - Produces: `func BuildScope(s *store.Store, cfg *config.Config) (map[int64]bool, []string, error)`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `internal/registry/registry_scope_test.go`:
 
@@ -231,12 +231,12 @@ func TestBuildScopePinAndLatestAndMissing(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test, verify it fails**
+- [x] **Step 2: Run test, verify it fails**
 
 Run: `go test ./internal/registry -run TestBuildScope -v`
 Expected: FAIL — undefined `BuildScope`.
 
-- [ ] **Step 3: Implement BuildScope**
+- [x] **Step 3: Implement BuildScope**
 
 Add to `internal/registry/registry.go` (add `"github.com/noviopenworks/candlegraph/internal/config"` to imports):
 
@@ -314,12 +314,12 @@ func BuildScope(s *store.Store, cfg *config.Config) (map[int64]bool, []string, e
 
 Add `"fmt"` to imports if not present.
 
-- [ ] **Step 4: Run test, verify it passes**
+- [x] **Step 4: Run test, verify it passes**
 
 Run: `go test ./internal/registry -run TestBuildScope -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/registry/registry.go internal/registry/registry_scope_test.go

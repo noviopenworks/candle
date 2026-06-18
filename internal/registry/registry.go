@@ -1,8 +1,11 @@
 package registry
 
 import (
+	"database/sql"
+	"fmt"
 	"strings"
 
+	"github.com/noviopenworks/candlegraph/internal/config"
 	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
@@ -29,6 +32,46 @@ func New(s *store.Store) *Registry { return &Registry{s: s} }
 // NewScoped builds a Registry limited to the given index ids.
 func NewScoped(s *store.Store, allowed map[int64]bool) *Registry {
 	return &Registry{s: s, allowed: allowed}
+}
+
+// BuildScope resolves manifest repo entries to an allow-set of index ids.
+// Pinned commits select the exact snapshot; omitted commits select the latest
+// indexed snapshot by ingested_at. Missing entries produce warnings, not errors.
+func BuildScope(s *store.Store, cfg *config.Config) (map[int64]bool, []string, error) {
+	allowed := map[int64]bool{}
+	var warns []string
+	for _, rc := range cfg.Repos {
+		var (
+			indexID int64
+			err     error
+		)
+		if rc.Commit != "" {
+			err = s.DB.QueryRow(`
+				SELECT i.id
+				FROM indexes i JOIN repos r ON r.id=i.repo_id
+				WHERE r.org=? AND r.name=? AND i.commit_sha=?`, rc.Org(), rc.Name(), rc.Commit).Scan(&indexID)
+		} else {
+			err = s.DB.QueryRow(`
+				SELECT i.id
+				FROM indexes i JOIN repos r ON r.id=i.repo_id
+				WHERE r.org=? AND r.name=?
+				ORDER BY i.ingested_at DESC, i.id DESC
+				LIMIT 1`, rc.Org(), rc.Name()).Scan(&indexID)
+		}
+		if err == nil {
+			allowed[indexID] = true
+			continue
+		}
+		if err != sql.ErrNoRows {
+			return nil, nil, err
+		}
+		if rc.Commit != "" {
+			warns = append(warns, fmt.Sprintf("%s: commit %s not indexed", rc.Repo, rc.Commit))
+		} else {
+			warns = append(warns, fmt.Sprintf("%s: no indexed snapshot in store", rc.Repo))
+		}
+	}
+	return allowed, warns, nil
 }
 
 // InScope reports whether an index id is served. Unscoped registries serve all.

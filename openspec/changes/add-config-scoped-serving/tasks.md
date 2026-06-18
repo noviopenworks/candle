@@ -13,10 +13,10 @@
 
 ## 2. Resolve config → allowed snapshots (test-first)
 
-- [ ] 2.1 Add a failing test: given the manifest entries (`repo` + optional `commit`) and the store, compute the allowed `index_id` set; pinned commit selects that snapshot; missing `(repo, commit)` yields a warning, not an error; commit-omitted resolves per the design-decided default
-- [ ] 2.2 Run and confirm it fails
-- [ ] 2.3 Implement the config→scope resolver (matches configured `(org/name, commit)` against `indexes`/`repos`), returning allowed `index_id`s + warnings
-- [ ] 2.4 Run and confirm it passes
+- [x] 2.1 Add a failing test: given the manifest entries (`repo` + optional `commit`) and the store, compute the allowed `index_id` set; pinned commit selects that snapshot; missing `(repo, commit)` yields a warning, not an error; commit-omitted resolves per the design-decided default
+- [x] 2.2 Run and confirm it fails
+- [x] 2.3 Implement the config→scope resolver (matches configured `(org/name, commit)` against `indexes`/`repos`), returning allowed `index_id`s + warnings
+- [x] 2.4 Run and confirm it passes
 
 ## 3. Wire `serve` to the scope config
 
