@@ -1,45 +1,43 @@
----
-change: add-get-context-facade
-design-doc: docs/superpowers/specs/2026-06-18-get-context-facade-design.md
-base-ref: 3f87c8a97f10f8258d4ba4ea5e0a672d95d5b5df
-archived-with: 2026-06-18-add-get-context-facade
----
-
 # get_context Retrieval Facade Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add `get_context` as the primary Context7-style MCP retrieval tool: a repo-scoped facade with an overview catalog mode and a topic-retrieval mode over code, OpenAPI, protobuf, and private Go libraries.
+**Goal:** Add `get_context` as the primary Context7-style retrieval tool for repo-scoped capability discovery and topic-oriented context lookup.
 
-**Architecture:** A pure, SDK-free `Tools.GetContext(GetContextArgs) (ContextResult, error)` in a new `internal/mcp/context_tools.go`, composing existing store/Tools queries, registered via a thin `registerGetContext` in `server.go`. Topic mode adds codegraph-style one-hop callers/callees for code matches.
+**Architecture:** Keep existing precise tools as follow-ups, and add a pure SDK-free `Tools.GetContext` method plus MCP registration. The method composes existing store queries for repo metadata, code graph symbols, OpenAPI, protobuf, and private Go library data; code topics include one-hop callers/callees like a codegraph response.
 
-**Tech Stack:** Go 1.26, `internal/mcp`, `internal/store`, SQLite-backed query helpers, MCP Go SDK (`mcpsdk`) registration.
+**Tech Stack:** Go 1.26, `internal/mcp`, `internal/store`, SQLite-backed query helpers, MCP Go SDK registration in `internal/mcp/server.go`.
 
-## Global Constraints
-
-- Go module path: `github.com/noviopenworks/candlegraph` (use in test imports).
-- Additive only: do NOT change existing tool behavior, `internal/store`, parsers, or the registry.
-- Repo field on the result MUST be the typed `RepoSummary` struct (design D3) — not `any`.
-- `mode:"overview"` returns the catalog only and suppresses topic matches even when a topic is given (design D6).
-- Proto RPC package MUST be derived from `ProtoRPC.FullName` (there is no `Package` field on `ProtoRPC`/`ProtoRPCResult`).
-- Verification gates: `go test ./...` and `go vet ./...` must pass.
-
-archived-with: 2026-06-18-add-get-context-facade
 ---
 
-### Task 1: Overview mode (types + catalog)
+## File Structure
+
+- Create: `internal/mcp/context_tools.go`
+  - Owns `GetContext`, input/result structs, overview mode, topic mode, limitations, resources, and suggested next-call hints.
+- Create: `internal/mcp/context_tools_test.go`
+  - Unit tests for overview mode, topic mode, codegraph-like symbol context, mode filtering, and unknown repos.
+- Modify: `internal/mcp/server.go`
+  - Add `get_context` to `ToolNames` and register the MCP tool.
+- Modify: `internal/mcp/e2e_surface_test.go`
+  - Update expected advertised tool count/name list.
+- Modify: `docs/tools.md`
+  - Document `get_context` request/response shapes and examples.
+- Modify: `docs/examples.md`
+  - Add recommended Context7-style flow using `get_context` first, then precise follow-up tools.
+- Modify: `README.md`
+  - Update advertised tool count and mention the retrieval-first entry point.
+- Optional after implementation: OpenSpec spec update under `openspec/specs/` if following Comet archive flow.
+
+---
+
+### Task 1: Add Failing Tests For Overview Mode
 
 **Files:**
-- Create: `internal/mcp/context_tools.go`
-- Test: `internal/mcp/context_tools_test.go`
+- Create: `internal/mcp/context_tools_test.go`
 
-**Interfaces:**
-- Consumes (existing): `Tools.reg.Resolve(repo) (registry.RepoInfo, bool, error)`; `registry.RepoInfo{IndexID int64; Repo, Branch, Commit string}`; `Tools.s.ListAPISpecs(indexID)`, `Tools.s.ListProtoFiles(indexID)`, `Tools.s.FindPrivateLibraries(indexID, "")`, `Tools.s.FindPrivateDeps(indexID, "")`; `Tools.s.DB`; `ErrNotFound`.
-- Produces (for later tasks): `GetContextArgs`, `ContextResult`, `RepoSummary`, `ContextCapabilities`, `CapabilitySummary`, `ContextMatches`, `CodeContext`, `ToolHint`, `ResourceScheme`; `func (t *Tools) GetContext(GetContextArgs) (ContextResult, error)`.
+- [ ] **Step 1: Write the overview-mode test**
 
-- [x] **Step 1: Write the failing overview test**
-
-Create `internal/mcp/context_tools_test.go`:
+Create `internal/mcp/context_tools_test.go` with:
 
 ```go
 package mcp
@@ -60,15 +58,18 @@ func seedContextTools(t *testing.T) *Tools {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err = s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file,source_location) VALUES(?,?,?,?,?,?)`,
-		id, "handler_reserve", "ReserveProduct", "code", "internal/http/reservation_handler.go", "L10"); err != nil {
+	_, err = s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file,source_location) VALUES(?,?,?,?,?,?)`,
+		id, "handler_reserve", "ReserveProduct", "code", "internal/http/reservation_handler.go", "L10")
+	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err = s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file,source_location) VALUES(?,?,?,?,?,?)`,
-		id, "service_reserve", "ReserveService", "code", "internal/reservation/service.go", "L20"); err != nil {
+	_, err = s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file,source_location) VALUES(?,?,?,?,?,?)`,
+		id, "service_reserve", "ReserveService", "code", "internal/reservation/service.go", "L20")
+	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err = s.DB.Exec(`INSERT INTO edges(index_id,source,target,relation) VALUES(?,?,?,?)`, id, "handler_reserve", "service_reserve", "calls"); err != nil {
+	_, err = s.DB.Exec(`INSERT INTO edges(index_id,source,target,relation) VALUES(?,?,?,?)`, id, "handler_reserve", "service_reserve", "calls")
+	if err != nil {
 		t.Fatal(err)
 	}
 	if err := s.ReplaceAPISpecs(id, []store.APISpecBundle{{
@@ -82,7 +83,7 @@ func seedContextTools(t *testing.T) *Tools {
 		File: store.ProtoFile{Path: "proto/inventory.proto", Package: "inventory.v1"},
 		Services: []store.ProtoServiceBundle{{
 			Service: store.ProtoService{Name: "InventoryService", FullName: "inventory.v1.InventoryService"},
-			RPCs:    []store.ProtoRPC{{Name: "ReserveProduct", FullName: "inventory.v1.InventoryService.ReserveProduct", RequestMessage: "inventory.v1.ReserveProductRequest", ResponseMessage: "inventory.v1.ReserveProductResponse", StreamKind: "unary"}},
+			RPCs: []store.ProtoRPC{{Name: "ReserveProduct", FullName: "inventory.v1.InventoryService.ReserveProduct", RequestMessage: "inventory.v1.ReserveProductRequest", ResponseMessage: "inventory.v1.ReserveProductResponse", StreamKind: "unary"}},
 		}},
 		Messages: []store.ProtoMessage{{Name: "ReserveProductRequest", FullName: "inventory.v1.ReserveProductRequest"}},
 	}}); err != nil {
@@ -121,20 +122,25 @@ func TestGetContextOverview(t *testing.T) {
 	if len(out.ResourceSchemes) == 0 {
 		t.Fatalf("expected resource schemes")
 	}
-	if len(out.Limitations) == 0 {
-		t.Fatalf("expected limitations")
-	}
 }
 ```
 
-- [x] **Step 2: Run the test, verify it fails**
+- [ ] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/mcp -run TestGetContextOverview -v`
-Expected: FAIL — undefined `GetContextArgs` / `Tools.GetContext`.
 
-- [x] **Step 3: Implement types + overview**
+Expected: FAIL with undefined `GetContextArgs` or missing `Tools.GetContext`.
 
-Create `internal/mcp/context_tools.go`:
+---
+
+### Task 2: Implement Overview Mode
+
+**Files:**
+- Create: `internal/mcp/context_tools.go`
+
+- [ ] **Step 1: Add the minimal implementation**
+
+Create `internal/mcp/context_tools.go` with:
 
 ```go
 package mcp
@@ -142,8 +148,6 @@ package mcp
 import (
 	"fmt"
 	"strings"
-
-	"github.com/noviopenworks/candlegraph/internal/store"
 )
 
 // GetContextArgs is the pure-tool input for get_context. Repo is required.
@@ -156,16 +160,8 @@ type GetContextArgs struct {
 	IncludeResources bool   `json:"include_resources,omitempty" jsonschema:"include resource URI hints"`
 }
 
-// RepoSummary is the typed repo identity exposed by get_context (design D3).
-type RepoSummary struct {
-	Repo      string `json:"repo"`
-	Commit    string `json:"commit"`
-	Branch    string `json:"branch"`
-	NodeCount int    `json:"node_count"`
-}
-
 type ContextResult struct {
-	Repo               RepoSummary         `json:"repo"`
+	Repo               any                 `json:"repo"`
 	Topic              string              `json:"topic,omitempty"`
 	Mode               string              `json:"mode"`
 	Capabilities       ContextCapabilities `json:"capabilities"`
@@ -190,18 +186,18 @@ type CapabilitySummary struct {
 }
 
 type ContextMatches struct {
-	CodeSymbols      []CodeContext    `json:"code_symbols,omitempty"`
-	Endpoints        any              `json:"endpoints,omitempty"`
-	Schemas          []SchemaInfo     `json:"schemas,omitempty"`
-	RPCs             []RPCExplanation `json:"rpcs,omitempty"`
-	PrivateLibraries any              `json:"private_libraries,omitempty"`
+	CodeSymbols      []CodeContext       `json:"code_symbols,omitempty"`
+	Endpoints        any                 `json:"endpoints,omitempty"`
+	Schemas          []SchemaInfo        `json:"schemas,omitempty"`
+	RPCs             []RPCExplanation    `json:"rpcs,omitempty"`
+	PrivateLibraries any                 `json:"private_libraries,omitempty"`
 }
 
 type CodeContext struct {
-	Node     store.NodeRow   `json:"node"`
-	Callers  []store.EdgeRow `json:"callers"`
-	Callees  []store.EdgeRow `json:"callees"`
-	Resource string          `json:"resource,omitempty"`
+	Node     any      `json:"node"`
+	Callers  any      `json:"callers"`
+	Callees  any      `json:"callees"`
+	Resource string   `json:"resource,omitempty"`
 }
 
 type ToolHint struct {
@@ -226,26 +222,22 @@ func (t *Tools) GetContext(args GetContextArgs) (ContextResult, error) {
 	}
 	mode := normalizeContextMode(args.Mode)
 	out := ContextResult{
-		Repo: RepoSummary{
-			Repo:      ri.Repo,
-			Commit:    ri.Commit,
-			Branch:    ri.Branch,
-			NodeCount: t.nodeCount(ri.IndexID),
-		},
-		Topic:           args.Topic,
-		Mode:            mode,
-		Limitations:     contextLimitations(),
-		Capabilities:    t.contextCapabilities(ri.IndexID),
-		SuggestedNextCalls: overviewHints(ri.Repo),
-		ResourceSchemes: contextResourceSchemes(),
+		Repo:         ri,
+		Topic:        args.Topic,
+		Mode:         mode,
+		Limitations:  contextLimitations(),
 	}
+	out.Capabilities = t.contextCapabilities(ri.IndexID)
+	out.SuggestedNextCalls = overviewHints(ri.Repo)
+	out.ResourceSchemes = contextResourceSchemes()
 	return out, nil
 }
 
-// normalizeContextMode keeps overview distinct from all (design D6): unknown/empty -> all.
 func normalizeContextMode(mode string) string {
 	switch strings.ToLower(strings.TrimSpace(mode)) {
-	case "overview", "all", "code", "api", "proto", "library":
+	case "", "overview", "all":
+		return "all"
+	case "code", "api", "proto", "library":
 		return strings.ToLower(strings.TrimSpace(mode))
 	default:
 		return "all"
@@ -258,9 +250,9 @@ func (t *Tools) contextCapabilities(indexID int64) ContextCapabilities {
 	libs, _ := t.s.FindPrivateLibraries(indexID, "")
 	deps, _ := t.s.FindPrivateDeps(indexID, "")
 	return ContextCapabilities{
-		CodeGraph:        CapabilitySummary{Available: true, Count: t.nodeCount(indexID), Tools: []string{"query_repo", "explain_symbol", "get_file_context"}},
-		OpenAPI:          CapabilitySummary{Available: len(apis) > 0, Count: len(apis), Tools: []string{"list_apis", "find_endpoint", "explain_endpoint", "find_schema"}},
-		Protobuf:         CapabilitySummary{Available: len(protos) > 0, Count: len(protos), Tools: []string{"list_apis", "find_rpc", "explain_rpc", "find_schema"}},
+		CodeGraph: CapabilitySummary{Available: true, Count: t.nodeCount(indexID), Tools: []string{"query_repo", "explain_symbol", "get_file_context"}},
+		OpenAPI: CapabilitySummary{Available: len(apis) > 0, Count: len(apis), Tools: []string{"list_apis", "find_endpoint", "explain_endpoint", "find_schema"}},
+		Protobuf: CapabilitySummary{Available: len(protos) > 0, Count: len(protos), Tools: []string{"list_apis", "find_rpc", "explain_rpc", "find_schema"}},
 		PrivateLibraries: CapabilitySummary{Available: len(libs)+len(deps) > 0, Count: len(libs) + len(deps), Tools: []string{"find_private_library", "find_library_consumers"}},
 	}
 }
@@ -305,65 +297,33 @@ func contextLimitations() []string {
 		"OpenAPI endpoint implementation linking is not yet available in get_context v1.",
 		"Cross-repo RPC consumed_by aggregation is deferred.",
 		"Cross-repo private library consumer aggregation is deferred.",
-		"Graph traversal is one hop; depth > 1 is deferred.",
 	}
 }
 
 func graphNodeResource(repo, commit, nodeID string) string {
-	return fmt.Sprintf("graph://%s/commit/%s/node/%s", repo, commitOrLatest(commit), nodeID)
-}
-
-func commitOrLatest(commit string) string {
 	if commit == "" {
-		return "latest"
+		commit = "latest"
 	}
-	return commit
-}
-
-// rpcPackage derives the proto package from an RPC full name
-// ("pkg.Service.Rpc" -> "pkg"); ProtoRPC has no Package field.
-func rpcPackage(fullName, service, name string) string {
-	pkg := strings.TrimSuffix(fullName, "."+service+"."+name)
-	if pkg == fullName {
-		// Fallback: strip the last two dotted segments.
-		parts := strings.Split(fullName, ".")
-		if len(parts) > 2 {
-			return strings.Join(parts[:len(parts)-2], ".")
-		}
-	}
-	return pkg
+	return fmt.Sprintf("graph://%s/commit/%s/node/%s", repo, commit, nodeID)
 }
 ```
 
-- [x] **Step 4: Run the test, verify it passes**
+- [ ] **Step 2: Run overview test**
 
 Run: `go test ./internal/mcp -run TestGetContextOverview -v`
+
 Expected: PASS.
 
-- [x] **Step 5: Commit**
-
-```bash
-git add internal/mcp/context_tools.go internal/mcp/context_tools_test.go
-git commit -m "feat(mcp): add get_context overview mode"
-```
-
-archived-with: 2026-06-18-add-get-context-facade
 ---
 
-### Task 2: Topic retrieval mode
+### Task 3: Add Topic Retrieval Tests
 
 **Files:**
-- Modify: `internal/mcp/context_tools.go`
-- Test: `internal/mcp/context_tools_test.go`
+- Modify: `internal/mcp/context_tools_test.go`
 
-**Interfaces:**
-- Consumes (existing): `Tools.s.NodesByLabel`, `Tools.s.Callers`, `Tools.s.Callees`, `Tools.s.FindOperations`, `Tools.FindSchema`, `Tools.s.FindRPCs`, `Tools.ExplainRPC`, `Tools.FindPrivateLibrary`; `store.ProtoRPCResult{ProtoRPC, Service, ProtoPath}`; `store.HTTPOperation{OperationID, ...}`; `store.PrivateLibraryResult{ModulePath, ...}`.
-- Consumes (from Task 1): `rpcPackage`, `commitOrLatest`, `graphNodeResource`, all result types.
-- Produces: `func (t *Tools) contextMatches(...)`.
+- [ ] **Step 1: Add tests for topic mode and mode filtering**
 
-- [x] **Step 1: Write failing topic tests**
-
-Append to `internal/mcp/context_tools_test.go`:
+Append:
 
 ```go
 func TestGetContextTopicSearchesAllSurfaces(t *testing.T) {
@@ -378,7 +338,7 @@ func TestGetContextTopicSearchesAllSurfaces(t *testing.T) {
 	if len(out.Matches.CodeSymbols) != 1 {
 		t.Fatalf("expected one code symbol match, got %+v", out.Matches.CodeSymbols)
 	}
-	if len(out.Matches.CodeSymbols[0].Callees) != 1 {
+	if len(out.Matches.CodeSymbols[0].Callees.([]store.EdgeRow)) != 1 {
 		t.Fatalf("expected codegraph-like callees: %+v", out.Matches.CodeSymbols[0])
 	}
 	if len(out.Matches.Schemas) == 0 {
@@ -406,20 +366,6 @@ func TestGetContextCodeModeOnlyReturnsCode(t *testing.T) {
 	}
 }
 
-func TestGetContextOverviewModeSuppressesMatches(t *testing.T) {
-	tools := seedContextTools(t)
-	out, err := tools.GetContext(GetContextArgs{Repo: "org/inventory", Topic: "ReserveProduct", Mode: "overview"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(out.Matches.CodeSymbols) != 0 || len(out.Matches.Schemas) != 0 || len(out.Matches.RPCs) != 0 || out.Matches.Endpoints != nil || out.Matches.PrivateLibraries != nil {
-		t.Fatalf("overview mode must suppress matches: %+v", out.Matches)
-	}
-	if out.Capabilities.CodeGraph.Count != 2 {
-		t.Fatalf("overview mode must still return the catalog")
-	}
-}
-
 func TestGetContextUnknownRepo(t *testing.T) {
 	tools := seedContextTools(t)
 	_, err := tools.GetContext(GetContextArgs{Repo: "org/missing"})
@@ -429,17 +375,26 @@ func TestGetContextUnknownRepo(t *testing.T) {
 }
 ```
 
-- [x] **Step 2: Run tests, verify topic/code/overview-suppress tests fail**
+- [ ] **Step 2: Run tests to verify they fail**
 
-Run: `go test ./internal/mcp -run 'TestGetContext' -v`
-Expected: `TestGetContextTopicSearchesAllSurfaces` and `TestGetContextCodeModeOnlyReturnsCode` FAIL (matches not populated); `TestGetContextOverviewModeSuppressesMatches` and `TestGetContextUnknownRepo` may already pass.
+Run: `go test ./internal/mcp -run 'TestGetContext(Topic|CodeMode|UnknownRepo)' -v`
 
-- [x] **Step 3: Wire topic search into GetContext**
+Expected: topic and code-mode tests FAIL because matches are not populated yet; unknown repo may already pass.
 
-In `GetContext`, before `return out, nil`, insert (note: overview mode skips matching per D6):
+---
+
+### Task 4: Implement Topic Retrieval Mode
+
+**Files:**
+- Modify: `internal/mcp/context_tools.go`
+
+- [ ] **Step 1: Add topic retrieval inside `GetContext`**
+
+Replace the tail of `GetContext` after `out.ResourceSchemes = contextResourceSchemes()` with:
 
 ```go
-	if strings.TrimSpace(args.Topic) != "" && mode != "overview" {
+	out.ResourceSchemes = contextResourceSchemes()
+	if strings.TrimSpace(args.Topic) != "" {
 		matches, resources, hints := t.contextMatches(ri.IndexID, ri.Repo, ri.Commit, args.Topic, mode, args.IncludeResources)
 		out.Matches = matches
 		out.Resources = resources
@@ -448,7 +403,7 @@ In `GetContext`, before `return out, nil`, insert (note: overview mode skips mat
 	return out, nil
 ```
 
-Then add `contextMatches`:
+Then add:
 
 ```go
 func (t *Tools) contextMatches(indexID int64, repo, commit, topic, mode string, includeResources bool) (ContextMatches, []string, []ToolHint) {
@@ -504,7 +459,7 @@ func (t *Tools) contextMatches(indexID int64, repo, commit, topic, mode string, 
 			if err == nil {
 				matches.RPCs = append(matches.RPCs, expl)
 				if includeResources {
-					resources = append(resources, fmt.Sprintf("proto://%s/commit/%s/rpc/%s/%s/%s", repo, commitOrLatest(commit), rpcPackage(rpc.FullName, rpc.Service, rpc.Name), rpc.Service, rpc.Name))
+					resources = append(resources, fmt.Sprintf("proto://%s/commit/%s/rpc/%s/%s/%s", repo, commitOrLatest(commit), rpc.Package, rpc.Service, rpc.Name))
 				}
 			}
 		}
@@ -528,45 +483,42 @@ func (t *Tools) contextMatches(indexID int64, repo, commit, topic, mode string, 
 
 	return matches, resources, hints
 }
+
+func commitOrLatest(commit string) string {
+	if commit == "" {
+		return "latest"
+	}
+	return commit
+}
 ```
 
-- [x] **Step 4: Run all get_context tests**
+- [ ] **Step 2: Run tests**
 
 Run: `go test ./internal/mcp -run 'TestGetContext' -v`
+
 Expected: PASS.
 
-- [x] **Step 5: Commit**
-
-```bash
-git add internal/mcp/context_tools.go internal/mcp/context_tools_test.go
-git commit -m "feat(mcp): add get_context topic retrieval and mode filtering"
-```
-
-archived-with: 2026-06-18-add-get-context-facade
 ---
 
-### Task 3: Register the MCP tool
+### Task 5: Register MCP Tool
 
 **Files:**
 - Modify: `internal/mcp/server.go`
 - Modify: `internal/mcp/e2e_surface_test.go`
 
-**Interfaces:**
-- Consumes: `mcpsdk.AddTool`, `Tools.GetContext`, helpers `textResult`, `mustJSON`, `toolErr`; `context` package.
+- [ ] **Step 1: Add `get_context` to `ToolNames`**
 
-- [x] **Step 1: Add to ToolNames**
+In `internal/mcp/server.go`, add `"get_context"` after `"resolve_repo"` in `ToolNames`.
 
-In `internal/mcp/server.go`, in `var ToolNames`, add `"get_context",` immediately after `"resolve_repo",`.
+- [ ] **Step 2: Register the tool in `NewServer`**
 
-- [x] **Step 2: Register in NewServer**
-
-In `NewServer`, add after `registerResolveRepo(srv, tools)`:
+Add after `registerResolveRepo(srv, tools)`:
 
 ```go
 	registerGetContext(srv, tools)
 ```
 
-- [x] **Step 3: Add registration function**
+- [ ] **Step 3: Add registration function**
 
 Add after `registerResolveRepo`:
 
@@ -585,35 +537,32 @@ func registerGetContext(srv *mcpsdk.Server, tools *Tools) {
 }
 ```
 
-- [x] **Step 4: Update e2e surface comments**
+- [ ] **Step 4: Update e2e surface expectation**
 
-In `internal/mcp/e2e_surface_test.go`, change the two comments referencing "all 13 tools" (≈ lines 32 and 218) to "all 14 tools" / "advertises all 14." The assertion loops over `ToolNames`, so no numeric assertion change is needed — adding `get_context` to `ToolNames` is what extends the checked surface.
+Open `internal/mcp/e2e_surface_test.go` and update any expected count/list from 13 tools to 14 tools, including `get_context` in the same order as `ToolNames`.
 
-- [x] **Step 5: Run MCP tests**
+- [ ] **Step 5: Run MCP tests**
 
 Run: `go test ./internal/mcp -v`
+
 Expected: PASS.
 
-- [x] **Step 6: Commit**
-
-```bash
-git add internal/mcp/server.go internal/mcp/e2e_surface_test.go
-git commit -m "feat(mcp): register get_context as the 14th tool"
-```
-
-archived-with: 2026-06-18-add-get-context-facade
 ---
 
-### Task 4: Documentation
+### Task 6: Document The Tool API
 
 **Files:**
 - Modify: `docs/tools.md`
 - Modify: `docs/examples.md`
 - Modify: `README.md`
 
-- [x] **Step 1: Update `docs/tools.md`**
+- [ ] **Step 1: Update tool count and list in `docs/tools.md`**
 
-Change the tool count to **14 tools** and insert a `get_context` reference section after `resolve_repo`:
+Change the first section to say **14 tools** and insert `get_context` after `resolve_repo`.
+
+- [ ] **Step 2: Add `get_context` reference section**
+
+Add after `resolve_repo`:
 
 ```markdown
 ### `get_context`
@@ -624,7 +573,7 @@ Context7-style retrieval entry point. With only `repo`, returns a catalog of wha
 |-----|------|-------------|
 | `repo` | string | repo identity (`org/name`) |
 | `topic` | string | optional symbol / endpoint / RPC / schema / library topic |
-| `mode` | string | optional: `overview`, `code`, `api`, `proto`, `library`, `all` (`overview` returns the catalog only and suppresses topic matches) |
+| `mode` | string | optional: `overview`, `code`, `api`, `proto`, `library`, `all` |
 | `depth` | number | optional; v1 supports one-hop code context |
 | `include_resources` | boolean | include exact resource URI hints |
 
@@ -640,68 +589,71 @@ Context7-style retrieval entry point. With only `repo`, returns a catalog of wha
 {"repo": "org/inventory-service", "topic": "ReserveProduct", "include_resources": true}
 ```
 
-**Response:** typed repo summary, grouped capabilities, matches, resource URI hints, suggested next tool calls, and explicit limitations.
+**Response:** grouped capabilities, matches, resource URI hints, suggested next tool calls, and explicit limitations.
 ```
 
-- [x] **Step 2: Update `docs/examples.md`**
+- [ ] **Step 3: Update `docs/examples.md`**
 
-Add a first example titled `Start with get_context`:
+Add a first example titled `Start with get_context` showing:
 
 ```json
 {"repo": "org/inventory-service"}
 {"repo": "org/inventory-service", "topic": "ReserveProduct", "include_resources": true}
 ```
 
-Explain that clients should call the precise tools (`explain_symbol`, `explain_rpc`, `explain_endpoint`, `find_private_library`) after `get_context` identifies the relevant surface, following the `suggested_next_calls` in the response.
+Explain that clients should call precise tools (`explain_symbol`, `explain_rpc`, `explain_endpoint`, `find_private_library`) after `get_context` identifies the relevant surface.
 
-- [x] **Step 3: Update `README.md`**
+- [ ] **Step 4: Update `README.md`**
 
-Change the advertised count from `13 tools` to `14 tools`, and add near the quick start:
+Change `13 tools` to `14 tools`, and add a short sentence near the quick start:
 
 ```markdown
 Agents typically start with `get_context`: call it with a repo for a catalog, or with a repo plus topic for focused Context7-style retrieval.
 ```
 
-- [x] **Step 4: Verify build is unaffected**
+- [ ] **Step 5: Run documentation sanity checks**
 
 Run: `go test ./...`
+
 Expected: PASS.
 
-- [x] **Step 5: Commit**
-
-```bash
-git add docs/tools.md docs/examples.md README.md
-git commit -m "docs: document get_context retrieval facade"
-```
-
-archived-with: 2026-06-18-add-get-context-facade
 ---
 
-### Task 5: Final verification
+### Task 7: Final Verification
 
-**Files:** all files touched above.
+**Files:**
+- All files touched by previous tasks.
 
-- [x] **Step 1: Full test suite**
+- [ ] **Step 1: Run full test suite**
 
 Run: `go test ./...`
+
 Expected: PASS.
 
-- [x] **Step 2: Static checks**
+- [ ] **Step 2: Run static checks**
 
 Run: `go vet ./...`
+
 Expected: PASS.
 
-- [x] **Step 3: Inspect diff scope**
+- [ ] **Step 3: Inspect diff**
 
-Run: `git diff 3f87c8a97f10f8258d4ba4ea5e0a672d95d5b5df --stat`
-Expected: only `internal/mcp/context_tools.go`, `internal/mcp/context_tools_test.go`, `internal/mcp/server.go`, `internal/mcp/e2e_surface_test.go`, `docs/tools.md`, `docs/examples.md`, `README.md` (plus OpenSpec/comet artifacts and the plan/design docs).
+Run: `git diff -- internal/mcp/context_tools.go internal/mcp/context_tools_test.go internal/mcp/server.go internal/mcp/e2e_surface_test.go docs/tools.md docs/examples.md README.md`
 
-archived-with: 2026-06-18-add-get-context-facade
+Expected: diff only contains `get_context` implementation, tests, MCP registration, and docs updates.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add internal/mcp/context_tools.go internal/mcp/context_tools_test.go internal/mcp/server.go internal/mcp/e2e_surface_test.go docs/tools.md docs/examples.md README.md
+git commit -m "feat(mcp): add get_context retrieval facade"
+```
+
 ---
 
 ## Self-Review
 
-- **Spec coverage:** Task 1 → overview catalog + limitations + unknown-repo handling (req: facade tool, overview mode, limitations). Task 2 → topic retrieval, one-hop code context, mode filter, overview-suppresses-matches (req: topic mode, mode filter incl. new D6 scenario). Task 3 → tool advertised in `tools/list` (req: facade tool / advertised). Task 4 → docs. Task 5 → gates.
-- **Placeholder scan:** none — all steps carry concrete code/commands.
-- **Type consistency:** `RepoSummary` (typed `Repo` field), `CodeContext.Callees []store.EdgeRow` (test reads `.Callees` without assertion), `rpcPackage` derives package from `FullName` (no nonexistent `ProtoRPC.Package`). `normalizeContextMode` keeps `overview` distinct from `all` (D6).
-- **Scope check:** single capability; additive; no store/parser/registry changes.
+- Spec coverage: The plan implements repo catalog mode, topic retrieval mode, codegraph-like one-hop code context, resource URI hints, tool registration, and docs.
+- Placeholder scan: No placeholder implementation steps are left; deferred product limitations are explicit runtime strings.
+- Type consistency: `GetContextArgs`, `ContextResult`, `ContextCapabilities`, `ContextMatches`, `CodeContext`, `ToolHint`, and `ResourceScheme` are defined before use.
+- Scope check: This plan intentionally does not implement OpenAPI handler linking, cross-repo RPC consumers, cross-repo library aggregation, embeddings, or multi-hop traversal.

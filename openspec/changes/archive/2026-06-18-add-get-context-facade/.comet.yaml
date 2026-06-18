@@ -16,7 +16,7 @@ verification_report: docs/superpowers/reports/2026-06-18-add-get-context-facade-
 branch_status: handled
 created_at: 2026-06-18
 verified_at: 2026-06-18
-archived: false
+archived: true
 handoff_context: openspec/changes/add-get-context-facade/.comet/handoff/design-context.json
 handoff_hash: bf3265978bebb94d552ee914292fe0c113d9c4266c25888eddd7294ec854cd5d
 build_command: go build ./...

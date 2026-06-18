@@ -2,6 +2,8 @@
 comet_change: add-get-context-facade
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-18-add-get-context-facade
+status: final
 ---
 
 # get_context Retrieval Facade — Technical Design
