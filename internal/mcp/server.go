@@ -36,7 +36,12 @@ var ToolNames = []string{
 // tools and the repo:// / graph:// resource templates. All SDK types are
 // confined to this file; the pure Tools/resource methods are untouched.
 func NewServer(s *store.Store) *mcpsdk.Server {
-	tools := NewTools(s)
+	return NewServerScoped(s, nil)
+}
+
+// NewServerScoped builds the MCP server limited to the given index ids (nil = all).
+func NewServerScoped(s *store.Store, allowed map[int64]bool) *mcpsdk.Server {
+	tools := NewToolsScoped(s, allowed)
 	srv := mcpsdk.NewServer(&mcpsdk.Implementation{
 		Name:    "candlegraph",
 		Version: version.String(),
@@ -64,7 +69,12 @@ func NewServer(s *store.Store) *mcpsdk.Server {
 
 // Serve runs the MCP stdio server backed by the store until ctx is cancelled.
 func Serve(ctx context.Context, s *store.Store) error {
-	return NewServer(s).Run(ctx, &mcpsdk.StdioTransport{})
+	return ServeScoped(ctx, s, nil)
+}
+
+// ServeScoped runs the MCP stdio server limited to the given index ids (nil = all).
+func ServeScoped(ctx context.Context, s *store.Store, allowed map[int64]bool) error {
+	return NewServerScoped(s, allowed).Run(ctx, &mcpsdk.StdioTransport{})
 }
 
 // textResult wraps a JSON/text payload in the SDK's tool-result content type.

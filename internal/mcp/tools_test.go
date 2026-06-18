@@ -1,10 +1,13 @@
 package mcp
 
 import (
+	"context"
 	"testing"
 
 	"github.com/noviopenworks/candlegraph/internal/store"
 )
+
+var _ func(context.Context, *store.Store, map[int64]bool) error = ServeScoped
 
 func seedTools(t *testing.T) *Tools {
 	t.Helper()
@@ -26,6 +29,41 @@ func TestListRepos(t *testing.T) {
 	}
 	if len(repos) != 1 || repos[0].Repo != "org/svc" || repos[0].NodeCount != 2 {
 		t.Fatalf("unexpected: %+v", repos)
+	}
+}
+
+func TestNewToolsScopedFiltersListAndResolve(t *testing.T) {
+	s, err := store.Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = s.Close() })
+
+	allowedID, err := s.UpsertIndex("org", "allowed", "a1", "main", "/g/allowed.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.UpsertIndex("org", "hidden", "h1", "main", "/g/hidden.json"); err != nil {
+		t.Fatal(err)
+	}
+
+	tl := NewToolsScoped(s, map[int64]bool{allowedID: true})
+	repos, err := tl.ListRepos()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(repos) != 1 || repos[0].Repo != "org/allowed" {
+		t.Fatalf("scoped ListRepos should return only org/allowed, got %+v", repos)
+	}
+	best, candidates, err := tl.ResolveRepo("org/hidden")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if best != nil || len(candidates) != 0 {
+		t.Fatalf("scoped ResolveRepo should hide org/hidden, best=%+v candidates=%+v", best, candidates)
+	}
+	if srv := NewServerScoped(s, map[int64]bool{allowedID: true}); srv == nil {
+		t.Fatal("NewServerScoped returned nil")
 	}
 }
 

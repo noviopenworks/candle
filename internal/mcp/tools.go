@@ -16,9 +16,14 @@ type Tools struct {
 	reg *registry.Registry
 }
 
-// NewTools builds the tool set.
+// NewTools builds an unscoped tool set.
 func NewTools(s *store.Store) *Tools {
-	return &Tools{s: s, reg: registry.New(s)}
+	return NewToolsScoped(s, nil)
+}
+
+// NewToolsScoped builds a tool set limited to the given index ids (nil = all).
+func NewToolsScoped(s *store.Store, allowed map[int64]bool) *Tools {
+	return &Tools{s: s, reg: registry.NewScoped(s, allowed)}
 }
 
 // ListRepos implements the list_repos tool.

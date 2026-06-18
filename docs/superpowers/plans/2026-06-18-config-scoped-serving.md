@@ -336,7 +336,7 @@ git commit -m "feat(registry): BuildScope resolves config to allowed index ids"
 **Interfaces:**
 - Produces: `NewToolsScoped(s, allowed)`, `NewServerScoped(s, allowed)`, `ServeScoped(ctx, s, allowed)`. Existing `NewTools`/`NewServer`/`Serve` delegate with `nil` scope (unchanged behavior).
 
-- [ ] **Step 1: Add scoped Tools constructor**
+- [x] **Step 1: Add scoped Tools constructor**
 
 In `internal/mcp/tools.go`:
 
@@ -352,7 +352,7 @@ func NewToolsScoped(s *store.Store, allowed map[int64]bool) *Tools {
 
 (`registry.NewScoped(s, nil)` is equivalent to `registry.New(s)`, so existing callers are unaffected.)
 
-- [ ] **Step 2: Add scoped Server + Serve**
+- [x] **Step 2: Add scoped Server + Serve**
 
 In `internal/mcp/server.go`, change `NewServer` to delegate and add scoped variants:
 
@@ -373,12 +373,12 @@ func ServeScoped(ctx context.Context, s *store.Store, allowed map[int64]bool) er
 
 Move the existing `NewServer` body into `NewServerScoped` (replace its `tools := NewTools(s)` line with the `tools` built from `allowed`).
 
-- [ ] **Step 3: Run mcp tests**
+- [x] **Step 3: Run mcp tests**
 
 Run: `go test ./internal/mcp`
 Expected: PASS (existing tests use `NewTools`/`NewServer`/`Serve`, all still valid).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add internal/mcp/tools.go internal/mcp/server.go
