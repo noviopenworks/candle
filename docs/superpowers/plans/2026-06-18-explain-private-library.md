@@ -589,7 +589,7 @@ git commit -m "feat(mcp): add ExplainPrivateLibrary provider+consumers with grap
 **Interfaces:**
 - Consumes (from Task 3): `Tools.ExplainPrivateLibrary`, all result types.
 
-- [ ] **Step 1: Write failing/boundary tests**
+- [x] **Step 1: Write failing/boundary tests**
 
 Append to `internal/mcp/library_explain_test.go`:
 
@@ -667,12 +667,12 @@ func TestExplainPrivateLibraryAmbiguousReturnsCandidates(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run tests**
+- [x] **Step 2: Run tests**
 
 Run: `go test ./internal/mcp -run TestExplainPrivateLibrary -v`
 Expected: PASS (Task 3's implementation already covers these boundaries; these tests lock the behavior in).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add internal/mcp/library_explain_test.go

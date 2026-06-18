@@ -20,17 +20,17 @@
 
 ## 3. Fuzzy resolution and boundary behavior (test-first)
 
-- [ ] 3.1 Add failing tests: ambiguous query → best + candidates; provider-less library → consumers only, no error; unknown query → `ErrNotFound`
-- [ ] 3.2 Run and confirm the new tests fail where expected
-- [ ] 3.3 Implement disambiguation + provider-less handling
-- [ ] 3.4 Run and confirm all pass
+- [x] 3.1 Add failing tests: ambiguous query → best + candidates; provider-less library → consumers only, no error; unknown query → `ErrNotFound`
+- [x] 3.2 Run and confirm the new tests fail where expected
+- [x] 3.3 Implement disambiguation + provider-less handling
+- [x] 3.4 Run and confirm all pass
 
 ## 4. Code-graph linking (test-first)
 
-- [ ] 4.1 Add failing tests: export → provider node link resolves; unresolved consumer usage is marked (per the brainstorming-decided matching rule)
-- [ ] 4.2 Run and confirm they fail
-- [ ] 4.3 Implement export→provider-node linking (`NodesByLabel` in provider index) and best-effort consumer usage→node linking with explicit unresolved markers
-- [ ] 4.4 Run and confirm all pass
+- [x] 4.1 Add failing tests: export → provider node link resolves; unresolved consumer usage is marked (per the brainstorming-decided matching rule)
+- [x] 4.2 Run and confirm they fail
+- [x] 4.3 Implement export→provider-node linking (`NodesByLabel` in provider index) and best-effort consumer usage→node linking with explicit unresolved markers
+- [x] 4.4 Run and confirm all pass
 
 ## 5. MCP registration and surface
 
