@@ -750,7 +750,7 @@ git commit -m "feat(mcp): register explain_private_library as the 15th tool"
 - Modify: `docs/examples.md`
 - Modify: `README.md`
 
-- [ ] **Step 1: Update `docs/tools.md`**
+- [x] **Step 1: Update `docs/tools.md`**
 
 Change the tool count to **15 tools**, add `explain_private_library` to the list, and add a reference section in the private-library tools area:
 
@@ -772,7 +772,7 @@ Explain an internal Go library from both sides: the provider definition (exports
 **Response:** `provider` (module path, exports with `node`/`resolved`, packages), `consumers` (per repo: version, used packages, usages with `node`/`resolved`), `candidates` when ambiguous, and `limitations`. Unlike `find_library_consumers` (single repo, deferred cross-repo marker), this aggregates consumers across all indexed repos.
 ```
 
-- [ ] **Step 2: Update `docs/examples.md`**
+- [x] **Step 2: Update `docs/examples.md`**
 
 Add an example titled `Who consumes this library across the org?`:
 
@@ -782,16 +782,16 @@ Add an example titled `Who consumes this library across the org?`:
 
 Explain that the response lists every consuming repo with its pinned version and used symbols, so an agent can spot version skew and usage hotspots in one call, then follow `explain_symbol` on a linked consumer node.
 
-- [ ] **Step 3: Update `README.md`**
+- [x] **Step 3: Update `README.md`**
 
 Change the advertised count from `14 tools` to `15 tools` (the ASCII diagram line and the Tools reference table row).
 
-- [ ] **Step 4: Verify build is unaffected**
+- [x] **Step 4: Verify build is unaffected**
 
 Run: `go test ./...`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add docs/tools.md docs/examples.md README.md

@@ -40,9 +40,9 @@
 
 ## 6. Documentation
 
-- [ ] 6.1 Update `docs/tools.md`: 15 tools, add `explain_private_library` reference (args, request/response shape) in the private-library section
-- [ ] 6.2 Update `docs/examples.md`: add a cross-repo "who consumes this library across the org?" example
-- [ ] 6.3 Update `README.md`: tool count 14 → 15
+- [x] 6.1 Update `docs/tools.md`: 15 tools, add `explain_private_library` reference (args, request/response shape) in the private-library section
+- [x] 6.2 Update `docs/examples.md`: add a cross-repo "who consumes this library across the org?" example
+- [x] 6.3 Update `README.md`: tool count 14 → 15
 
 ## 7. Final verification
 
