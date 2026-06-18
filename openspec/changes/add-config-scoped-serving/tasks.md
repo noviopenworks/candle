@@ -45,6 +45,6 @@
 
 ## 7. Final verification
 
-- [ ] 7.1 Run `go test ./...` and confirm pass
-- [ ] 7.2 Run `go vet ./...` and confirm pass
-- [ ] 7.3 Inspect `git diff` and confirm scope matches the plan
+- [x] 7.1 Run `go test ./...` and confirm pass
+- [x] 7.2 Run `go vet ./...` and confirm pass
+- [x] 7.3 Inspect `git diff` and confirm scope matches the plan

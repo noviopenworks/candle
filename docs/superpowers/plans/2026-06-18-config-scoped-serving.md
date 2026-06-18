@@ -588,9 +588,9 @@ git commit -m "docs: document config-scoped serving + serve-scope example"
 
 **Files:** all files touched above.
 
-- [ ] **Step 1: Full test suite** — Run: `go test ./...` → PASS.
-- [ ] **Step 2: Static checks** — Run: `go vet ./...` → PASS.
-- [ ] **Step 3: Diff scope** — Run: `git diff 52222b301e473956102b78d2cad37923e3c7dc61 --stat` → only registry, mcp (tools/server/library_explain), cmd/main.go, examples, docs (plus OpenSpec/comet + plan/design artifacts).
+- [x] **Step 1: Full test suite** — Run: `go test ./...` → PASS.
+- [x] **Step 2: Static checks** — Run: `go vet ./...` → PASS.
+- [x] **Step 3: Diff scope** — Run: `git diff 52222b301e473956102b78d2cad37923e3c7dc61 --stat` → only registry, mcp (tools/server/library_explain), cmd/main.go, examples, docs (plus OpenSpec/comet + plan/design artifacts).
 
 ---
 

@@ -86,3 +86,21 @@ Result: PASS. `list_repos` returned only `VendSYSTEM/service-inventory` and
 `VendSYSTEM/warehouse-service`; the verifier completed without any scoped tool
 returning `VendSYSTEM/service-user`, `VendSYSTEM/bff-service`, or
 `VendSYSTEM/platform-go`.
+
+## Task 7: final verification
+
+Date: 2026-06-18
+
+Commands:
+
+```bash
+go test ./...
+go vet ./...
+git diff 52222b301e473956102b78d2cad37923e3c7dc61 --stat
+```
+
+Results:
+
+- `go test ./...` — PASS. All 12 packages passed.
+- `go vet ./...` — PASS. No diagnostics.
+- `git diff 52222b301e473956102b78d2cad37923e3c7dc61 --stat` — PASS. Diff scope is limited to the planned registry, MCP tools/server/library explain, `cmd/candlegraph`, examples, docs, OpenSpec/comet metadata, plan, tasks, and verification artifacts.
