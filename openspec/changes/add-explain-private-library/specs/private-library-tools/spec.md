@@ -59,6 +59,12 @@ resolved, the result SHALL mark that item as unresolved rather than failing the 
 - **WHEN** a provider export's symbol matches a code-graph node in the provider repo's index
 - **THEN** that export carries a reference to the resolved provider node
 
+#### Scenario: Consumer usage links to the enclosing consumer node
+- **WHEN** a consumer usage occurs in a file that has code-graph nodes, and at least one node's
+  definition line is at or before the usage line
+- **THEN** that usage carries a reference to the node with the greatest definition line at or
+  before the usage line (the enclosing definition)
+
 #### Scenario: Unresolved consumer link is marked, not errored
 - **WHEN** a consumer usage cannot be matched to a consumer code-graph node
 - **THEN** that usage is returned with an explicit unresolved marker and the call still

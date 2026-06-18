@@ -1,0 +1,14 @@
+{
+  "change": "add-explain-private-library",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "0582bed70fc88c9aa9ef3b76366aa40749eceaeca360ff5e76c811ac22ffe1e5",
+  "files": [
+    { "path": "openspec/changes/add-explain-private-library/proposal.md", "sha256": "950c5366a881b4691add979d90b03d2f47827c6f6b852d00cb7846cb2755fd51" },
+    { "path": "openspec/changes/add-explain-private-library/design.md", "sha256": "b7e6a0690d56f5fd49f197413a22625235efb1e98139babbbfe30c2496374004" },
+    { "path": "openspec/changes/add-explain-private-library/tasks.md", "sha256": "30782816ce4c2e551538873cec915ab27ecadefcc4ce38fa1071267b1a423b25" },
+    { "path": "openspec/changes/add-explain-private-library/specs/private-library-tools/spec.md", "sha256": "c5a40f2de69d7cc8aada59ac6b23a1b1bcb0d752823ec1ced5a7187c0b6ab493" }
+  ]
+}
