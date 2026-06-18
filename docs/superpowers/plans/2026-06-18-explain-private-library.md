@@ -195,7 +195,7 @@ git commit -m "feat(store): cross-repo private library consumer aggregation"
 **Interfaces:**
 - Produces: `func (s *Store) SearchPrivateModulePaths(query string) ([]string, error)` — distinct private module paths across all indexes matching query.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append:
 
@@ -223,12 +223,12 @@ func TestSearchPrivateModulePaths(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store -run TestSearchPrivateModulePaths -v`
 Expected: FAIL — undefined `SearchPrivateModulePaths`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Add to `internal/store/godep.go`:
 
@@ -265,12 +265,12 @@ func (s *Store) SearchPrivateModulePaths(query string) ([]string, error) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store -run TestSearchPrivateModulePaths -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/store/godep.go internal/store/godep_test.go
