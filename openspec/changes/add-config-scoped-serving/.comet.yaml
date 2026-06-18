@@ -1,5 +1,5 @@
 workflow: full
-phase: design
+phase: build
 context_compression: off
 build_mode: null
 build_pause: null
@@ -9,7 +9,7 @@ isolation: null
 verify_mode: null
 auto_transition: true
 base_ref: 350215e219e90181f0cdab4695861683237455b9
-design_doc: null
+design_doc: docs/superpowers/specs/2026-06-18-config-scoped-serving-design.md
 plan: null
 verify_result: pending
 verification_report: null
@@ -17,3 +17,5 @@ branch_status: pending
 created_at: 2026-06-18
 verified_at: null
 archived: false
+handoff_context: openspec/changes/add-config-scoped-serving/.comet/handoff/design-context.json
+handoff_hash: 223ab9043f21ee10b2e967d473275c57b8d16e0bdf2b0fafed093c74f53e4133

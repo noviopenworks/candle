@@ -58,3 +58,9 @@ compatible.
 #### Scenario: No config serves everything (backward compatible)
 - **WHEN** `serve` is started without a scope config
 - **THEN** all indexed snapshots are served exactly as before this change
+
+#### Scenario: Config entry without a commit resolves to the latest snapshot
+- **WHEN** a scope config entry names a repo but omits `commit`, and the store holds one or more
+  snapshots of that repo
+- **THEN** the server resolves that repo to its latest snapshot (by `indexed_at`) deterministically,
+  and that single snapshot is the one served for the repo

@@ -1,0 +1,14 @@
+{
+  "change": "add-config-scoped-serving",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "223ab9043f21ee10b2e967d473275c57b8d16e0bdf2b0fafed093c74f53e4133",
+  "files": [
+    { "path": "openspec/changes/add-config-scoped-serving/proposal.md", "sha256": "007d0aa085d505994b215f566d70c467113ff522230b6d9637e4a1231541c7da" },
+    { "path": "openspec/changes/add-config-scoped-serving/design.md", "sha256": "1531173c4e031f607bc5a01a7cde8aec9aba183da922e47004abfa620d245ec1" },
+    { "path": "openspec/changes/add-config-scoped-serving/tasks.md", "sha256": "00b8d72398cf9f897e67b418f9bbc47b5eab66294d654adb4240b5ace4f356f6" },
+    { "path": "openspec/changes/add-config-scoped-serving/specs/mcp-core/spec.md", "sha256": "ebfce77391a761d28971c9e58ab9cfc55b235c294e285b6d7f08eb0fc1c442de" }
+  ]
+}
