@@ -6,10 +6,10 @@
 
 ## 1. Scope model in the registry (test-first)
 
-- [ ] 1.1 Add a failing registry test: given a store with multiple repos and multiple snapshots of one repo, a scoped registry over a chosen `(repo, commit)` set lists/resolves only those; resolution is deterministic to the pinned snapshot
-- [ ] 1.2 Run the test and confirm it fails
-- [ ] 1.3 Make `registry` scope-aware: build a scope from allowed `index_id`s; `List`/`Resolve`/`Match` filter to the scope; `nil` scope = serve-all (unchanged). Resolve deterministically to the single in-scope snapshot per repo
-- [ ] 1.4 Run the test and confirm it passes
+- [x] 1.1 Add a failing registry test: given a store with multiple repos and multiple snapshots of one repo, a scoped registry over a chosen `(repo, commit)` set lists/resolves only those; resolution is deterministic to the pinned snapshot
+- [x] 1.2 Run the test and confirm it fails
+- [x] 1.3 Make `registry` scope-aware: build a scope from allowed `index_id`s; `List`/`Resolve`/`Match` filter to the scope; `nil` scope = serve-all (unchanged). Resolve deterministically to the single in-scope snapshot per repo
+- [x] 1.4 Run the test and confirm it passes
 
 ## 2. Resolve config → allowed snapshots (test-first)
 

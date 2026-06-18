@@ -16,11 +16,28 @@ type RepoInfo struct {
 	NodeCount  int
 }
 
-// Registry resolves repo identities to indexed snapshots.
-type Registry struct{ s *store.Store }
+// Registry resolves repo identities to indexed snapshots, optionally scoped to
+// an allow-set of index ids (nil = unscoped, serve all).
+type Registry struct {
+	s       *store.Store
+	allowed map[int64]bool
+}
 
-// New builds a Registry over the store.
+// New builds an unscoped Registry over the store.
 func New(s *store.Store) *Registry { return &Registry{s: s} }
+
+// NewScoped builds a Registry limited to the given index ids.
+func NewScoped(s *store.Store, allowed map[int64]bool) *Registry {
+	return &Registry{s: s, allowed: allowed}
+}
+
+// InScope reports whether an index id is served. Unscoped registries serve all.
+func (r *Registry) InScope(indexID int64) bool {
+	if r.allowed == nil {
+		return true
+	}
+	return r.allowed[indexID]
+}
 
 // List returns all indexed repo snapshots.
 func (r *Registry) List() ([]RepoInfo, error) {
@@ -39,6 +56,9 @@ func (r *Registry) List() ([]RepoInfo, error) {
 		var org, name string
 		if err := rows.Scan(&ri.IndexID, &org, &name, &ri.Branch, &ri.Commit, &ri.IngestedAt, &ri.NodeCount); err != nil {
 			return nil, err
+		}
+		if !r.InScope(ri.IndexID) {
+			continue
 		}
 		ri.Repo = org + "/" + name
 		out = append(out, ri)

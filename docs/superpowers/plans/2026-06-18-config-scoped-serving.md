@@ -37,7 +37,7 @@ base-ref: 52222b301e473956102b78d2cad37923e3c7dc61
 - Consumes: `store.Store` + `indexes`/`repos` schema; existing `RepoInfo`.
 - Produces: `func NewScoped(s *store.Store, allowed map[int64]bool) *Registry`; scope-filtered `List`/`Resolve`/`Match`; `func (r *Registry) InScope(indexID int64) bool`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/registry/registry_scope_test.go`:
 
@@ -115,12 +115,12 @@ func TestUnscopedRegistryUnchanged(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test, verify it fails**
+- [x] **Step 2: Run test, verify it fails**
 
 Run: `go test ./internal/registry -run 'TestScopedRegistry|TestUnscoped' -v`
 Expected: FAIL — undefined `NewScoped` / `InScope`.
 
-- [ ] **Step 3: Implement scope-aware registry**
+- [x] **Step 3: Implement scope-aware registry**
 
 In `internal/registry/registry.go`:
 
@@ -170,12 +170,12 @@ In `List`, after scanning each `ri`, skip out-of-scope rows:
 
 `Resolve` and `Match` already iterate `List()`, so they inherit the scope filter automatically; no further change needed. (Scoped `List` returns at most one snapshot per repo because the scope pins one, so `Resolve`'s first-match is deterministic.)
 
-- [ ] **Step 4: Run test, verify it passes**
+- [x] **Step 4: Run test, verify it passes**
 
 Run: `go test ./internal/registry -run 'TestScopedRegistry|TestUnscoped' -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/registry/registry.go internal/registry/registry_scope_test.go
