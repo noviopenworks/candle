@@ -35,7 +35,7 @@ base-ref: 3f87c8a97f10f8258d4ba4ea5e0a672d95d5b5df
 - Consumes (existing): `Tools.reg.Resolve(repo) (registry.RepoInfo, bool, error)`; `registry.RepoInfo{IndexID int64; Repo, Branch, Commit string}`; `Tools.s.ListAPISpecs(indexID)`, `Tools.s.ListProtoFiles(indexID)`, `Tools.s.FindPrivateLibraries(indexID, "")`, `Tools.s.FindPrivateDeps(indexID, "")`; `Tools.s.DB`; `ErrNotFound`.
 - Produces (for later tasks): `GetContextArgs`, `ContextResult`, `RepoSummary`, `ContextCapabilities`, `CapabilitySummary`, `ContextMatches`, `CodeContext`, `ToolHint`, `ResourceScheme`; `func (t *Tools) GetContext(GetContextArgs) (ContextResult, error)`.
 
-- [ ] **Step 1: Write the failing overview test**
+- [x] **Step 1: Write the failing overview test**
 
 Create `internal/mcp/context_tools_test.go`:
 
@@ -125,12 +125,12 @@ func TestGetContextOverview(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run the test, verify it fails**
+- [x] **Step 2: Run the test, verify it fails**
 
 Run: `go test ./internal/mcp -run TestGetContextOverview -v`
 Expected: FAIL — undefined `GetContextArgs` / `Tools.GetContext`.
 
-- [ ] **Step 3: Implement types + overview**
+- [x] **Step 3: Implement types + overview**
 
 Create `internal/mcp/context_tools.go`:
 
@@ -333,12 +333,12 @@ func rpcPackage(fullName, service, name string) string {
 }
 ```
 
-- [ ] **Step 4: Run the test, verify it passes**
+- [x] **Step 4: Run the test, verify it passes**
 
 Run: `go test ./internal/mcp -run TestGetContextOverview -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp/context_tools.go internal/mcp/context_tools_test.go
@@ -358,7 +358,7 @@ git commit -m "feat(mcp): add get_context overview mode"
 - Consumes (from Task 1): `rpcPackage`, `commitOrLatest`, `graphNodeResource`, all result types.
 - Produces: `func (t *Tools) contextMatches(...)`.
 
-- [ ] **Step 1: Write failing topic tests**
+- [x] **Step 1: Write failing topic tests**
 
 Append to `internal/mcp/context_tools_test.go`:
 
@@ -426,12 +426,12 @@ func TestGetContextUnknownRepo(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run tests, verify topic/code/overview-suppress tests fail**
+- [x] **Step 2: Run tests, verify topic/code/overview-suppress tests fail**
 
 Run: `go test ./internal/mcp -run 'TestGetContext' -v`
 Expected: `TestGetContextTopicSearchesAllSurfaces` and `TestGetContextCodeModeOnlyReturnsCode` FAIL (matches not populated); `TestGetContextOverviewModeSuppressesMatches` and `TestGetContextUnknownRepo` may already pass.
 
-- [ ] **Step 3: Wire topic search into GetContext**
+- [x] **Step 3: Wire topic search into GetContext**
 
 In `GetContext`, before `return out, nil`, insert (note: overview mode skips matching per D6):
 
@@ -527,12 +527,12 @@ func (t *Tools) contextMatches(indexID int64, repo, commit, topic, mode string, 
 }
 ```
 
-- [ ] **Step 4: Run all get_context tests**
+- [x] **Step 4: Run all get_context tests**
 
 Run: `go test ./internal/mcp -run 'TestGetContext' -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp/context_tools.go internal/mcp/context_tools_test.go
@@ -550,11 +550,11 @@ git commit -m "feat(mcp): add get_context topic retrieval and mode filtering"
 **Interfaces:**
 - Consumes: `mcpsdk.AddTool`, `Tools.GetContext`, helpers `textResult`, `mustJSON`, `toolErr`; `context` package.
 
-- [ ] **Step 1: Add to ToolNames**
+- [x] **Step 1: Add to ToolNames**
 
 In `internal/mcp/server.go`, in `var ToolNames`, add `"get_context",` immediately after `"resolve_repo",`.
 
-- [ ] **Step 2: Register in NewServer**
+- [x] **Step 2: Register in NewServer**
 
 In `NewServer`, add after `registerResolveRepo(srv, tools)`:
 
@@ -562,7 +562,7 @@ In `NewServer`, add after `registerResolveRepo(srv, tools)`:
 	registerGetContext(srv, tools)
 ```
 
-- [ ] **Step 3: Add registration function**
+- [x] **Step 3: Add registration function**
 
 Add after `registerResolveRepo`:
 
@@ -581,16 +581,16 @@ func registerGetContext(srv *mcpsdk.Server, tools *Tools) {
 }
 ```
 
-- [ ] **Step 4: Update e2e surface comments**
+- [x] **Step 4: Update e2e surface comments**
 
 In `internal/mcp/e2e_surface_test.go`, change the two comments referencing "all 13 tools" (≈ lines 32 and 218) to "all 14 tools" / "advertises all 14." The assertion loops over `ToolNames`, so no numeric assertion change is needed — adding `get_context` to `ToolNames` is what extends the checked surface.
 
-- [ ] **Step 5: Run MCP tests**
+- [x] **Step 5: Run MCP tests**
 
 Run: `go test ./internal/mcp -v`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/mcp/server.go internal/mcp/e2e_surface_test.go
@@ -606,7 +606,7 @@ git commit -m "feat(mcp): register get_context as the 14th tool"
 - Modify: `docs/examples.md`
 - Modify: `README.md`
 
-- [ ] **Step 1: Update `docs/tools.md`**
+- [x] **Step 1: Update `docs/tools.md`**
 
 Change the tool count to **14 tools** and insert a `get_context` reference section after `resolve_repo`:
 
@@ -638,7 +638,7 @@ Context7-style retrieval entry point. With only `repo`, returns a catalog of wha
 **Response:** typed repo summary, grouped capabilities, matches, resource URI hints, suggested next tool calls, and explicit limitations.
 ```
 
-- [ ] **Step 2: Update `docs/examples.md`**
+- [x] **Step 2: Update `docs/examples.md`**
 
 Add a first example titled `Start with get_context`:
 
@@ -649,7 +649,7 @@ Add a first example titled `Start with get_context`:
 
 Explain that clients should call the precise tools (`explain_symbol`, `explain_rpc`, `explain_endpoint`, `find_private_library`) after `get_context` identifies the relevant surface, following the `suggested_next_calls` in the response.
 
-- [ ] **Step 3: Update `README.md`**
+- [x] **Step 3: Update `README.md`**
 
 Change the advertised count from `13 tools` to `14 tools`, and add near the quick start:
 
@@ -657,12 +657,12 @@ Change the advertised count from `13 tools` to `14 tools`, and add near the quic
 Agents typically start with `get_context`: call it with a repo for a catalog, or with a repo plus topic for focused Context7-style retrieval.
 ```
 
-- [ ] **Step 4: Verify build is unaffected**
+- [x] **Step 4: Verify build is unaffected**
 
 Run: `go test ./...`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add docs/tools.md docs/examples.md README.md
@@ -675,17 +675,17 @@ git commit -m "docs: document get_context retrieval facade"
 
 **Files:** all files touched above.
 
-- [ ] **Step 1: Full test suite**
+- [x] **Step 1: Full test suite**
 
 Run: `go test ./...`
 Expected: PASS.
 
-- [ ] **Step 2: Static checks**
+- [x] **Step 2: Static checks**
 
 Run: `go vet ./...`
 Expected: PASS.
 
-- [ ] **Step 3: Inspect diff scope**
+- [x] **Step 3: Inspect diff scope**
 
 Run: `git diff 3f87c8a97f10f8258d4ba4ea5e0a672d95d5b5df --stat`
 Expected: only `internal/mcp/context_tools.go`, `internal/mcp/context_tools_test.go`, `internal/mcp/server.go`, `internal/mcp/e2e_surface_test.go`, `docs/tools.md`, `docs/examples.md`, `README.md` (plus OpenSpec/comet artifacts and the plan/design docs).
