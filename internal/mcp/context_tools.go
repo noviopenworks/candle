@@ -93,17 +93,18 @@ func (t *Tools) GetContext(args GetContextArgs) (ContextResult, error) {
 		return ContextResult{}, ErrNotFound
 	}
 	mode := normalizeContextMode(args.Mode)
+	nodeCount := t.nodeCount(ri.IndexID)
 	out := ContextResult{
 		Repo: RepoSummary{
 			Repo:      ri.Repo,
 			Commit:    ri.Commit,
 			Branch:    ri.Branch,
-			NodeCount: t.nodeCount(ri.IndexID),
+			NodeCount: nodeCount,
 		},
 		Topic:              args.Topic,
 		Mode:               mode,
 		Limitations:        contextLimitations(),
-		Capabilities:       t.contextCapabilities(ri.IndexID),
+		Capabilities:       t.contextCapabilities(ri.IndexID, nodeCount),
 		SuggestedNextCalls: overviewHints(ri.Repo),
 		ResourceSchemes:    contextResourceSchemes(),
 	}
@@ -207,13 +208,13 @@ func normalizeContextMode(mode string) string {
 	}
 }
 
-func (t *Tools) contextCapabilities(indexID int64) ContextCapabilities {
+func (t *Tools) contextCapabilities(indexID int64, nodeCount int) ContextCapabilities {
 	apis, _ := t.s.ListAPISpecs(indexID)
 	protos, _ := t.s.ListProtoFiles(indexID)
 	libs, _ := t.s.FindPrivateLibraries(indexID, "")
 	deps, _ := t.s.FindPrivateDeps(indexID, "")
 	return ContextCapabilities{
-		CodeGraph:        CapabilitySummary{Available: true, Count: t.nodeCount(indexID), Tools: []string{"query_repo", "explain_symbol", "get_file_context"}},
+		CodeGraph:        CapabilitySummary{Available: true, Count: nodeCount, Tools: []string{"query_repo", "explain_symbol", "get_file_context"}},
 		OpenAPI:          CapabilitySummary{Available: len(apis) > 0, Count: len(apis), Tools: []string{"list_apis", "find_endpoint", "explain_endpoint", "find_schema"}},
 		Protobuf:         CapabilitySummary{Available: len(protos) > 0, Count: len(protos), Tools: []string{"list_apis", "find_rpc", "explain_rpc", "find_schema"}},
 		PrivateLibraries: CapabilitySummary{Available: len(libs)+len(deps) > 0, Count: len(libs) + len(deps), Tools: []string{"find_private_library", "find_library_consumers"}},
