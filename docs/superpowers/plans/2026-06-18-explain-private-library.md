@@ -289,7 +289,7 @@ git commit -m "feat(store): cross-index private module path search"
 - Consumes (existing): `t.s.SearchPrivateModulePaths`, `t.s.PrivateLibraryByModule`, `t.s.PrivateConsumersAcrossRepos`, `t.s.NodeByID`, `t.s.NodesByLabel`, `t.s.NodesByFile`, `ErrNotFound`; `store.PrivateLibraryRow{ PrivateLibrary{ModulePath,DocSynopsis}, IndexID, Exports []PrivateExport }`, `store.PrivateExport{PackagePath,Symbol,Kind,Doc,NodeID}`, `store.RepoConsumer`, `store.PrivateUsage`, `store.NodeRow`.
 - Produces: `func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error)` + result types.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `internal/mcp/library_explain_test.go`:
 
@@ -370,12 +370,12 @@ func TestExplainPrivateLibraryProviderAndConsumers(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/mcp -run TestExplainPrivateLibraryProviderAndConsumers -v`
 Expected: FAIL — undefined `ExplainPrivateLibrary` / result types.
 
-- [ ] **Step 3: Implement the tool**
+- [x] **Step 3: Implement the tool**
 
 Create `internal/mcp/library_explain.go`:
 
@@ -567,12 +567,12 @@ func parseSourceLine(loc string) int {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/mcp -run TestExplainPrivateLibraryProviderAndConsumers -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp/library_explain.go internal/mcp/library_explain_test.go

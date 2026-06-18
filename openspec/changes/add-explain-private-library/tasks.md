@@ -13,10 +13,10 @@
 
 ## 2. ExplainPrivateLibrary provider + consumer aggregation (test-first)
 
-- [ ] 2.1 Add a failing test for `Tools.ExplainPrivateLibrary`: provider exports + cross-repo consumers for a known library
-- [ ] 2.2 Run and confirm it fails (undefined `ExplainPrivateLibrary`/result types)
-- [ ] 2.3 Implement `Tools.ExplainPrivateLibrary` + result types: fuzzy resolution (best + candidates), provider section via `PrivateLibraryByModule`, consumer aggregation via the new store query, `limitations`
-- [ ] 2.4 Run and confirm it passes
+- [x] 2.1 Add a failing test for `Tools.ExplainPrivateLibrary`: provider exports + cross-repo consumers for a known library
+- [x] 2.2 Run and confirm it fails (undefined `ExplainPrivateLibrary`/result types)
+- [x] 2.3 Implement `Tools.ExplainPrivateLibrary` + result types: fuzzy resolution (best + candidates), provider section via `PrivateLibraryByModule`, consumer aggregation via the new store query, `limitations`
+- [x] 2.4 Run and confirm it passes
 
 ## 3. Fuzzy resolution and boundary behavior (test-first)
 
