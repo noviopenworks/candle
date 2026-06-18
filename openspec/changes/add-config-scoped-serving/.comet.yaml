@@ -6,14 +6,14 @@ build_pause: null
 subagent_dispatch: confirmed
 tdd_mode: tdd
 isolation: branch
-verify_mode: null
+verify_mode: full
 auto_transition: true
 base_ref: 350215e219e90181f0cdab4695861683237455b9
 design_doc: docs/superpowers/specs/2026-06-18-config-scoped-serving-design.md
 plan: docs/superpowers/plans/2026-06-18-config-scoped-serving.md
 verify_result: pending
-verification_report: null
-branch_status: pending
+verification_report: docs/superpowers/reports/2026-06-18-add-config-scoped-serving-verify.md
+branch_status: handled
 created_at: 2026-06-18
 verified_at: null
 archived: false
