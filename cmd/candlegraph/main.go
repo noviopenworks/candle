@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -10,8 +11,12 @@ import (
 	"github.com/noviopenworks/candlegraph/internal/config"
 	"github.com/noviopenworks/candlegraph/internal/ingest"
 	"github.com/noviopenworks/candlegraph/internal/mcp"
+	"github.com/noviopenworks/candlegraph/internal/registry"
 	"github.com/noviopenworks/candlegraph/internal/store"
 )
+
+type serveFunc func(context.Context, *store.Store) error
+type serveScopedFunc func(context.Context, *store.Store, map[int64]bool) error
 
 func main() {
 	var dbPath, manifest string
@@ -48,12 +53,7 @@ func main() {
 		Use:   "serve",
 		Short: "Run the MCP stdio server",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			s, err := store.Open(dbPath)
-			if err != nil {
-				return err
-			}
-			defer s.Close()
-			return mcp.Serve(context.Background(), s)
+			return runServe(context.Background(), dbPath, manifest, cmd.Flags().Changed("config"), os.Stderr, mcp.Serve, mcp.ServeScoped)
 		},
 	}
 
@@ -61,4 +61,41 @@ func main() {
 	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func runServe(ctx context.Context, dbPath, manifest string, explicitConfig bool, stderr io.Writer, serve serveFunc, serveScoped serveScopedFunc) error {
+	s, err := store.Open(dbPath)
+	if err != nil {
+		return err
+	}
+	defer s.Close()
+
+	scopePath := ""
+	if explicitConfig {
+		scopePath = manifest
+	} else if _, statErr := os.Stat(manifest); statErr == nil {
+		scopePath = manifest
+	}
+
+	var allowed map[int64]bool
+	if scopePath != "" {
+		cfg, lerr := config.Load(scopePath)
+		if lerr != nil {
+			return lerr
+		}
+		a, warns, berr := registry.BuildScope(s, cfg)
+		if berr != nil {
+			return berr
+		}
+		for _, w := range warns {
+			fmt.Fprintln(stderr, "scope warning:", w)
+		}
+		allowed = a
+		fmt.Fprintf(stderr, "serving %d configured snapshot(s) from %s\n", len(allowed), scopePath)
+	}
+
+	if allowed == nil {
+		return serve(ctx, s)
+	}
+	return serveScoped(ctx, s, allowed)
 }

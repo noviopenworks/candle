@@ -474,7 +474,7 @@ git commit -m "feat(mcp): scope cross-repo consumer aggregation to allowed index
 **Interfaces:**
 - Consumes: cobra `cmd.Flags().Changed("config")`, `config.Load`, `registry.BuildScope`, `mcp.ServeScoped`, `mcp.Serve`.
 
-- [ ] **Step 1: Implement serve scope resolution**
+- [x] **Step 1: Implement serve scope resolution**
 
 Replace the `serveCmd` `RunE` body in `cmd/candlegraph/main.go`:
 
@@ -521,12 +521,12 @@ Replace the `serveCmd` `RunE` body in `cmd/candlegraph/main.go`:
 
 Add imports as needed: `"os"` (already present), `"github.com/noviopenworks/candlegraph/internal/config"`, `"github.com/noviopenworks/candlegraph/internal/registry"`.
 
-- [ ] **Step 2: Build the binary**
+- [x] **Step 2: Build the binary**
 
 Run: `go build ./cmd/candlegraph`
 Expected: compiles cleanly.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add cmd/candlegraph/main.go
