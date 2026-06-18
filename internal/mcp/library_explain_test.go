@@ -72,3 +72,75 @@ func TestExplainPrivateLibraryProviderAndConsumers(t *testing.T) {
 		t.Fatalf("expected limitations")
 	}
 }
+
+func TestExplainPrivateLibraryUnknownQuery(t *testing.T) {
+	tools := seedExplain(t)
+	_, err := tools.ExplainPrivateLibrary("does-not-exist")
+	if err != ErrNotFound {
+		t.Fatalf("expected ErrNotFound, got %v", err)
+	}
+}
+
+func TestExplainPrivateLibraryProviderLess(t *testing.T) {
+	// A module consumed but with no indexed provider: provider section empty,
+	// consumers still returned, no error.
+	s, err := store.Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cid, err := s.UpsertIndex("org", "web", "c1", "main", "/g/web.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(cid, store.GoDepBundle{
+		Dependencies: []store.Dependency{{ModulePath: "github.com/org/nostub", Version: "v0.1.0", Ecosystem: "go", IsPrivate: true, Direct: true}},
+		Usages:       []store.PrivateUsage{{ModulePath: "github.com/org/nostub", Version: "v0.1.0", PackagePath: "github.com/org/nostub", Symbol: "Do", File: "x.go", Line: 3}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	tools := NewTools(s)
+	out, err := tools.ExplainPrivateLibrary("nostub")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out.Provider.Exports) != 0 {
+		t.Fatalf("expected no provider exports, got %+v", out.Provider.Exports)
+	}
+	if len(out.Consumers) != 1 || out.Consumers[0].Repo != "org/web" {
+		t.Fatalf("expected consumer org/web, got %+v", out.Consumers)
+	}
+	// No node in x.go -> usage link unresolved, not errored.
+	if out.Consumers[0].Usages[0].Resolved {
+		t.Fatalf("expected unresolved consumer link, got %+v", out.Consumers[0].Usages[0])
+	}
+}
+
+func TestExplainPrivateLibraryAmbiguousReturnsCandidates(t *testing.T) {
+	s, err := store.Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	id, err := s.UpsertIndex("org", "web", "c1", "main", "/g/web.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(id, store.GoDepBundle{
+		Dependencies: []store.Dependency{
+			{ModulePath: "github.com/org/authcore", Version: "v1.0.0", Ecosystem: "go", IsPrivate: true, Direct: true},
+			{ModulePath: "github.com/org/authutil", Version: "v1.0.0", Ecosystem: "go", IsPrivate: true, Direct: true},
+		},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	tools := NewTools(s)
+	out, err := tools.ExplainPrivateLibrary("auth")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out.Provider.ModulePath == "" {
+		t.Fatalf("expected a best match")
+	}
+	if len(out.Candidates) != 1 {
+		t.Fatalf("expected 1 candidate alongside best match, got %+v", out.Candidates)
+	}
+}
