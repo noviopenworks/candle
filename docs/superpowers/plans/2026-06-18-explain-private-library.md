@@ -2,6 +2,7 @@
 change: add-explain-private-library
 design-doc: docs/superpowers/specs/2026-06-18-explain-private-library-design.md
 base-ref: 7028fefe6d7fa8da8e0c1a754818b23c7726f202
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 # explain_private_library Implementation Plan
@@ -24,6 +25,7 @@ base-ref: 7028fefe6d7fa8da8e0c1a754818b23c7726f202
 - Advertised tool count 14 → 15.
 - Gates: `go test ./...` and `go vet ./...` pass.
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ### Task 1: Cross-index consumer aggregation (store)
@@ -184,6 +186,7 @@ git add internal/store/godep.go internal/store/godep_test.go
 git commit -m "feat(store): cross-repo private library consumer aggregation"
 ```
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ### Task 2: Cross-index module-path resolution (store)
@@ -277,6 +280,7 @@ git add internal/store/godep.go internal/store/godep_test.go
 git commit -m "feat(store): cross-index private module path search"
 ```
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ### Task 3: ExplainPrivateLibrary — provider + consumers
@@ -579,6 +583,7 @@ git add internal/mcp/library_explain.go internal/mcp/library_explain_test.go
 git commit -m "feat(mcp): add ExplainPrivateLibrary provider+consumers with graph links"
 ```
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ### Task 4: Boundary behavior — candidates, provider-less, not-found, unresolved link
@@ -679,6 +684,7 @@ git add internal/mcp/library_explain_test.go
 git commit -m "test(mcp): explain_private_library boundary cases"
 ```
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ### Task 5: Register the MCP tool
@@ -741,6 +747,7 @@ git add internal/mcp/server.go internal/mcp/e2e_surface_test.go
 git commit -m "feat(mcp): register explain_private_library as the 15th tool"
 ```
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ### Task 6: Documentation
@@ -798,6 +805,7 @@ git add docs/tools.md docs/examples.md README.md
 git commit -m "docs: document explain_private_library"
 ```
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ### Task 7: Final verification
@@ -819,6 +827,7 @@ Expected: PASS.
 Run: `git diff 7028fefe6d7fa8da8e0c1a754818b23c7726f202 --stat`
 Expected: only `internal/store/godep.go`, `internal/store/godep_test.go`, `internal/mcp/library_explain.go`, `internal/mcp/library_explain_test.go`, `internal/mcp/server.go`, `internal/mcp/e2e_surface_test.go`, the three docs (plus OpenSpec/comet + plan/design artifacts).
 
+archived-with: 2026-06-18-add-explain-private-library
 ---
 
 ## Self-Review

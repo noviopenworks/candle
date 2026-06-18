@@ -16,7 +16,7 @@ verification_report: docs/superpowers/reports/2026-06-18-add-explain-private-lib
 branch_status: handled
 created_at: 2026-06-18
 verified_at: 2026-06-18
-archived: false
+archived: true
 handoff_context: openspec/changes/add-explain-private-library/.comet/handoff/design-context.json
 handoff_hash: 0582bed70fc88c9aa9ef3b76366aa40749eceaeca360ff5e76c811ac22ffe1e5
 build_command: go build ./...

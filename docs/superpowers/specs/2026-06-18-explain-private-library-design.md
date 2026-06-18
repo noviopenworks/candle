@@ -2,6 +2,8 @@
 comet_change: add-explain-private-library
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-18-add-explain-private-library
+status: final
 ---
 
 # explain_private_library — Technical Design
