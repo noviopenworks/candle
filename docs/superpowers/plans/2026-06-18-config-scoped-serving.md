@@ -2,6 +2,7 @@
 change: add-config-scoped-serving
 design-doc: docs/superpowers/specs/2026-06-18-config-scoped-serving-design.md
 base-ref: 52222b301e473956102b78d2cad37923e3c7dc61
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 # Config-scoped MCP serving Implementation Plan
@@ -25,6 +26,7 @@ base-ref: 52222b301e473956102b78d2cad37923e3c7dc61
 - Discovery: explicit `--config` (error if path missing) wins; else default `manifest.yaml` in cwd if present; else no scope.
 - Gates: `go test ./...`, `go vet ./...` pass.
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ### Task 1: Scope-aware registry
@@ -182,6 +184,7 @@ git add internal/registry/registry.go internal/registry/registry_scope_test.go
 git commit -m "feat(registry): scope-aware registry (allow-set of index ids)"
 ```
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ### Task 2: Build scope from config
@@ -326,6 +329,7 @@ git add internal/registry/registry.go internal/registry/registry_scope_test.go
 git commit -m "feat(registry): BuildScope resolves config to allowed index ids"
 ```
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ### Task 3: Scoped Tools/Server/Serve entry points
@@ -385,6 +389,7 @@ git add internal/mcp/tools.go internal/mcp/server.go
 git commit -m "feat(mcp): scoped Tools/Server/Serve entry points (additive)"
 ```
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ### Task 4: Constrain cross-repo aggregation to the scope
@@ -464,6 +469,7 @@ git add internal/mcp/library_explain.go internal/mcp/library_explain_test.go
 git commit -m "feat(mcp): scope cross-repo consumer aggregation to allowed index ids"
 ```
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ### Task 5: Wire `serve` to discover and apply the scope config
@@ -533,6 +539,7 @@ git add cmd/candlegraph/main.go
 git commit -m "feat(cli): serve scopes to a discovered/explicit config (back-compat serve-all)"
 ```
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ### Task 6: Worked example + manual verification (inventory + warehouse)
@@ -582,6 +589,7 @@ git add examples/serve-scope.yaml docs/configuration.md docs/getting-started.md 
 git commit -m "docs: document config-scoped serving + serve-scope example"
 ```
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ### Task 7: Final verification
@@ -592,6 +600,7 @@ git commit -m "docs: document config-scoped serving + serve-scope example"
 - [x] **Step 2: Static checks** — Run: `go vet ./...` → PASS.
 - [x] **Step 3: Diff scope** — Run: `git diff 52222b301e473956102b78d2cad37923e3c7dc61 --stat` → only registry, mcp (tools/server/library_explain), cmd/main.go, examples, docs (plus OpenSpec/comet + plan/design artifacts).
 
+archived-with: 2026-06-18-add-config-scoped-serving
 ---
 
 ## Self-Review

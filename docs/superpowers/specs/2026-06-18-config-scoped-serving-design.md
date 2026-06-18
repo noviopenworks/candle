@@ -2,6 +2,8 @@
 comet_change: add-config-scoped-serving
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-18-add-config-scoped-serving
+status: final
 ---
 
 # Config-scoped MCP serving — Technical Design
