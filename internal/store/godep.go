@@ -280,3 +280,112 @@ func (s *Store) PrivateLibraryByModule(modulePath string) (PrivateLibraryRow, bo
 	r.Exports = exps
 	return r, true, nil
 }
+
+// RepoConsumer is one repo's consumption of a private module (cross-repo aggregation).
+type RepoConsumer struct {
+	IndexID      int64          `json:"-"`
+	Repo         string         `json:"repo"`
+	Commit       string         `json:"commit"`
+	Version      string         `json:"version"`
+	UsedPackages []string       `json:"used_packages"`
+	UsedSymbols  []PrivateUsage `json:"used_symbols"`
+}
+
+// PrivateConsumersAcrossRepos aggregates, across all indexes, every repo that
+// uses or depends on modulePath. It collects the consuming index ids first
+// (closing the cursor) and then reuses index-scoped helpers, per the :memory:
+// pooled-connection caveat.
+func (s *Store) PrivateConsumersAcrossRepos(modulePath string) ([]RepoConsumer, error) {
+	rows, err := s.DB.Query(`
+		SELECT DISTINCT i.id, r.org, r.name, COALESCE(i.commit_sha,'')
+		FROM indexes i JOIN repos r ON r.id=i.repo_id
+		WHERE i.id IN (SELECT index_id FROM private_library_usages WHERE module_path=?)
+		   OR i.id IN (SELECT index_id FROM dependencies WHERE module_path=? AND is_private=1)
+		ORDER BY r.org, r.name`, modulePath, modulePath)
+	if err != nil {
+		return nil, err
+	}
+	type ident struct {
+		id     int64
+		repo   string
+		commit string
+	}
+	var idents []ident
+	for rows.Next() {
+		var it ident
+		var org, name string
+		if err := rows.Scan(&it.id, &org, &name, &it.commit); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		it.repo = org + "/" + name
+		idents = append(idents, it)
+	}
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return nil, err
+	}
+	rows.Close()
+
+	var out []RepoConsumer
+	for _, it := range idents {
+		usages, err := s.PrivateUsagesByModule(it.id, modulePath)
+		if err != nil {
+			return nil, err
+		}
+		rc := RepoConsumer{IndexID: it.id, Repo: it.repo, Commit: it.commit, UsedSymbols: usages}
+		if dep, found, err := s.DependencyByModule(it.id, modulePath); err != nil {
+			return nil, err
+		} else if found {
+			rc.Version = dep.Version
+		}
+		if rc.Version == "" {
+			for _, u := range usages {
+				if u.Version != "" {
+					rc.Version = u.Version
+					break
+				}
+			}
+		}
+		seen := map[string]bool{}
+		for _, u := range usages {
+			if u.PackagePath != "" && !seen[u.PackagePath] {
+				seen[u.PackagePath] = true
+				rc.UsedPackages = append(rc.UsedPackages, u.PackagePath)
+			}
+		}
+		out = append(out, rc)
+	}
+	return out, nil
+}
+
+// SearchPrivateModulePaths returns distinct private module paths across all
+// indexes whose module path, doc synopsis, readme, or package path matches
+// query, plus path-only private dependencies matching by module path.
+func (s *Store) SearchPrivateModulePaths(query string) ([]string, error) {
+	q := "%" + strings.ToLower(query) + "%"
+	rows, err := s.DB.Query(`
+		SELECT module_path FROM private_libraries
+		WHERE LOWER(module_path) LIKE ? OR LOWER(COALESCE(doc_synopsis,'')) LIKE ? OR LOWER(COALESCE(readme,'')) LIKE ?
+		   OR id IN (SELECT private_library_id FROM private_library_exports WHERE LOWER(package_path) LIKE ?)
+		UNION
+		SELECT module_path FROM dependencies WHERE is_private=1 AND LOWER(module_path) LIKE ?`,
+		q, q, q, q, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	seen := map[string]bool{}
+	var out []string
+	for rows.Next() {
+		var mp string
+		if err := rows.Scan(&mp); err != nil {
+			return nil, err
+		}
+		if !seen[mp] {
+			seen[mp] = true
+			out = append(out, mp)
+		}
+	}
+	return out, rows.Err()
+}

@@ -56,3 +56,66 @@ func TestGoDepStorageAndIdempotent(t *testing.T) {
 		t.Fatalf("expected 0 deps after empty replace, got %d", n)
 	}
 }
+
+func seedConsumer(t *testing.T, s *Store, org, name, commit, modulePath, version, sym, file string, line int) {
+	t.Helper()
+	id, err := s.UpsertIndex(org, name, commit, "main", "/g/"+name+".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(id, GoDepBundle{
+		Dependencies: []Dependency{{ModulePath: modulePath, Version: version, Ecosystem: "go", IsPrivate: true, Direct: true}},
+		Usages:       []PrivateUsage{{ModulePath: modulePath, Version: version, PackagePath: modulePath, Symbol: sym, File: file, Line: line}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestPrivateConsumersAcrossRepos(t *testing.T) {
+	s, err := Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	seedConsumer(t, s, "org", "web", "c1", "github.com/org/auth", "v1.2.0", "ValidateToken", "internal/http/a.go", 12)
+	seedConsumer(t, s, "org", "worker", "c2", "github.com/org/auth", "v1.1.0", "NewClient", "internal/job/b.go", 30)
+
+	cons, err := s.PrivateConsumersAcrossRepos("github.com/org/auth")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(cons) != 2 {
+		t.Fatalf("expected 2 consumers across repos, got %d: %+v", len(cons), cons)
+	}
+	byRepo := map[string]RepoConsumer{}
+	for _, c := range cons {
+		byRepo[c.Repo] = c
+	}
+	if byRepo["org/web"].Version != "v1.2.0" || byRepo["org/worker"].Version != "v1.1.0" {
+		t.Fatalf("version aggregation mismatch: %+v", byRepo)
+	}
+	if len(byRepo["org/web"].UsedSymbols) != 1 || byRepo["org/web"].UsedSymbols[0].Symbol != "ValidateToken" {
+		t.Fatalf("used symbols mismatch: %+v", byRepo["org/web"])
+	}
+}
+
+func TestSearchPrivateModulePaths(t *testing.T) {
+	s, err := Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	seedConsumer(t, s, "org", "web", "c1", "github.com/org/auth", "v1.2.0", "ValidateToken", "a.go", 1)
+	got, err := s.SearchPrivateModulePaths("auth")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[0] != "github.com/org/auth" {
+		t.Fatalf("expected [github.com/org/auth], got %v", got)
+	}
+	none, err := s.SearchPrivateModulePaths("nonexistent")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(none) != 0 {
+		t.Fatalf("expected no matches, got %v", none)
+	}
+}

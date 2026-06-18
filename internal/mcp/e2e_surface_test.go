@@ -29,7 +29,7 @@ func writeFixture(t *testing.T, dir, rel, data string) {
 // Go private-library usage, and a provider repo defining the library), then
 // drives a real stdio serve subprocess to assert the full tool + resource
 // surface end-to-end:
-//   - tools/list advertises all 14 tools
+//   - tools/list advertises all 15 tools
 //   - code-graph tools (query_repo, explain_symbol, get_file_context)
 //   - explain_rpc surfaces the AST-confirmed (HIGH) implemented_by link
 //   - find_rpc, find_private_library, find_library_consumers
@@ -215,7 +215,7 @@ func (c *Client) Verify(token string) bool { return token != "" }
 		}
 	}
 
-	// tools/list advertises all 14.
+	// tools/list advertises all 15.
 	lt, err := session.ListTools(ctx, nil)
 	if err != nil {
 		t.Fatalf("tools/list failed: %v", err)

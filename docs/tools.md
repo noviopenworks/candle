@@ -1,11 +1,11 @@
 # MCP tools reference
 
-The server advertises **14 tools**, in this registration order:
+The server advertises **15 tools**, in this registration order:
 
 `list_repos` · `resolve_repo` · `get_context` · `query_repo` · `explain_symbol` ·
 `get_file_context` · `list_apis` · `find_endpoint` · `explain_endpoint` ·
 `find_schema` · `find_rpc` · `explain_rpc` · `find_private_library` ·
-`find_library_consumers`
+`find_library_consumers` · `explain_private_library`
 
 Every tool returns a single JSON text payload. Tools that take a `repo` resolve
 it internally; an unknown repo/symbol comes back as a **tool-level error result**
@@ -301,6 +301,22 @@ symbols actually used.
 
 > `consumed_across_repos` is **deferred** (cross-repo aggregation), like
 > `explain_rpc`'s `consumed_by`.
+
+### `explain_private_library`
+
+Explain an internal Go library from both sides: the provider definition (exports with code-graph node links, packages, doc synopsis) and **cross-repo consumers** — every indexed repo that uses the library, with its pinned version and used symbols (each best-effort linked to the enclosing consumer code-graph node).
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `query` | string | library name, module path, doc synopsis, or purpose (fuzzy) |
+
+**Request:**
+
+```json
+{"query": "auth"}
+```
+
+**Response:** `provider` (module path, exports with `node`/`resolved`, packages), `consumers` (per repo: version, used packages, usages with `node`/`resolved`), `candidates` when ambiguous, and `limitations`. Unlike `find_library_consumers` (single repo, deferred cross-repo marker), this aggregates consumers across all indexed repos.
 
 ---
 

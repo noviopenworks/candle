@@ -29,6 +29,7 @@ var ToolNames = []string{
 	"explain_rpc",
 	"find_private_library",
 	"find_library_consumers",
+	"explain_private_library",
 }
 
 // NewServer builds the MCP server backed by the store, registering all base
@@ -55,6 +56,7 @@ func NewServer(s *store.Store) *mcpsdk.Server {
 	registerExplainRPC(srv, tools)
 	registerFindPrivateLibrary(srv, tools)
 	registerFindLibraryConsumers(srv, tools)
+	registerExplainPrivateLibrary(srv, tools)
 	registerResources(srv, tools)
 
 	return srv
@@ -313,6 +315,23 @@ func registerFindLibraryConsumers(srv *mcpsdk.Server, tools *Tools) {
 		Description: "Show how a repo consumes a private Go module: version and used symbols.",
 	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args findLibraryConsumersArgs) (*mcpsdk.CallToolResult, any, error) {
 		out, err := tools.FindLibraryConsumers(args.Repo, args.Module)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(out)), nil, nil
+	})
+}
+
+type explainPrivateLibraryArgs struct {
+	Query string `json:"query" jsonschema:"library name, module path, or purpose"`
+}
+
+func registerExplainPrivateLibrary(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "explain_private_library",
+		Description: "Explain an internal Go library from both sides: provider exports (code-graph linked) and cross-repo consumers with versions and used symbols.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args explainPrivateLibraryArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.ExplainPrivateLibrary(args.Query)
 		if err != nil {
 			return toolErr(err)
 		}
