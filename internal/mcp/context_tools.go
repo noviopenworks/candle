@@ -107,7 +107,94 @@ func (t *Tools) GetContext(args GetContextArgs) (ContextResult, error) {
 		SuggestedNextCalls: overviewHints(ri.Repo),
 		ResourceSchemes:    contextResourceSchemes(),
 	}
+	// Overview mode returns the catalog only and suppresses topic matches.
+	if strings.TrimSpace(args.Topic) != "" && mode != "overview" {
+		matches, resources, hints := t.contextMatches(ri.IndexID, ri.Repo, ri.Commit, args.Topic, mode, args.IncludeResources)
+		out.Matches = matches
+		out.Resources = resources
+		out.SuggestedNextCalls = append(hints, out.SuggestedNextCalls...)
+	}
 	return out, nil
+}
+
+// contextMatches searches the requested surfaces for topic and returns matches,
+// resource URI hints, and follow-up tool hints.
+func (t *Tools) contextMatches(indexID int64, repo, commit, topic, mode string, includeResources bool) (ContextMatches, []string, []ToolHint) {
+	var matches ContextMatches
+	var resources []string
+	var hints []ToolHint
+	include := func(surface string) bool { return mode == "all" || mode == surface }
+
+	if include("code") {
+		nodes, _ := t.s.NodesByLabel(indexID, topic)
+		for _, n := range nodes {
+			callers, _ := t.s.Callers(indexID, n.NodeID)
+			callees, _ := t.s.Callees(indexID, n.NodeID)
+			cc := CodeContext{Node: n, Callers: callers, Callees: callees}
+			if includeResources {
+				cc.Resource = graphNodeResource(repo, commit, n.NodeID)
+				resources = append(resources, cc.Resource)
+			}
+			matches.CodeSymbols = append(matches.CodeSymbols, cc)
+		}
+		if len(matches.CodeSymbols) > 0 {
+			hints = append(hints, ToolHint{Tool: "explain_symbol", Reason: "code symbol matched topic", Args: map[string]any{"repo": repo, "symbol": topic}})
+		}
+	}
+
+	if include("api") {
+		ops, _ := t.s.FindOperations(indexID, topic)
+		if len(ops) > 0 {
+			matches.Endpoints = ops
+			hints = append(hints, ToolHint{Tool: "find_endpoint", Reason: "HTTP operation matched topic", Args: map[string]any{"repo": repo, "query": topic}})
+			if includeResources {
+				for _, op := range ops {
+					if op.OperationID != "" {
+						resources = append(resources, fmt.Sprintf("openapi://%s/commit/%s/operation/%s", repo, commitOrLatest(commit), op.OperationID))
+					}
+				}
+			}
+		}
+	}
+
+	if include("api") || include("proto") {
+		schemas, _ := t.FindSchema(repo, topic)
+		matches.Schemas = append(matches.Schemas, schemas...)
+		if len(schemas) > 0 {
+			hints = append(hints, ToolHint{Tool: "find_schema", Reason: "schema/message matched topic", Args: map[string]any{"repo": repo, "query": topic}})
+		}
+	}
+
+	if include("proto") {
+		rpcs, _ := t.s.FindRPCs(indexID, topic, "")
+		for _, rpc := range rpcs {
+			expl, err := t.ExplainRPC(repo, rpc.Service, rpc.Name)
+			if err == nil {
+				matches.RPCs = append(matches.RPCs, expl)
+				if includeResources {
+					resources = append(resources, fmt.Sprintf("proto://%s/commit/%s/rpc/%s/%s/%s", repo, commitOrLatest(commit), rpcPackage(rpc.FullName, rpc.Service, rpc.Name), rpc.Service, rpc.Name))
+				}
+			}
+		}
+		if len(matches.RPCs) > 0 {
+			hints = append(hints, ToolHint{Tool: "find_rpc", Reason: "RPC matched topic", Args: map[string]any{"repo": repo, "query": topic}})
+		}
+	}
+
+	if include("library") {
+		libs, _ := t.FindPrivateLibrary(repo, topic)
+		if len(libs) > 0 {
+			matches.PrivateLibraries = libs
+			hints = append(hints, ToolHint{Tool: "find_private_library", Reason: "private library matched topic", Args: map[string]any{"repo": repo, "query": topic}})
+			if includeResources {
+				for _, lib := range libs {
+					resources = append(resources, "lib://"+lib.ModulePath)
+				}
+			}
+		}
+	}
+
+	return matches, resources, hints
 }
 
 // normalizeContextMode keeps overview distinct from all: unknown/empty -> all.

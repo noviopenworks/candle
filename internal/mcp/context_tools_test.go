@@ -81,3 +81,65 @@ func TestGetContextOverview(t *testing.T) {
 		t.Fatalf("expected limitations")
 	}
 }
+
+func TestGetContextTopicSearchesAllSurfaces(t *testing.T) {
+	tools := seedContextTools(t)
+	out, err := tools.GetContext(GetContextArgs{Repo: "org/inventory", Topic: "ReserveProduct", IncludeResources: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out.Topic != "ReserveProduct" {
+		t.Fatalf("topic mismatch: %q", out.Topic)
+	}
+	if len(out.Matches.CodeSymbols) != 1 {
+		t.Fatalf("expected one code symbol match, got %+v", out.Matches.CodeSymbols)
+	}
+	if len(out.Matches.CodeSymbols[0].Callees) != 1 {
+		t.Fatalf("expected codegraph-like callees: %+v", out.Matches.CodeSymbols[0])
+	}
+	if len(out.Matches.Schemas) == 0 {
+		t.Fatalf("expected schema match")
+	}
+	if len(out.Matches.RPCs) == 0 {
+		t.Fatalf("expected rpc match")
+	}
+	if len(out.Resources) == 0 {
+		t.Fatalf("expected resource URIs")
+	}
+}
+
+func TestGetContextCodeModeOnlyReturnsCode(t *testing.T) {
+	tools := seedContextTools(t)
+	out, err := tools.GetContext(GetContextArgs{Repo: "org/inventory", Topic: "ReserveProduct", Mode: "code"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out.Matches.CodeSymbols) != 1 {
+		t.Fatalf("expected code symbol match")
+	}
+	if len(out.Matches.Schemas) != 0 || len(out.Matches.RPCs) != 0 || out.Matches.Endpoints != nil {
+		t.Fatalf("code mode should not include non-code matches: %+v", out.Matches)
+	}
+}
+
+func TestGetContextOverviewModeSuppressesMatches(t *testing.T) {
+	tools := seedContextTools(t)
+	out, err := tools.GetContext(GetContextArgs{Repo: "org/inventory", Topic: "ReserveProduct", Mode: "overview"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out.Matches.CodeSymbols) != 0 || len(out.Matches.Schemas) != 0 || len(out.Matches.RPCs) != 0 || out.Matches.Endpoints != nil || out.Matches.PrivateLibraries != nil {
+		t.Fatalf("overview mode must suppress matches: %+v", out.Matches)
+	}
+	if out.Capabilities.CodeGraph.Count != 2 {
+		t.Fatalf("overview mode must still return the catalog")
+	}
+}
+
+func TestGetContextUnknownRepo(t *testing.T) {
+	tools := seedContextTools(t)
+	_, err := tools.GetContext(GetContextArgs{Repo: "org/missing"})
+	if err != ErrNotFound {
+		t.Fatalf("expected ErrNotFound, got %v", err)
+	}
+}
