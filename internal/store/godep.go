@@ -358,3 +358,34 @@ func (s *Store) PrivateConsumersAcrossRepos(modulePath string) ([]RepoConsumer, 
 	}
 	return out, nil
 }
+
+// SearchPrivateModulePaths returns distinct private module paths across all
+// indexes whose module path, doc synopsis, readme, or package path matches
+// query, plus path-only private dependencies matching by module path.
+func (s *Store) SearchPrivateModulePaths(query string) ([]string, error) {
+	q := "%" + strings.ToLower(query) + "%"
+	rows, err := s.DB.Query(`
+		SELECT module_path FROM private_libraries
+		WHERE LOWER(module_path) LIKE ? OR LOWER(COALESCE(doc_synopsis,'')) LIKE ? OR LOWER(COALESCE(readme,'')) LIKE ?
+		   OR id IN (SELECT private_library_id FROM private_library_exports WHERE LOWER(package_path) LIKE ?)
+		UNION
+		SELECT module_path FROM dependencies WHERE is_private=1 AND LOWER(module_path) LIKE ?`,
+		q, q, q, q, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	seen := map[string]bool{}
+	var out []string
+	for rows.Next() {
+		var mp string
+		if err := rows.Scan(&mp); err != nil {
+			return nil, err
+		}
+		if !seen[mp] {
+			seen[mp] = true
+			out = append(out, mp)
+		}
+	}
+	return out, rows.Err()
+}

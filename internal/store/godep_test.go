@@ -97,3 +97,25 @@ func TestPrivateConsumersAcrossRepos(t *testing.T) {
 		t.Fatalf("used symbols mismatch: %+v", byRepo["org/web"])
 	}
 }
+
+func TestSearchPrivateModulePaths(t *testing.T) {
+	s, err := Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	seedConsumer(t, s, "org", "web", "c1", "github.com/org/auth", "v1.2.0", "ValidateToken", "a.go", 1)
+	got, err := s.SearchPrivateModulePaths("auth")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[0] != "github.com/org/auth" {
+		t.Fatalf("expected [github.com/org/auth], got %v", got)
+	}
+	none, err := s.SearchPrivateModulePaths("nonexistent")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(none) != 0 {
+		t.Fatalf("expected no matches, got %v", none)
+	}
+}
