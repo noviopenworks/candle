@@ -164,7 +164,27 @@ imports — enough to assess the blast radius of changing `ValidateToken`.
 
 ---
 
-## 5. "Orient me in an unknown index"
+## 5. "Who consumes this library across the org?"
+
+`find_library_consumers` answers for a **single** repo; `explain_private_library`
+aggregates **every** indexed repo at once, from both sides.
+
+```json
+// request
+{"query": "auth"}
+```
+
+The response carries `provider` (the defining repo's exports, code-graph linked)
+and `consumers` — each consuming repo with its **pinned version** and the
+**used symbols**, every usage best-effort linked to the enclosing consumer node.
+Because all repos are aggregated in one call, an agent can spot **version skew**
+(repos stuck on older versions) and **usage hotspots** (the most-imported symbols)
+immediately, then follow `explain_symbol` on a linked consumer node to walk into
+the calling code.
+
+---
+
+## 6. "Orient me in an unknown index"
 
 ```json
 list_repos    {}                                   // what's indexed?
