@@ -9,6 +9,42 @@ Assume two repos are indexed: `org/inventory-service` (HTTP + gRPC + Go) and
 
 ---
 
+## 0. Start with `get_context`
+
+The recommended entry point. Call it with just a repo to discover what candlegraph
+knows, then with a topic for focused, Context7-style retrieval.
+
+**Step 1 — repo catalog** (`get_context`):
+
+```json
+// request
+{"repo": "org/inventory-service"}
+// response (trimmed) — capability counts + the precise tools per surface
+{"repo": {"repo": "org/inventory-service", "commit": "abc123", "node_count": 412},
+ "capabilities": {"code_graph": {"count": 412, "tools": ["query_repo", "explain_symbol", "..."]},
+                  "openapi": {"count": 1}, "protobuf": {"count": 1}, "private_libraries": {"count": 1}},
+ "suggested_next_calls": [{"tool": "get_context", "args": {"topic": "<symbol …>"}}],
+ "limitations": ["OpenAPI endpoint implementation linking is not yet available …"]}
+```
+
+**Step 2 — focused topic** (`get_context` with `topic`):
+
+```json
+// request
+{"repo": "org/inventory-service", "topic": "ReserveProduct", "include_resources": true}
+// response (trimmed) — matches across surfaces + resource URIs + follow-up hints
+{"matches": {"code_symbols": [{"node": {"Label": "ReserveProduct"}, "callees": [/* one hop */]}],
+             "schemas": [{"name": "ReserveProductRequest"}], "rpcs": [/* … */]},
+ "resources": ["graph://org/inventory-service/commit/abc123/node/handler_reserve"],
+ "suggested_next_calls": [{"tool": "explain_symbol", "args": {"symbol": "ReserveProduct"}}]}
+```
+
+Once `get_context` identifies the relevant surface, follow `suggested_next_calls` into the
+precise tools (`explain_symbol`, `explain_rpc`, `explain_endpoint`, `find_private_library`),
+as the next examples show.
+
+---
+
 ## 1. "Which handler implements the reserve-product endpoint?"
 
 Find the endpoint, then explain it, then walk into the code.

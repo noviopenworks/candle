@@ -28,7 +28,7 @@ or *"what breaks if I change this proto message?"* resolve across repos.
                     └─────────┬─────────┘
                               ▼
                     ┌───────────────────┐
-                    │  MCP stdio server │  13 tools · 5 resource schemes
+                    │  MCP stdio server │  14 tools · 5 resource schemes
                     └───────────────────┘
                               ▼
                          AI agent
@@ -54,6 +54,9 @@ go run ./cmd/candlegraph serve --db intel.db
 Then point an MCP client (Claude Desktop, Claude Code, any MCP-compatible agent)
 at the `serve` command. See **[docs/getting-started.md](docs/getting-started.md)**.
 
+Agents typically start with `get_context`: call it with a repo for a catalog of
+what candlegraph knows, or with a repo plus a topic for focused Context7-style retrieval.
+
 ## Documentation
 
 | Doc | What's in it |
@@ -61,7 +64,7 @@ at the `serve` command. See **[docs/getting-started.md](docs/getting-started.md)
 | [Getting started](docs/getting-started.md) | Build, index, serve, connect a client |
 | [Concepts](docs/concepts.md) | The three layers, the graph model, cross-repo joins, commit pinning |
 | [Configuration](docs/configuration.md) | Full `manifest.yaml` reference |
-| [Tools reference](docs/tools.md) | All 13 MCP tools with arguments and example I/O |
+| [Tools reference](docs/tools.md) | All 14 MCP tools with arguments and example I/O |
 | [Resources reference](docs/resources.md) | The 5 URI schemes for commit-pinned lookups |
 | [Examples](docs/examples.md) | End-to-end walkthroughs (find a handler, impact analysis, consumers) |
 | [Architecture](docs/architecture.md) | Internal packages, data flow, storage layout |
