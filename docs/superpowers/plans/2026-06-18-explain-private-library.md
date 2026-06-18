@@ -36,7 +36,7 @@ base-ref: 7028fefe6d7fa8da8e0c1a754818b23c7726f202
 - Consumes (existing): `UpsertIndex`, `ReplaceGoDeps`, `PrivateUsagesByModule(indexID, modulePath)`, `DependencyByModule(indexID, modulePath)`, `s.DB`.
 - Produces: type `RepoConsumer{ IndexID int64; Repo, Commit, Version string; UsedPackages []string; UsedSymbols []PrivateUsage }`; `func (s *Store) PrivateConsumersAcrossRepos(modulePath string) ([]RepoConsumer, error)`.
 
-- [ ] **Step 1: Write the failing store test**
+- [x] **Step 1: Write the failing store test**
 
 Append to `internal/store/godep_test.go` (create the file with `package store` + imports if it does not exist):
 
@@ -83,12 +83,12 @@ func TestPrivateConsumersAcrossRepos(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store -run TestPrivateConsumersAcrossRepos -v`
 Expected: FAIL — undefined `PrivateConsumersAcrossRepos` / `RepoConsumer`.
 
-- [ ] **Step 3: Implement the cross-index aggregation**
+- [x] **Step 3: Implement the cross-index aggregation**
 
 Add to `internal/store/godep.go`:
 
@@ -172,12 +172,12 @@ func (s *Store) PrivateConsumersAcrossRepos(modulePath string) ([]RepoConsumer, 
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store -run TestPrivateConsumersAcrossRepos -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/store/godep.go internal/store/godep_test.go

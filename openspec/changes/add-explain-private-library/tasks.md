@@ -6,10 +6,10 @@
 
 ## 1. Cross-index consumer aggregation (store, test-first)
 
-- [ ] 1.1 Add a failing store test for cross-index aggregation by module path (seed 2 indexes consuming the same private module + a provider index)
-- [ ] 1.2 Run the store test and confirm it fails (undefined aggregation method)
-- [ ] 1.3 Implement the cross-index aggregation query in `internal/store/godep.go` joining `private_library_usages`/`dependencies` → `indexes` → `repos` by `module_path`, returning per-repo identity, version, used packages, used symbols
-- [ ] 1.4 Run the store test and confirm it passes
+- [x] 1.1 Add a failing store test for cross-index aggregation by module path (seed 2 indexes consuming the same private module + a provider index)
+- [x] 1.2 Run the store test and confirm it fails (undefined aggregation method)
+- [x] 1.3 Implement the cross-index aggregation query in `internal/store/godep.go` joining `private_library_usages`/`dependencies` → `indexes` → `repos` by `module_path`, returning per-repo identity, version, used packages, used symbols
+- [x] 1.4 Run the store test and confirm it passes
 
 ## 2. ExplainPrivateLibrary provider + consumer aggregation (test-first)
 

@@ -280,3 +280,81 @@ func (s *Store) PrivateLibraryByModule(modulePath string) (PrivateLibraryRow, bo
 	r.Exports = exps
 	return r, true, nil
 }
+
+// RepoConsumer is one repo's consumption of a private module (cross-repo aggregation).
+type RepoConsumer struct {
+	IndexID      int64          `json:"-"`
+	Repo         string         `json:"repo"`
+	Commit       string         `json:"commit"`
+	Version      string         `json:"version"`
+	UsedPackages []string       `json:"used_packages"`
+	UsedSymbols  []PrivateUsage `json:"used_symbols"`
+}
+
+// PrivateConsumersAcrossRepos aggregates, across all indexes, every repo that
+// uses or depends on modulePath. It collects the consuming index ids first
+// (closing the cursor) and then reuses index-scoped helpers, per the :memory:
+// pooled-connection caveat.
+func (s *Store) PrivateConsumersAcrossRepos(modulePath string) ([]RepoConsumer, error) {
+	rows, err := s.DB.Query(`
+		SELECT DISTINCT i.id, r.org, r.name, COALESCE(i.commit_sha,'')
+		FROM indexes i JOIN repos r ON r.id=i.repo_id
+		WHERE i.id IN (SELECT index_id FROM private_library_usages WHERE module_path=?)
+		   OR i.id IN (SELECT index_id FROM dependencies WHERE module_path=? AND is_private=1)
+		ORDER BY r.org, r.name`, modulePath, modulePath)
+	if err != nil {
+		return nil, err
+	}
+	type ident struct {
+		id     int64
+		repo   string
+		commit string
+	}
+	var idents []ident
+	for rows.Next() {
+		var it ident
+		var org, name string
+		if err := rows.Scan(&it.id, &org, &name, &it.commit); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		it.repo = org + "/" + name
+		idents = append(idents, it)
+	}
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return nil, err
+	}
+	rows.Close()
+
+	var out []RepoConsumer
+	for _, it := range idents {
+		usages, err := s.PrivateUsagesByModule(it.id, modulePath)
+		if err != nil {
+			return nil, err
+		}
+		rc := RepoConsumer{IndexID: it.id, Repo: it.repo, Commit: it.commit, UsedSymbols: usages}
+		if dep, found, err := s.DependencyByModule(it.id, modulePath); err != nil {
+			return nil, err
+		} else if found {
+			rc.Version = dep.Version
+		}
+		if rc.Version == "" {
+			for _, u := range usages {
+				if u.Version != "" {
+					rc.Version = u.Version
+					break
+				}
+			}
+		}
+		seen := map[string]bool{}
+		for _, u := range usages {
+			if u.PackagePath != "" && !seen[u.PackagePath] {
+				seen[u.PackagePath] = true
+				rc.UsedPackages = append(rc.UsedPackages, u.PackagePath)
+			}
+		}
+		out = append(out, rc)
+	}
+	return out, nil
+}
