@@ -56,6 +56,9 @@ func TestExplainPrivateLibraryProviderAndConsumers(t *testing.T) {
 	if out.Provider.ModulePath != "github.com/org/auth" {
 		t.Fatalf("provider module mismatch: %+v", out.Provider)
 	}
+	if out.Provider.Repo != "org/auth-lib" || out.Provider.Commit != "p1" {
+		t.Fatalf("provider defining repo/commit mismatch: %+v", out.Provider)
+	}
 	if len(out.Provider.Exports) != 1 || !out.Provider.Exports[0].Resolved || out.Provider.Exports[0].Node == nil {
 		t.Fatalf("expected resolved export node, got %+v", out.Provider.Exports)
 	}

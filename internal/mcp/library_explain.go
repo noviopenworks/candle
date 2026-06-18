@@ -97,7 +97,10 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 		return LibraryExplanation{}, err
 	} else if found {
 		out.Provider.DocSynopsis = lib.DocSynopsis
-		out.Provider.Commit = ""
+		if repo, commit, ok := t.repoIdentity(lib.IndexID); ok {
+			out.Provider.Repo = repo
+			out.Provider.Commit = commit
+		}
 		pkgSeen := map[string]bool{}
 		for _, e := range lib.Exports {
 			ei := ExportInfo{PackagePath: e.PackagePath, Symbol: e.Symbol, Kind: e.Kind, Doc: e.Doc}
@@ -130,6 +133,20 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 		out.Consumers = append(out.Consumers, ci)
 	}
 	return out, nil
+}
+
+// repoIdentity resolves a defining index id to its repo (org/name) and commit.
+func (t *Tools) repoIdentity(indexID int64) (string, string, bool) {
+	all, err := t.reg.List()
+	if err != nil {
+		return "", "", false
+	}
+	for _, ri := range all {
+		if ri.IndexID == indexID {
+			return ri.Repo, ri.Commit, true
+		}
+	}
+	return "", "", false
 }
 
 // resolveExportNode links an export to its provider node, preferring the stored
