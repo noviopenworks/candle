@@ -1,8 +1,8 @@
 # MCP tools reference
 
-The server advertises **13 tools**, in this registration order:
+The server advertises **14 tools**, in this registration order:
 
-`list_repos` · `resolve_repo` · `query_repo` · `explain_symbol` ·
+`list_repos` · `resolve_repo` · `get_context` · `query_repo` · `explain_symbol` ·
 `get_file_context` · `list_apis` · `find_endpoint` · `explain_endpoint` ·
 `find_schema` · `find_rpc` · `explain_rpc` · `find_private_library` ·
 `find_library_consumers`
@@ -51,6 +51,40 @@ Resolve a repo query to a snapshot: exact match first, else fuzzy candidates.
 ```
 
 For a fuzzy query like `"invent"`, `best` is null and `candidates` lists matches.
+
+### `get_context`
+
+Context7-style retrieval entry point — the recommended **first** call. With only
+`repo`, it returns a catalog of what candlegraph knows about that repo (code graph,
+OpenAPI, protobuf, private libraries) with counts and the precise follow-up tools for
+each surface. With `topic`, it searches code symbols, HTTP endpoints, schemas, RPCs,
+proto messages, and private libraries in that repo, returning code matches with one-hop
+callers/callees.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity (`org/name`) |
+| `topic` | string | optional symbol / endpoint / RPC / schema / library topic |
+| `mode` | string | optional: `overview`, `code`, `api`, `proto`, `library`, `all` (`overview` returns the catalog only and suppresses topic matches; unknown/empty ⇒ `all`) |
+| `depth` | number | optional; v1 supports one-hop code context |
+| `include_resources` | boolean | include exact resource URI hints |
+
+**Overview request:**
+
+```json
+{"repo": "org/inventory-service"}
+```
+
+**Topic request:**
+
+```json
+{"repo": "org/inventory-service", "topic": "ReserveProduct", "include_resources": true}
+```
+
+**Response** — a typed `repo` summary, grouped `capabilities`, `matches` (in topic mode),
+`resources` URI hints, `suggested_next_calls`, and explicit `limitations`. Follow the
+`suggested_next_calls` into precise tools (`explain_symbol`, `explain_rpc`,
+`explain_endpoint`, `find_private_library`) once a surface is identified.
 
 ### `query_repo`
 

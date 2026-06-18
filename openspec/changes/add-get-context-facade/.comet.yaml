@@ -1,0 +1,23 @@
+workflow: full
+phase: verify
+context_compression: off
+build_mode: executing-plans
+build_pause: null
+subagent_dispatch: null
+tdd_mode: tdd
+isolation: branch
+verify_mode: full
+auto_transition: true
+base_ref: 3f87c8a97f10f8258d4ba4ea5e0a672d95d5b5df
+design_doc: docs/superpowers/specs/2026-06-18-get-context-facade-design.md
+plan: docs/superpowers/plans/2026-06-18-get-context-facade.md
+verify_result: pending
+verification_report: docs/superpowers/reports/2026-06-18-add-get-context-facade-verify.md
+branch_status: pending
+created_at: 2026-06-18
+verified_at: null
+archived: false
+handoff_context: openspec/changes/add-get-context-facade/.comet/handoff/design-context.json
+handoff_hash: bf3265978bebb94d552ee914292fe0c113d9c4266c25888eddd7294ec854cd5d
+build_command: go build ./...
+verify_command: go test ./...
