@@ -17,6 +17,7 @@ import (
 var ToolNames = []string{
 	"list_repos",
 	"resolve_repo",
+	"get_context",
 	"query_repo",
 	"explain_symbol",
 	"get_file_context",
@@ -42,6 +43,7 @@ func NewServer(s *store.Store) *mcpsdk.Server {
 
 	registerListRepos(srv, tools)
 	registerResolveRepo(srv, tools)
+	registerGetContext(srv, tools)
 	registerQueryRepo(srv, tools)
 	registerExplainSymbol(srv, tools)
 	registerGetFileContext(srv, tools)
@@ -101,6 +103,19 @@ func registerResolveRepo(srv *mcpsdk.Server, tools *Tools) {
 			return nil, nil, err
 		}
 		out := map[string]any{"best": best, "candidates": candidates}
+		return textResult(mustJSON(out)), nil, nil
+	})
+}
+
+func registerGetContext(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "get_context",
+		Description: "Context7-style retrieval entry point: repo catalog or topic context across code, APIs, protobuf, and private libraries.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args GetContextArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.GetContext(args)
+		if err != nil {
+			return toolErr(err)
+		}
 		return textResult(mustJSON(out)), nil, nil
 	})
 }
