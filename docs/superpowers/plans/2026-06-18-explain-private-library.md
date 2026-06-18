@@ -804,17 +804,17 @@ git commit -m "docs: document explain_private_library"
 
 **Files:** all files touched above.
 
-- [ ] **Step 1: Full test suite**
+- [x] **Step 1: Full test suite**
 
 Run: `go test ./...`
 Expected: PASS.
 
-- [ ] **Step 2: Static checks**
+- [x] **Step 2: Static checks**
 
 Run: `go vet ./...`
 Expected: PASS.
 
-- [ ] **Step 3: Inspect diff scope**
+- [x] **Step 3: Inspect diff scope**
 
 Run: `git diff 7028fefe6d7fa8da8e0c1a754818b23c7726f202 --stat`
 Expected: only `internal/store/godep.go`, `internal/store/godep_test.go`, `internal/mcp/library_explain.go`, `internal/mcp/library_explain_test.go`, `internal/mcp/server.go`, `internal/mcp/e2e_surface_test.go`, the three docs (plus OpenSpec/comet + plan/design artifacts).
