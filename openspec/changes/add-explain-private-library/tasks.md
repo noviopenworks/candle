@@ -46,6 +46,8 @@
 
 ## 7. Final verification
 
-- [ ] 7.1 Run `go test ./...` and confirm pass
-- [ ] 7.2 Run `go vet ./...` and confirm pass
-- [ ] 7.3 Inspect `git diff` and confirm scope matches the plan
+- [x] 7.1 Run `go test ./...` and confirm pass
+- [x] 7.2 Run `go vet ./...` and confirm pass
+- [x] 7.3 Inspect `git diff` and confirm scope matches the plan
+
+<!-- Code review (subagent-driven build, reviewed inline between/after tasks): no Critical/Important findings. Fixed: provider section left Repo/Commit empty despite spec requiring defining repo+commit (now populated via registry index lookup + test assertion). By-design: best-effort consumer linking with unresolved markers; version from dependency pin falling back to usage version. -->
