@@ -120,6 +120,39 @@ func TestExplainPrivateLibraryRespectsScope(t *testing.T) {
 	}
 }
 
+func TestExplainPrivateLibraryIgnoresOutOfScopeProvider(t *testing.T) {
+	s, err := store.Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	inScopeID, err := s.UpsertIndex("org", "auth-lib", "p1", "main", "/g/auth.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(inScopeID, store.GoDepBundle{Libraries: []store.PrivateLibraryBundle{{
+		Library: store.PrivateLibrary{ModulePath: "github.com/org/auth"},
+		Exports: []store.PrivateExport{{PackagePath: "github.com/org/auth", Symbol: "F"}},
+	}}}); err != nil {
+		t.Fatal(err)
+	}
+	outOfScopeID, err := s.UpsertIndex("org", "platform-go", "p2", "main", "/g/platform.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(outOfScopeID, store.GoDepBundle{Libraries: []store.PrivateLibraryBundle{{
+		Library: store.PrivateLibrary{ModulePath: "github.com/org/platform-go"},
+		Exports: []store.PrivateExport{{PackagePath: "github.com/org/platform-go", Symbol: "G"}},
+	}}}); err != nil {
+		t.Fatal(err)
+	}
+
+	tools := NewToolsScoped(s, map[int64]bool{inScopeID: true})
+	_, err = tools.ExplainPrivateLibrary("platform")
+	if err != ErrNotFound {
+		t.Fatalf("out-of-scope provider should be hidden, got %v", err)
+	}
+}
+
 func TestExplainPrivateLibraryProviderLess(t *testing.T) {
 	// A module consumed but with no indexed provider: provider section empty,
 	// consumers still returned, no error.

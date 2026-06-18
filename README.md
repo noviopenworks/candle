@@ -57,6 +57,19 @@ at the `serve` command. See **[docs/getting-started.md](docs/getting-started.md)
 Agents typically start with `get_context`: call it with a repo for a catalog of
 what candlegraph knows, or with a repo plus a topic for focused Context7-style retrieval.
 
+To run isolated MCP instances over the same store, pass a manifest subset to
+`serve --config`. For example,
+[`examples/serve-scope.yaml`](examples/serve-scope.yaml) exposes only
+`VendSYSTEM/service-inventory` and `VendSYSTEM/warehouse-service`:
+
+```bash
+go run ./cmd/candlegraph serve --db intel.db --config examples/serve-scope.yaml
+```
+
+Use a different scope file per MCP client; omit `--config` only when the client
+should use the default `manifest.yaml` scope or, if no config is present, see all
+indexed snapshots.
+
 ## Documentation
 
 | Doc | What's in it |

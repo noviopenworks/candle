@@ -84,6 +84,34 @@ go:
     - github.com/noviopenworks/   # anything under this org is "private"
 ```
 
+## Serve scope
+
+`candlegraph serve` can use the same manifest shape as a serve-time scope. When
+started with `--config <path>`, the MCP server exposes only snapshots matching the
+listed repos. Without an explicit `--config`, serve looks for the default
+`manifest.yaml` in the working directory; if it exists, that manifest scopes the
+server. If no config is supplied or discovered, serve remains unscoped and exposes
+all indexed snapshots in the SQLite store.
+
+Each scope entry is resolved by `repo` plus `commit`:
+
+- If `commit` is present, serve exposes that exact indexed snapshot.
+- If `commit` is omitted, serve exposes the latest indexed snapshot for that repo.
+- If a listed repo or pinned commit is not present in the store, serve prints a
+  scope warning and continues with the snapshots it can resolve.
+
+The `graph:` field is still required because the loader validates manifests for
+indexing. For serve-only scope files, keep `graph:` pointed at the Graphify graph
+used when the repo was indexed; serve itself resolves the scope from `repo` and
+`commit` in the database.
+
+Example: run an MCP instance that exposes only inventory and warehouse from a
+larger multi-repo store:
+
+```bash
+candlegraph serve --db intel.db --config examples/serve-scope.yaml
+```
+
 ## Worked examples
 
 ### HTTP service with OpenAPI

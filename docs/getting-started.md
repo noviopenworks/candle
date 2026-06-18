@@ -95,6 +95,21 @@ go run ./cmd/candlegraph serve --db intel.db
 The process now speaks MCP on stdin/stdout. It blocks until the client
 disconnects or the context is cancelled.
 
+### Running multiple scoped instances
+
+Use `--config` with a manifest subset to run isolated MCP instances over the same
+SQLite store. For example, [`examples/serve-scope.yaml`](../examples/serve-scope.yaml)
+exposes only `VendSYSTEM/service-inventory` and `VendSYSTEM/warehouse-service`:
+
+```bash
+go run ./cmd/candlegraph serve --db intel.db --config examples/serve-scope.yaml
+```
+
+Start another `serve` process with a different scope file to give another MCP
+client a different repo view. If `--config` is omitted, serve discovers
+`manifest.yaml` in the working directory when present; if no config is found, it
+serves every indexed snapshot.
+
 ## 5. Connect a client
 
 ### Claude Desktop

@@ -34,14 +34,14 @@
 
 ## 5. Worked example + manual verification: inventory + warehouse
 
-- [ ] 5.1 Provide an example serve config scoping to exactly `VendSYSTEM/service-inventory` and `VendSYSTEM/warehouse-service` (e.g. `examples/serve-scope.yaml`)
-- [ ] 5.2 Manually verify against a multi-repo store: with that config, `list_repos` returns only service-inventory + warehouse-service; service-user / bff-service / platform-go are omitted from every tool
-- [ ] 5.3 Record the manual verification result in the verification report
+- [x] 5.1 Provide an example serve config scoping to exactly `VendSYSTEM/service-inventory` and `VendSYSTEM/warehouse-service` (e.g. `examples/serve-scope.yaml`)
+- [x] 5.2 Manually verify against a multi-repo store: with that config, `list_repos` returns only service-inventory + warehouse-service; service-user / bff-service / platform-go are omitted from every tool
+- [x] 5.3 Record the manual verification result in the verification report
 
 ## 6. Documentation
 
-- [ ] 6.1 Update `docs/configuration.md`: serve-time scope config, `commit` pinning semantics, discovery/precedence, missing-snapshot warning
-- [ ] 6.2 Update `docs/getting-started.md` / `README.md`: running multiple isolated, config-scoped MCP instances; the inventory+warehouse example
+- [x] 6.1 Update `docs/configuration.md`: serve-time scope config, `commit` pinning semantics, discovery/precedence, missing-snapshot warning
+- [x] 6.2 Update `docs/getting-started.md` / `README.md`: running multiple isolated, config-scoped MCP instances; the inventory+warehouse example
 
 ## 7. Final verification
 

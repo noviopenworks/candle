@@ -541,7 +541,7 @@ git commit -m "feat(cli): serve scopes to a discovered/explicit config (back-com
 - Create: `examples/serve-scope.yaml`
 - Modify: `docs/configuration.md`, `docs/getting-started.md`, `README.md`
 
-- [ ] **Step 1: Add an example serve-scope manifest**
+- [x] **Step 1: Add an example serve-scope manifest**
 
 Create `examples/serve-scope.yaml` (a manifest subset; `graph:` is required by the loader and may point at the same graphs used to index):
 
@@ -557,12 +557,12 @@ repos:
     commit: 85eee1188105bd2f0805d94dfeab487113d4b2a6
 ```
 
-- [ ] **Step 2: Document serve scoping**
+- [x] **Step 2: Document serve scoping**
 
 In `docs/configuration.md`, add a "Serve scope" section: serve reads `--config` (default `manifest.yaml`) and exposes only the listed `(repo, commit)` snapshots; `commit` omitted ⇒ latest; missing snapshot ⇒ warning; no config ⇒ serve all. Note `graph:` is still required by the loader (point it at the index graphs).
 In `docs/getting-started.md` + `README.md`, add a short "Running multiple scoped instances" note with the inventory+warehouse example.
 
-- [ ] **Step 3: Manual verification against a multi-repo store**
+- [x] **Step 3: Manual verification against a multi-repo store**
 
 Run (using the existing 5-repo store at /tmp/vs/intel.db, with a scope file pinning the two repos' commits):
 
@@ -575,7 +575,7 @@ go build -o /tmp/candlegraph ./cmd/candlegraph
 
 Expected: `list_repos` shows exactly the two configured repos; service-user / bff-service / platform-go are omitted. Record the result in the verification report.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add examples/serve-scope.yaml docs/configuration.md docs/getting-started.md README.md

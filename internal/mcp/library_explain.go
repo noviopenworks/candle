@@ -72,6 +72,20 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 	if len(paths) == 0 {
 		return LibraryExplanation{}, ErrNotFound
 	}
+	visible := paths[:0]
+	for _, p := range paths {
+		ok, err := t.privateModuleInScope(p)
+		if err != nil {
+			return LibraryExplanation{}, err
+		}
+		if ok {
+			visible = append(visible, p)
+		}
+	}
+	paths = visible
+	if len(paths) == 0 {
+		return LibraryExplanation{}, ErrNotFound
+	}
 	best := paths[0]
 	for _, p := range paths {
 		if p == strings.TrimSpace(query) {
@@ -95,7 +109,7 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 
 	if lib, found, err := t.s.PrivateLibraryByModule(best); err != nil {
 		return LibraryExplanation{}, err
-	} else if found {
+	} else if found && t.reg.InScope(lib.IndexID) {
 		out.Provider.DocSynopsis = lib.DocSynopsis
 		if repo, commit, ok := t.repoIdentity(lib.IndexID); ok {
 			out.Provider.Repo = repo
@@ -136,6 +150,24 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 		out.Consumers = append(out.Consumers, ci)
 	}
 	return out, nil
+}
+
+func (t *Tools) privateModuleInScope(modulePath string) (bool, error) {
+	if lib, found, err := t.s.PrivateLibraryByModule(modulePath); err != nil {
+		return false, err
+	} else if found {
+		return t.reg.InScope(lib.IndexID), nil
+	}
+	cons, err := t.s.PrivateConsumersAcrossRepos(modulePath)
+	if err != nil {
+		return false, err
+	}
+	for _, c := range cons {
+		if t.reg.InScope(c.IndexID) {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 // repoIdentity resolves a defining index id to its repo (org/name) and commit.

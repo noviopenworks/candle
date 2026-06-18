@@ -1,0 +1,9 @@
+# Serve-scope example: expose only inventory + warehouse from a larger store.
+# `candlegraph serve --db intel.db --config examples/serve-scope.yaml`
+repos:
+  - repo: VendSYSTEM/service-inventory
+    graph: /abs/path/service-inventory/graphify-out/graph.json
+    commit: 6b5aaa507dd54b5f32e904950261cfb0234ae411
+  - repo: VendSYSTEM/warehouse-service
+    graph: /abs/path/warehouse-service/graphify-out/graph.json
+    commit: 85eee1188105bd2f0805d94dfeab487113d4b2a6
