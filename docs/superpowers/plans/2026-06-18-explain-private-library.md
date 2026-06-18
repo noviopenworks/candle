@@ -690,11 +690,11 @@ git commit -m "test(mcp): explain_private_library boundary cases"
 **Interfaces:**
 - Consumes: `mcpsdk.AddTool`, `Tools.ExplainPrivateLibrary`, helpers `textResult`/`mustJSON`/`toolErr`, `context`.
 
-- [ ] **Step 1: Add to ToolNames**
+- [x] **Step 1: Add to ToolNames**
 
 In `internal/mcp/server.go` `var ToolNames`, add `"explain_private_library",` immediately after `"find_library_consumers",`.
 
-- [ ] **Step 2: Register in NewServer**
+- [x] **Step 2: Register in NewServer**
 
 In `NewServer`, add after `registerFindLibraryConsumers(srv, tools)`:
 
@@ -702,7 +702,7 @@ In `NewServer`, add after `registerFindLibraryConsumers(srv, tools)`:
 	registerExplainPrivateLibrary(srv, tools)
 ```
 
-- [ ] **Step 3: Add registration function**
+- [x] **Step 3: Add registration function**
 
 Add after `registerFindLibraryConsumers`:
 
@@ -725,16 +725,16 @@ func registerExplainPrivateLibrary(srv *mcpsdk.Server, tools *Tools) {
 }
 ```
 
-- [ ] **Step 4: Update e2e surface comments**
+- [x] **Step 4: Update e2e surface comments**
 
 In `internal/mcp/e2e_surface_test.go`, update the two comments referencing "14 tools" / "advertises all 14" to "15". The assertion loops over `ToolNames`, so adding the entry there extends the checked surface.
 
-- [ ] **Step 5: Run MCP tests**
+- [x] **Step 5: Run MCP tests**
 
 Run: `go test ./internal/mcp -v`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/mcp/server.go internal/mcp/e2e_surface_test.go

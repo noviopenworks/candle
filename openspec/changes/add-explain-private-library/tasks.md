@@ -34,9 +34,9 @@
 
 ## 5. MCP registration and surface
 
-- [ ] 5.1 Add `"explain_private_library"` to `ToolNames` and register via `registerExplainPrivateLibrary` in `internal/mcp/server.go`
-- [ ] 5.2 Update `internal/mcp/e2e_surface_test.go` advertised count/comments 14 → 15
-- [ ] 5.3 Run `go test ./internal/mcp -v` and confirm pass
+- [x] 5.1 Add `"explain_private_library"` to `ToolNames` and register via `registerExplainPrivateLibrary` in `internal/mcp/server.go`
+- [x] 5.2 Update `internal/mcp/e2e_surface_test.go` advertised count/comments 14 → 15
+- [x] 5.3 Run `go test ./internal/mcp -v` and confirm pass
 
 ## 6. Documentation
 
