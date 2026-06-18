@@ -34,3 +34,5 @@
 - [x] 5.1 Run `go test ./...` and confirm pass
 - [x] 5.2 Run `go vet ./...` and confirm pass
 - [x] 5.3 Inspect `git diff` and confirm it only contains `get_context` implementation, tests, registration, and docs
+
+<!-- Code review: performed inline (no subagent dispatch, per user's no-agent-spawn preference for this build). No Critical/Important findings. Minor finding fixed: deduped the nodes COUNT query in get_context overview. Accepted by-design: best-effort error handling (store query errors swallowed for graceful partial context) and Depth as a documented v1 no-op. -->
