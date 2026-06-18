@@ -121,6 +121,9 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 		return LibraryExplanation{}, err
 	}
 	for _, c := range cons {
+		if !t.reg.InScope(c.IndexID) {
+			continue
+		}
 		ci := ConsumerInfo{Repo: c.Repo, Commit: c.Commit, Version: c.Version, UsedPackages: c.UsedPackages}
 		for _, u := range c.UsedSymbols {
 			ul := UsageLink{Usage: u}

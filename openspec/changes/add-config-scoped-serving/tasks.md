@@ -27,10 +27,10 @@
 
 ## 4. Constrain cross-repo aggregation to the scope
 
-- [ ] 4.1 Add a failing test: `explain_private_library` / `find_library_consumers` cross-repo aggregation under a scope only aggregates configured repos
-- [ ] 4.2 Run and confirm it fails
-- [ ] 4.3 Constrain `store.PrivateConsumersAcrossRepos` (or the Tools-layer caller) to the allowed `index_id`s per the design decision
-- [ ] 4.4 Run and confirm it passes
+- [x] 4.1 Add a failing test: `explain_private_library` / `find_library_consumers` cross-repo aggregation under a scope only aggregates configured repos
+- [x] 4.2 Run and confirm it fails
+- [x] 4.3 Constrain `store.PrivateConsumersAcrossRepos` (or the Tools-layer caller) to the allowed `index_id`s per the design decision
+- [x] 4.4 Run and confirm it passes
 
 ## 5. Worked example + manual verification: inventory + warehouse
 

@@ -84,6 +84,42 @@ func TestExplainPrivateLibraryUnknownQuery(t *testing.T) {
 	}
 }
 
+func TestExplainPrivateLibraryRespectsScope(t *testing.T) {
+	s, err := store.Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Provider is in scope; consumer is indexed but outside the served scope.
+	pid, err := s.UpsertIndex("org", "auth-lib", "p1", "main", "/g/a.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(pid, store.GoDepBundle{Libraries: []store.PrivateLibraryBundle{{
+		Library: store.PrivateLibrary{ModulePath: "github.com/org/auth", DocSynopsis: "x"},
+		Exports: []store.PrivateExport{{PackagePath: "github.com/org/auth", Symbol: "F"}},
+	}}}); err != nil {
+		t.Fatal(err)
+	}
+	cid, err := s.UpsertIndex("org", "web", "c1", "main", "/g/web.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ReplaceGoDeps(cid, store.GoDepBundle{
+		Dependencies: []store.Dependency{{ModulePath: "github.com/org/auth", Version: "v1", Ecosystem: "go", IsPrivate: true, Direct: true}},
+		Usages:       []store.PrivateUsage{{ModulePath: "github.com/org/auth", Version: "v1", PackagePath: "github.com/org/auth", Symbol: "F", File: "x.go", Line: 1}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	tools := NewToolsScoped(s, map[int64]bool{pid: true})
+	out, err := tools.ExplainPrivateLibrary("github.com/org/auth")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out.Consumers) != 0 {
+		t.Fatalf("out-of-scope consumer must be filtered, got %+v", out.Consumers)
+	}
+}
+
 func TestExplainPrivateLibraryProviderLess(t *testing.T) {
 	// A module consumed but with no indexed provider: provider section empty,
 	// consumers still returned, no error.

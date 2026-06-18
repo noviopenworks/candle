@@ -396,7 +396,7 @@ git commit -m "feat(mcp): scoped Tools/Server/Serve entry points (additive)"
 **Interfaces:**
 - Consumes: `t.reg.InScope(indexID)`; `store.RepoConsumer.IndexID`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `internal/mcp/library_explain_test.go`:
 
@@ -430,12 +430,12 @@ func TestExplainPrivateLibraryRespectsScope(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test, verify it fails**
+- [x] **Step 2: Run test, verify it fails**
 
 Run: `go test ./internal/mcp -run TestExplainPrivateLibraryRespectsScope -v`
 Expected: FAIL — consumer still present (no scope filter yet).
 
-- [ ] **Step 3: Filter consumers by scope**
+- [x] **Step 3: Filter consumers by scope**
 
 In `internal/mcp/library_explain.go`, where consumers are appended in `ExplainPrivateLibrary`, skip out-of-scope index ids:
 
@@ -452,12 +452,12 @@ In `internal/mcp/library_explain.go`, where consumers are appended in `ExplainPr
 
 (`find_library_consumers` is already single-repo via `Resolve`, which is scope-filtered in Task 1, so an out-of-scope repo resolves to not-found — no change needed there. If a test shows otherwise, add the same `InScope` guard.)
 
-- [ ] **Step 4: Run tests, verify pass**
+- [x] **Step 4: Run tests, verify pass**
 
 Run: `go test ./internal/mcp -run TestExplainPrivateLibrary -v`
 Expected: PASS (all explain tests, incl. the new scope test).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp/library_explain.go internal/mcp/library_explain_test.go
