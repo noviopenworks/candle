@@ -3,6 +3,8 @@ comet_change: harden-linker-and-store-errors
 role: technical-design
 canonical_spec: openspec
 status: ready-to-build
+archived-with: 2026-06-20-harden-linker-and-store-errors
+status: final
 ---
 
 # Design Doc: harden-linker-and-store-errors

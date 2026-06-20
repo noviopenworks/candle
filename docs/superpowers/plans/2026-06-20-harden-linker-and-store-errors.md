@@ -4,6 +4,7 @@ design-doc: docs/superpowers/specs/2026-06-20-harden-linker-and-store-errors-des
 build_mode: direct
 isolation: branch
 tdd_mode: direct
+archived-with: 2026-06-20-harden-linker-and-store-errors
 ---
 
 # Plan: harden-linker-and-store-errors

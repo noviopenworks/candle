@@ -16,7 +16,7 @@ verification_report: docs/superpowers/reports/2026-06-20-harden-linker-and-store
 branch_status: handled
 created_at: 2026-06-20
 verified_at: 2026-06-20
-archived: false
+archived: true
 handoff_context: openspec/changes/harden-linker-and-store-errors/.comet/handoff/design-context.json
 handoff_hash: 37484914c4c63312fce846f0c67c9e72daec6eb2b76b69f3c85d6e1abc4f4213
 direct_override: true
