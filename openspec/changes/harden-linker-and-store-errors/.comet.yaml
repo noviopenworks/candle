@@ -1,5 +1,5 @@
 workflow: full
-phase: verify
+phase: archive
 context_compression: off
 build_mode: direct
 build_pause: null
@@ -11,11 +11,11 @@ auto_transition: true
 base_ref: 6be0140a000ba69160e9e700da1a8e8401db3c4a
 design_doc: docs/superpowers/specs/2026-06-20-harden-linker-and-store-errors-design.md
 plan: docs/superpowers/plans/2026-06-20-harden-linker-and-store-errors.md
-verify_result: pending
+verify_result: pass
 verification_report: docs/superpowers/reports/2026-06-20-harden-linker-and-store-errors-verify.md
-branch_status: pending
+branch_status: handled
 created_at: 2026-06-20
-verified_at: null
+verified_at: 2026-06-20
 archived: false
 handoff_context: openspec/changes/harden-linker-and-store-errors/.comet/handoff/design-context.json
 handoff_hash: 37484914c4c63312fce846f0c67c9e72daec6eb2b76b69f3c85d6e1abc4f4213
