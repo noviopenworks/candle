@@ -98,4 +98,7 @@ func mergeResults(dst, src *Result) {
 	}
 }
 
-func readFile(path string) ([]byte, error) { return os.ReadFile(path) }
+func readFile(path string) ([]byte, error) {
+	// #nosec G304 -- Go module paths are explicit user manifest inputs.
+	return os.ReadFile(path)
+}

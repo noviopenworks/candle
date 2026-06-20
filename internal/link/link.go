@@ -114,12 +114,8 @@ func score(root string, n store.NodeRow, r RPC, serviceRegistered bool) (float64
 //     context.Context param, result is just error). matched=false, ok=true when
 //     no matching FuncDecl exists.
 func astSignatureMatch(root, sourceFile, rpcName, streamKind string) (matched bool, ok bool) {
-	if root == "" {
-		return false, false
-	}
-	path := filepath.Join(root, sourceFile)
-	src, err := os.ReadFile(path)
-	if err != nil {
+	path, src, ok := readSourceUnderRoot(root, sourceFile)
+	if !ok {
 		return false, false
 	}
 	fset := token.NewFileSet()
@@ -244,6 +240,8 @@ func signatureMatches(sourceFile, rpcName, streamKind string) bool {
 	if sourceFile == "" {
 		return false
 	}
+	// #nosec G304 -- legacy fallback intentionally reads graph source_file when no
+	// repo root was configured; unreadable or unsafe paths simply do not match.
 	data, err := os.ReadFile(sourceFile)
 	if err != nil {
 		return false
@@ -331,9 +329,8 @@ func astExportPick(root string, nodes []store.NodeRow, e Export) (string, bool) 
 		if n.SourceFile == "" {
 			continue
 		}
-		path := filepath.Join(root, n.SourceFile)
-		src, err := os.ReadFile(path)
-		if err != nil {
+		path, src, ok := readSourceUnderRoot(root, n.SourceFile)
+		if !ok {
 			continue
 		}
 		fset := token.NewFileSet()
@@ -350,6 +347,31 @@ func astExportPick(root string, nodes []store.NodeRow, e Export) (string, bool) 
 		}
 	}
 	return "", false
+}
+
+func readSourceUnderRoot(root, sourceFile string) (string, []byte, bool) {
+	if root == "" || sourceFile == "" {
+		return "", nil, false
+	}
+	absRoot, err := filepath.Abs(root)
+	if err != nil {
+		return "", nil, false
+	}
+	path := filepath.Join(absRoot, sourceFile)
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return "", nil, false
+	}
+	rel, err := filepath.Rel(absRoot, absPath)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, "../") || filepath.IsAbs(rel) {
+		return "", nil, false
+	}
+	// #nosec G304 -- absPath is verified to remain under absRoot above.
+	src, err := os.ReadFile(absPath)
+	if err != nil {
+		return "", nil, false
+	}
+	return absPath, src, true
 }
 
 // declaresSymbol reports whether the parsed file declares a top-level func, type,

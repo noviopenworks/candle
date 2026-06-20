@@ -61,19 +61,28 @@ func (s *Store) NodeByID(indexID int64, nodeID string) (NodeRow, bool, error) {
 
 // Callees returns edges where nodeID is the source.
 func (s *Store) Callees(indexID int64, nodeID string) ([]EdgeRow, error) {
-	return s.edges(`source`, indexID, nodeID)
+	rows, err := s.DB.Query(`SELECT source, target, relation FROM edges WHERE index_id=? AND source=?`, indexID, nodeID)
+	if err != nil {
+		return nil, err
+	}
+	return scanEdges(rows)
 }
 
 // Callers returns edges where nodeID is the target.
 func (s *Store) Callers(indexID int64, nodeID string) ([]EdgeRow, error) {
-	return s.edges(`target`, indexID, nodeID)
-}
-
-func (s *Store) edges(col string, indexID int64, nodeID string) ([]EdgeRow, error) {
-	rows, err := s.DB.Query(`SELECT source, target, relation FROM edges WHERE index_id=? AND `+col+`=?`, indexID, nodeID)
+	rows, err := s.DB.Query(`SELECT source, target, relation FROM edges WHERE index_id=? AND target=?`, indexID, nodeID)
 	if err != nil {
 		return nil, err
 	}
+	return scanEdges(rows)
+}
+
+func scanEdges(rows interface {
+	Next() bool
+	Scan(...any) error
+	Err() error
+	Close() error
+}) ([]EdgeRow, error) {
 	defer rows.Close()
 	var out []EdgeRow
 	for rows.Next() {

@@ -1,6 +1,9 @@
 package store
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
 // Dependency is a stored module dependency.
 type Dependency struct {
@@ -161,16 +164,22 @@ func (s *Store) FindPrivateLibraries(indexID int64, query string) ([]PrivateLibr
 	for rows.Next() {
 		var h libHit
 		if err := rows.Scan(&h.id, &h.r.ModulePath, &h.r.DocSynopsis); err != nil {
-			rows.Close()
+			if closeErr := rows.Close(); closeErr != nil {
+				return nil, errors.Join(err, closeErr)
+			}
 			return nil, err
 		}
 		hits = append(hits, h)
 	}
 	if err := rows.Err(); err != nil {
-		rows.Close()
+		if closeErr := rows.Close(); closeErr != nil {
+			return nil, errors.Join(err, closeErr)
+		}
 		return nil, err
 	}
-	rows.Close()
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
 	var out []PrivateLibraryResult
 	for _, h := range hits {
 		exps, err := s.exportsByLib(h.id)
@@ -272,7 +281,9 @@ func (s *Store) PrivateLibraryByModule(modulePath string) (PrivateLibraryRow, bo
 	if err := rows.Scan(&r.ID, &r.IndexID, &r.ModulePath, &r.Readme, &r.DocSynopsis); err != nil {
 		return PrivateLibraryRow{}, false, err
 	}
-	rows.Close()
+	if err := rows.Close(); err != nil {
+		return PrivateLibraryRow{}, false, err
+	}
 	exps, err := s.exportsByLib(r.ID)
 	if err != nil {
 		return PrivateLibraryRow{}, false, err
@@ -315,17 +326,23 @@ func (s *Store) PrivateConsumersAcrossRepos(modulePath string) ([]RepoConsumer, 
 		var it ident
 		var org, name string
 		if err := rows.Scan(&it.id, &org, &name, &it.commit); err != nil {
-			rows.Close()
+			if closeErr := rows.Close(); closeErr != nil {
+				return nil, errors.Join(err, closeErr)
+			}
 			return nil, err
 		}
 		it.repo = org + "/" + name
 		idents = append(idents, it)
 	}
 	if err := rows.Err(); err != nil {
-		rows.Close()
+		if closeErr := rows.Close(); closeErr != nil {
+			return nil, errors.Join(err, closeErr)
+		}
 		return nil, err
 	}
-	rows.Close()
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
 
 	var out []RepoConsumer
 	for _, it := range idents {

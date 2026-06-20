@@ -15,6 +15,7 @@ import (
 func extractExports(dir, modulePath string) (*Library, []string) {
 	lib := &Library{ModulePath: modulePath}
 	var warns []string
+	// #nosec G304 -- module dirs are explicit user manifest inputs.
 	if data, err := os.ReadFile(filepath.Join(dir, "README.md")); err == nil {
 		lib.Readme = string(data)
 	}
@@ -40,7 +41,7 @@ func extractExports(dir, modulePath string) (*Library, []string) {
 		}
 		pkgPath := importPath(modulePath, dir, filepath.Dir(path))
 		if !pkgSeen[pkgPath] && f.Doc != nil {
-			lib.DocSynopsis = strings.TrimSpace(doc.Synopsis(f.Doc.Text()))
+			lib.DocSynopsis = strings.TrimSpace((&doc.Package{}).Synopsis(f.Doc.Text()))
 			pkgSeen[pkgPath] = true
 		}
 		if pkgPath != "" {

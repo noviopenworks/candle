@@ -18,10 +18,17 @@ func Load(s *store.Store, indexID int64, g *Graph) (LoadResult, error) {
 	}
 	defer tx.Rollback()
 
-	for _, tbl := range []string{"nodes", "edges", "hyperedges", "hyperedge_members"} {
-		if _, err := tx.Exec("DELETE FROM "+tbl+" WHERE index_id=?", indexID); err != nil {
-			return res, err
-		}
+	if _, err := tx.Exec("DELETE FROM nodes WHERE index_id=?", indexID); err != nil {
+		return res, err
+	}
+	if _, err := tx.Exec("DELETE FROM edges WHERE index_id=?", indexID); err != nil {
+		return res, err
+	}
+	if _, err := tx.Exec("DELETE FROM hyperedges WHERE index_id=?", indexID); err != nil {
+		return res, err
+	}
+	if _, err := tx.Exec("DELETE FROM hyperedge_members WHERE index_id=?", indexID); err != nil {
+		return res, err
 	}
 
 	for _, n := range g.Nodes {

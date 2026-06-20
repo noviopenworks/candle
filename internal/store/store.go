@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"errors"
 
 	_ "modernc.org/sqlite"
 )
@@ -19,12 +20,16 @@ func Open(dsn string) (*Store, error) {
 		return nil, err
 	}
 	if _, err := db.Exec("PRAGMA foreign_keys = ON;"); err != nil {
-		db.Close()
+		if closeErr := db.Close(); closeErr != nil {
+			return nil, errors.Join(err, closeErr)
+		}
 		return nil, err
 	}
 	s := &Store{DB: db}
 	if err := s.migrate(); err != nil {
-		db.Close()
+		if closeErr := db.Close(); closeErr != nil {
+			return nil, errors.Join(err, closeErr)
+		}
 		return nil, err
 	}
 	return s, nil

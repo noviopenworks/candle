@@ -90,6 +90,7 @@ func parseWork(workPath string, privatePrefixes []string) (*Result, []string) {
 
 // readGoSum returns a set of "module version" present in a go.sum (empty if absent).
 func readGoSum(path string) map[string]struct{} {
+	// #nosec G304 -- go.sum path is derived from explicit user manifest module paths.
 	f, err := os.Open(path)
 	if err != nil {
 		return nil

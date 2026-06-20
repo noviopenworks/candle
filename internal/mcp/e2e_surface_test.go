@@ -41,8 +41,8 @@ func TestEndToEndToolSurface(t *testing.T) {
 	}
 
 	tmp := t.TempDir()
-	inv := filepath.Join(tmp, "inventory")  // consumer repo
-	prov := filepath.Join(tmp, "platform")  // provider repo
+	inv := filepath.Join(tmp, "inventory") // consumer repo
+	prov := filepath.Join(tmp, "platform") // provider repo
 
 	// --- consumer repo: code graph -----------------------------------------
 	// Node ids/labels are chosen so the AST linker can confirm the RPC impl:

@@ -1,6 +1,7 @@
 package ingest
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -33,7 +34,13 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 			continue
 		}
 		g, err := graph.Parse(f)
-		f.Close()
+		if closeErr := f.Close(); closeErr != nil {
+			if err != nil {
+				err = errors.Join(err, closeErr)
+			} else {
+				return rep, closeErr
+			}
+		}
 		if err != nil {
 			rep.Skipped++
 			rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: parse: %v", r.Repo, err))

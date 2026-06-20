@@ -40,6 +40,7 @@ type Spec struct {
 
 // ParseFile parses an OpenAPI 3.x document at path.
 func ParseFile(path string) (*Spec, error) {
+	// #nosec G304 -- OpenAPI paths are explicit user manifest inputs.
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -98,9 +99,7 @@ func normalize(doc *openapi3.T) *Spec {
 					break
 				}
 			}
-			for _, req := range securityNames(op.Security) {
-				no.Security = append(no.Security, req)
-			}
+			no.Security = append(no.Security, securityNames(op.Security)...)
 			s.Operations = append(s.Operations, no)
 		}
 	}
