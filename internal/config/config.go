@@ -48,14 +48,14 @@ func (r RepoConfig) Name() string {
 	return parts[1]
 }
 
-func (r RepoConfig) validate() (RepoConfig, error) {
+func (r RepoConfig) validate() error {
 	if !strings.Contains(r.Repo, "/") {
-		return r, fmt.Errorf("repo %q must be in org/name form", r.Repo)
+		return fmt.Errorf("repo %q must be in org/name form", r.Repo)
 	}
 	if r.Graph == "" {
-		return r, fmt.Errorf("repo %q missing graph path", r.Repo)
+		return fmt.Errorf("repo %q missing graph path", r.Repo)
 	}
-	return r, nil
+	return nil
 }
 
 // Load reads and validates a viper manifest at path.
@@ -69,11 +69,10 @@ func Load(path string) (*Config, error) {
 	if err := v.Unmarshal(&cfg); err != nil {
 		return nil, err
 	}
-	for i, r := range cfg.Repos {
-		if _, err := r.validate(); err != nil {
+	for _, r := range cfg.Repos {
+		if err := r.validate(); err != nil {
 			return nil, err
 		}
-		_ = i
 	}
 	return &cfg, nil
 }

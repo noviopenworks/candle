@@ -1,0 +1,75 @@
+# golangci-lint v2 configuration.
+# https://golangci-lint.run/usage/configuration/
+version: "2"
+
+run:
+  timeout: 5m
+  go: "1.26"
+  modules-download-mode: readonly
+
+linters:
+  default: standard
+  enable:
+    - bodyclose      # check http.Response.Body is closed
+    - errorlint      # use errors.Is/As, %w correctly
+    - gocritic       # idiomatic style
+    - misspell      # spelling
+    - revive        # golint successor
+    - staticcheck   # comprehensive static analysis
+    - unconvert      # remove unnecessary type conversions
+    - unparam        # find unused function parameters/returns
+
+  settings:
+    errorlint:
+      errorf: true
+      asserts: true
+      comparison: true
+    revive:
+      severity: warning
+      rules:
+        - name: package-comments
+          disabled: true
+        - name: unused-parameter
+          disabled: true
+        - name: var-naming
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: exported
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+        - name: unreachable-code
+        - name: if-return
+        - name: increment-decrement
+
+  exclusions:
+    preset:
+      - tests
+      - common-false-positives
+    rules:
+      - path: _test\.go
+        linters: [errcheck, errorlint, gosec]
+      # Trust manifest-derived file reads (the manifest is the trust root).
+      - linters: [gosec]
+        text: "G304"
+      # Deferred Close/Rollback: errors are not actionable at defer time.
+      - linters: [errcheck]
+        text: "Error return value of .*(Close|Rollback)"
+      # fmt.Fprint* to stderr/stdout: write errors are not actionable.
+      - linters: [errcheck]
+        text: "return value of `fmt\\.F"
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+formatters:
+  default: standard

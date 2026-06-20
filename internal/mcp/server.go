@@ -2,6 +2,7 @@ package mcp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -352,7 +353,7 @@ func registerExplainPrivateLibrary(srv *mcpsdk.Server, tools *Tools) {
 // toolErr maps a not-found into a tool-level error result (IsError) rather than
 // a protocol error, so unknown repos/symbols degrade gracefully.
 func toolErr(err error) (*mcpsdk.CallToolResult, any, error) {
-	if err == ErrNotFound {
+	if errors.Is(err, ErrNotFound) {
 		return &mcpsdk.CallToolResult{
 			IsError: true,
 			Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: ErrNotFound.Error()}},
@@ -374,7 +375,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		repo := strings.TrimPrefix(uri, "repo://")
 		body, err := tools.RepoResource(repo)
 		if err != nil {
-			if err == ErrNotFound {
+			if errors.Is(err, ErrNotFound) {
 				return nil, mcpsdk.ResourceNotFoundError(uri)
 			}
 			return nil, err
@@ -394,7 +395,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 		}
 		body, err := tools.GraphNodeResource(repo, nodeID)
 		if err != nil {
-			if err == ErrNotFound {
+			if errors.Is(err, ErrNotFound) {
 				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
 			}
 			return nil, err
@@ -424,7 +425,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
 		}
 		if err != nil {
-			if err == ErrNotFound {
+			if errors.Is(err, ErrNotFound) {
 				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
 			}
 			return nil, err
@@ -468,7 +469,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
 		}
 		if err != nil {
-			if err == ErrNotFound {
+			if errors.Is(err, ErrNotFound) {
 				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
 			}
 			return nil, err
@@ -498,7 +499,7 @@ func registerResources(srv *mcpsdk.Server, tools *Tools) {
 			return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
 		}
 		if err != nil {
-			if err == ErrNotFound {
+			if errors.Is(err, ErrNotFound) {
 				return nil, mcpsdk.ResourceNotFoundError(req.Params.URI)
 			}
 			return nil, err

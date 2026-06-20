@@ -1,0 +1,13 @@
+# mise — pinned tool versions for candlegraph.
+# Single source of truth used by local dev and CI (via jdx/mise-action).
+# https://mise.jdx.dev
+[tools]
+go = "1.26.4"            # must match go.mod
+golangci-lint = "2.12.2" # linter (built with Go 1.26)
+goreleaser = "2.16.0"    # release automation
+"go:golang.org/x/vuln/cmd/govulncheck" = "latest"
+
+[env]
+# go install'd binaries land here; ensure they are on PATH for shells that
+# opened before mise activated (notably CI shells and editors).
+_.path = ["{{ env.HOME }}/go/bin"]

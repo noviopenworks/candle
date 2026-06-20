@@ -98,7 +98,7 @@ func TestGoConfigParses(t *testing.T) {
 }
 
 func TestInvalidRepoIdentity(t *testing.T) {
-	_, err := (RepoConfig{Repo: "noslash"}).validate()
+	err := (RepoConfig{Repo: "noslash"}).validate()
 	if err == nil {
 		t.Fatal("expected error for repo without org/name slash")
 	}

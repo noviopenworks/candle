@@ -1,0 +1,91 @@
+# Taskfile for candlegraph. Run `task -l` to list available tasks.
+# Tooling (Go, golangci-lint, goreleaser, govulncheck) is pinned in mise.toml.
+version: '3'
+
+vars:
+  PACKAGE: github.com/noviopenworks/candlegraph
+  CMD: ./cmd/candlegraph
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task -l
+    silent: true
+
+  build:
+    desc: Build all packages
+    cmds:
+      - go build ./...
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  test:
+    desc: Run the test suite
+    cmds:
+      - go test ./...
+
+  fmt:
+    desc: Format all Go source (excludes testdata fixtures)
+    cmds:
+      - gofmt -w $(find . -name '*.go' -not -path '*/testdata/*')
+
+  fmt-check:
+    desc: Fail if any Go source is not gofmt-clean (excludes testdata fixtures)
+    cmds:
+      - |
+        unformatted="$(gofmt -l $(find . -name '*.go' -not -path '*/testdata/*'))"
+        if [ -n "$unformatted" ]; then
+          echo "Not gofmt-clean:" >&2
+          echo "$unformatted" >&2
+          exit 1
+        fi
+
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - golangci-lint run
+
+  vuln:
+    desc: Scan for known vulnerabilities
+    cmds:
+      - govulncheck ./...
+
+  coverage:
+    desc: Run tests with coverage and write coverage.html
+    cmds:
+      - go test -race -coverprofile=coverage.out -covermode=atomic ./...
+      - go tool cover -html=coverage.out -o coverage.html
+
+  install:
+    desc: Install the candlegraph binary
+    cmds:
+      - go install {{.CMD}}
+
+  tidy:
+    desc: Tidy and verify module dependencies
+    cmds:
+      - go mod tidy
+      - go mod verify
+
+  release:
+    desc: Build and publish a release with GoReleaser
+    cmds:
+      - goreleaser release --clean
+
+  release-snapshot:
+    desc: Build a local snapshot release without publishing
+    cmds:
+      - goreleaser release --snapshot --clean
+
+  ci:
+    desc: Run the full CI gate (fmt-check, vet, lint, test, vuln)
+    cmds:
+      - task: fmt-check
+      - task: vet
+      - task: lint
+      - task: test
+      - task: vuln

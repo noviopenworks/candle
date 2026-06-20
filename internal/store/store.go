@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	_ "modernc.org/sqlite"
+	_ "modernc.org/sqlite" // pure-Go SQLite driver; registers the "sqlite" driver via init()
 )
 
 // Store wraps the SQLite connection.
