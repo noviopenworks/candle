@@ -1,0 +1,13 @@
+{
+  "change": "harden-linker-and-store-errors",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "37484914c4c63312fce846f0c67c9e72daec6eb2b76b69f3c85d6e1abc4f4213",
+  "files": [
+    { "path": "openspec/changes/harden-linker-and-store-errors/proposal.md", "sha256": "2dd4f363aef8af98aa13ba0e2ea9a62fcdeba08726fffa5909b3e117984303b9" },
+    { "path": "openspec/changes/harden-linker-and-store-errors/design.md", "sha256": "aefc80786ae8df06148fca43ce962cae74ad01678ee0c51723528e9341069604" },
+    { "path": "openspec/changes/harden-linker-and-store-errors/tasks.md", "sha256": "d42eb1e62b0b4b9d5716f52cca04054c71a6d72f33bef0564e84cc17aeac65bd" }
+  ]
+}
