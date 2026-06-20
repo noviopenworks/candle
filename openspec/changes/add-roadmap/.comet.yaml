@@ -1,5 +1,5 @@
 workflow: tweak
-phase: build
+phase: verify
 context_compression: off
 build_mode: direct
 build_pause: null
@@ -12,10 +12,10 @@ base_ref: 91899cd566d0cd0e136d34d8b76bd7b61685e6d0
 design_doc: null
 plan: null
 verify_result: pending
-verification_report: null
-branch_status: pending
+verification_report: docs/superpowers/reports/2026-06-20-add-roadmap-verify.md
+branch_status: handled
 created_at: 2026-06-20
-verified_at: null
+verified_at: 2026-06-20
 archived: false
 build_command: go build ./...
 verify_command: go test ./...
