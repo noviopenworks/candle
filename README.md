@@ -94,4 +94,4 @@ The complete design spec lives in **[docs/design.md](docs/design.md)**.
 
 ## License
 
-See the repository for license terms.
+MIT — see [LICENSE](LICENSE). © 2026 noviopenworks.
