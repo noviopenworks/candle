@@ -4,6 +4,10 @@
 *.test
 *.out
 
+# Coverage / release artifacts
+coverage.html
+/dist/
+
 # Local index / SQLite store
 *.db
 *.sqlite
