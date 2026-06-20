@@ -4,6 +4,9 @@ Start here, then follow the path that matches what you're doing.
 
 ## Reading paths
 
+**"I want the 5-minute picture of how it works."**
+→ [How it works](../flow.md) — end-to-end narrative from setup to an answer.
+
 **"I want to run it."**
 → [Getting started](getting-started.md) → [Configuration](configuration.md)
 
@@ -22,6 +25,7 @@ full DDL, edge catalog, end-to-end walkthrough).
 | Document | Summary |
 |----------|---------|
 | [getting-started.md](getting-started.md) | Install prerequisites, build, index repos, run the server, connect Claude. |
+| [flow.md](../flow.md) | End-to-end narrative: how a repo becomes an indexed snapshot and how an agent query is answered. |
 | [concepts.md](concepts.md) | Why three layers, the graph node/edge model, `index_id`, query-time cross-repo joins, commit pinning, what's deferred. |
 | [configuration.md](configuration.md) | Every `manifest.yaml` field with examples for OpenAPI, protobuf, and Go. |
 | [tools.md](tools.md) | All 13 MCP tools: arguments, behavior, example request and response JSON. |

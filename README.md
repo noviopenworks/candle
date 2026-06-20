@@ -34,6 +34,42 @@ or *"what breaks if I change this proto message?"* resolve across repos.
                          AI agent
 ```
 
+## Installation
+
+Any of these gives you a `candlegraph` binary that speaks MCP over stdio.
+
+**`go install`** (needs Go 1.26+):
+
+```bash
+go install github.com/noviopenworks/candlegraph/cmd/candlegraph@latest
+```
+
+It lands in `$(go env GOBIN)` (or `$(go env GOPATH)/bin`) — make sure that's on
+your `PATH`.
+
+**Prebuilt release binary** — download the archive for your OS/arch from the
+[releases page](https://github.com/noviopenworks/candlegraph/releases), extract,
+and put `candlegraph` on your `PATH`:
+
+```bash
+tar -xzf candlegraph_<version>_<os>_<arch>.tar.gz
+./candlegraph --help
+```
+
+**From source (for development)** — the repo pins its toolchain with
+[mise](https://mise.jdx.dev) and drives builds with
+[Task](https://taskfile.dev):
+
+```bash
+git clone https://github.com/noviopenworks/candlegraph
+cd candlegraph
+mise install   # Go + linter + release tools, versions from mise.toml
+task install   # go install ./cmd/candlegraph
+```
+
+Run `task -l` for all developer tasks (build, test, lint, vuln, coverage,
+release). Full walkthrough in **[docs/getting-started.md](docs/getting-started.md)**.
+
 ## Quick start
 
 ```bash
@@ -74,7 +110,8 @@ indexed snapshots.
 
 | Doc | What's in it |
 |-----|--------------|
-| [Getting started](docs/getting-started.md) | Build, index, serve, connect a client |
+| [Getting started](docs/getting-started.md) | Install, index, serve, connect a client |
+| [How it works](flow.md) | End-to-end narrative from setup to an agent's answer |
 | [Concepts](docs/concepts.md) | The three layers, the graph model, cross-repo joins, commit pinning |
 | [Configuration](docs/configuration.md) | Full `manifest.yaml` reference |
 | [Tools reference](docs/tools.md) | All 15 MCP tools with arguments and example I/O |

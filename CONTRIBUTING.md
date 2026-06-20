@@ -12,6 +12,15 @@ The `internal/mcp` e2e test builds the `candlegraph` binary, indexes a fixture
 graph, and drives the stdio server — so a green `go test ./...` means the whole
 index → serve path works.
 
+The toolchain (Go, golangci-lint, goreleaser, govulncheck) is pinned in
+`mise.toml` and builds run through [Task](https://taskfile.dev). With
+[mise](https://mise.jdx.dev) installed, `mise install` provisions everything and
+`task -l` lists the tasks. Before pushing, run the same gate CI runs:
+
+```bash
+task ci   # fmt-check, vet, lint, test, vuln
+```
+
 ### Layout
 
 See [docs/architecture.md](docs/architecture.md) for the package map. Key rule:

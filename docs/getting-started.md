@@ -4,7 +4,8 @@ This guide takes you from a clone to an agent querying your services.
 
 ## Prerequisites
 
-- **Go 1.26+** (the module targets `go 1.26.3`).
+- **Go 1.26+** (the module targets `go 1.26.4`) — or **[mise](https://mise.jdx.dev)**,
+  which pins Go and the dev tools from the repo's `mise.toml` (`mise install`).
 - **A Graphify code graph** per repo you want to index. candlegraph consumes
   Graphify's `graph.json` output — it does not extract code itself. See
   [Concepts → Code graph](concepts.md#layer-1-code-graph-graphify) for how to
@@ -12,20 +13,32 @@ This guide takes you from a clone to an agent querying your services.
 - **An MCP client** to talk to the server (Claude Desktop, Claude Code, or any
   MCP-compatible agent runner). The server speaks MCP over **stdio**.
 
-## 1. Build
+## 1. Install or build
+
+Install a ready-to-run binary with `go install` (needs Go 1.26+):
+
+```bash
+go install github.com/noviopenworks/candlegraph/cmd/candlegraph@latest
+candlegraph --help
+```
+
+Or grab a prebuilt archive for your OS/arch from the
+[releases page](https://github.com/noviopenworks/candlegraph/releases), extract
+it, and put `candlegraph` on your `PATH`.
+
+To work from a clone instead:
 
 ```bash
 git clone https://github.com/noviopenworks/candlegraph
 cd candlegraph
-go build ./...
-```
-
-Build a binary if you prefer:
-
-```bash
-go build -o candlegraph ./cmd/candlegraph
+go build ./...                       # build all packages
+go build -o candlegraph ./cmd/candlegraph   # or a single binary
 ./candlegraph --help
 ```
+
+If you use [mise](https://mise.jdx.dev), `mise install` pins the toolchain and
+`task install` runs the `go install` above. `task -l` lists every developer task
+(build, test, lint, vuln, coverage, release).
 
 The CLI has two subcommands and two persistent flags:
 
