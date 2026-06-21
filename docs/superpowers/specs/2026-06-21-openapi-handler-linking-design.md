@@ -2,6 +2,8 @@
 comet_change: add-openapi-handler-linking
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-21-add-openapi-handler-linking
+status: final
 ---
 
 # OpenAPI handler linking — technical design

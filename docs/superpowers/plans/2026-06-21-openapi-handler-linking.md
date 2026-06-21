@@ -2,6 +2,7 @@
 change: add-openapi-handler-linking
 design-doc: docs/superpowers/specs/2026-06-21-openapi-handler-linking-design.md
 base-ref: 7181f9d43a83f5223ce69063009c3b2a2b60162b
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 # OpenAPI Handler Linking Implementation Plan
@@ -26,6 +27,7 @@ base-ref: 7181f9d43a83f5223ce69063009c3b2a2b60162b
 - Keep the baseline green after every task: `go build ./...`, `go vet ./...`, `go test ./...`, and `mise exec -- task ci`.
 - Tests are table/round-trip style mirroring the existing files; do not add new test frameworks. Commit after every task — never batch.
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## File Structure
@@ -46,6 +48,7 @@ base-ref: 7181f9d43a83f5223ce69063009c3b2a2b60162b
 | `Roadmap.md` | Flip item 0.2 status 🔎 → ✅ | Modify |
 | `docs/design.md`, `docs/concepts.md`, `docs/getting-started.md` | Reconcile "deferred"/count drift introduced by the new field | Modify |
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 1: Store table + migration for HTTP operation impl links
@@ -90,6 +93,7 @@ git add internal/store/schema.go
 git commit -m "feat(store): add http_operation_impls table keyed by (index_id, method, path)"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 2: Store writer + reader for HTTP impl links
@@ -232,6 +236,7 @@ git add internal/store/api.go internal/store/api_test.go
 git commit -m "feat(store): add LinkHTTPOpImpls writer and HTTPOpImpls reader"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 3: Linker `MatchOpenAPI` with the three-tier scoring ladder
@@ -507,6 +512,7 @@ git add internal/link/openapi.go internal/link/testdata/repo/internal/http/handl
 git commit -m "feat(link): add MatchOpenAPI handler linker with three-tier scoring"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 4: Unit tests for `MatchOpenAPI` (all tiers)
@@ -679,6 +685,7 @@ git add internal/link/openapi_test.go
 git commit -m "test(link): cover MatchOpenAPI tiers (AST HIGH, scan HIGH, MEDIUM, LOW, no-link)"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 5: Ingest wiring — run `MatchOpenAPI` alongside `MatchRPCs`
@@ -813,6 +820,7 @@ git add internal/ingest/ingest.go internal/ingest/ingest_test.go
 git commit -m "feat(ingest): run MatchOpenAPI and persist HTTP handler links"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 6: MCP `ExplainEndpoint` returns `implemented_by[]`
@@ -967,6 +975,7 @@ git add internal/mcp/openapi_tools.go internal/mcp/openapi_tools_test.go
 git commit -m "feat(mcp): explain_endpoint returns implemented_by handler links"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 7: Update stale capability/limitation strings
@@ -1042,6 +1051,7 @@ git add internal/mcp/context_tools.go internal/mcp/context_tools_test.go
 git commit -m "docs(mcp): replace stale OpenAPI-linking limitation with router-precision caveat"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 8: End-to-end assertion — HTTP `implemented_by` HIGH for `reserveProduct`
@@ -1107,6 +1117,7 @@ git add internal/mcp/e2e_surface_test.go internal/mcp/e2e_test.go
 git commit -m "test(mcp): e2e asserts explain_endpoint returns HTTP implemented_by HIGH"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 9: Reconcile docs + flip Roadmap 0.2
@@ -1147,6 +1158,7 @@ git add Roadmap.md docs/design.md docs/concepts.md docs/getting-started.md
 git commit -m "docs: flip roadmap 0.2 to done; reconcile HTTP handler-linking notes"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Task 10: Full baseline verification
@@ -1184,6 +1196,7 @@ git add openspec/changes/add-openapi-handler-linking/tasks.md
 git commit -m "chore(comet): mark add-openapi-handler-linking tasks complete"
 ```
 
+archived-with: 2026-06-21-add-openapi-handler-linking
 ---
 
 ## Self-Review
