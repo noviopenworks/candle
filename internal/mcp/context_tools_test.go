@@ -1,10 +1,19 @@
 package mcp
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/noviopenworks/candlegraph/internal/store"
 )
+
+func TestContextLimitationsNoStaleOpenAPINote(t *testing.T) {
+	for _, lim := range contextLimitations() {
+		if strings.Contains(lim, "OpenAPI endpoint implementation linking is not yet available") {
+			t.Fatalf("stale limitation still present: %q", lim)
+		}
+	}
+}
 
 func seedContextTools(t *testing.T) *Tools {
 	t.Helper()

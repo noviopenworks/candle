@@ -258,7 +258,7 @@ func contextResourceSchemes() []ResourceScheme {
 
 func contextLimitations() []string {
 	return []string{
-		"OpenAPI endpoint implementation linking is not yet available in get_context v1.",
+		"OpenAPI/HTTP handler linking is name-based: path→handler binding is coarse (route-registration presence), not router-precise.",
 		"Cross-repo RPC consumed_by aggregation is deferred.",
 		"Cross-repo private library consumer aggregation is deferred.",
 		"Graph traversal is one hop; depth > 1 is deferred.",
