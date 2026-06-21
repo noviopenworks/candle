@@ -32,8 +32,54 @@ func TestExplainEndpoint(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if out.OperationID != "reserveProduct" || out.ResponseSchema != "ReservationResponse" {
+	if out.Operation.OperationID != "reserveProduct" || out.Operation.ResponseSchema != "ReservationResponse" {
 		t.Fatalf("explain: %+v", out)
+	}
+}
+
+func TestExplainEndpointImplementedBy(t *testing.T) {
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	id, _ := s.UpsertIndex("acme", "inventory", "abc", "main", "/g")
+	if err := s.ReplaceAPISpecs(id, []store.APISpecBundle{{
+		Spec:       store.APISpec{Kind: "openapi", Name: "I", Version: "1", Path: "api/openapi.yaml"},
+		Operations: []store.HTTPOperation{{Method: "POST", Path: "/x", OperationID: "reserveProduct"}},
+	}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.LinkHTTPOpImpls(id, []store.HTTPOpImplLink{{
+		Method: "POST", Path: "/x", NodeID: "h1", Confidence: 0.9, MatchReason: "name+route+ast"}}); err != nil {
+		t.Fatal(err)
+	}
+	tools := NewTools(s)
+
+	expl, err := tools.ExplainEndpoint("acme/inventory", "POST", "/x")
+	if err != nil {
+		t.Fatalf("explain: %v", err)
+	}
+	if expl.Operation.OperationID != "reserveProduct" {
+		t.Fatalf("operation not returned: %+v", expl.Operation)
+	}
+	if len(expl.ImplementedBy) != 1 || expl.ImplementedBy[0].Symbol != "h1" || expl.ImplementedBy[0].Confidence != "HIGH" {
+		t.Fatalf("implemented_by: %+v", expl.ImplementedBy)
+	}
+
+	// No link → empty (non-nil) slice, contract still returned.
+	if err := s.ReplaceAPISpecs(id, []store.APISpecBundle{{
+		Spec:       store.APISpec{Kind: "openapi", Name: "I", Version: "1", Path: "api/openapi.yaml"},
+		Operations: []store.HTTPOperation{{Method: "GET", Path: "/y", OperationID: "noimpl"}},
+	}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.LinkHTTPOpImpls(id, nil); err != nil {
+		t.Fatal(err)
+	}
+	expl, err = tools.ExplainEndpoint("acme/inventory", "GET", "/y")
+	if err != nil {
+		t.Fatalf("explain noimpl: %v", err)
+	}
+	if expl.ImplementedBy == nil || len(expl.ImplementedBy) != 0 {
+		t.Fatalf("expected empty non-nil implemented_by, got %#v", expl.ImplementedBy)
 	}
 }
 

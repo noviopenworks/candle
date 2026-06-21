@@ -231,13 +231,13 @@ type explainEndpointArgs struct {
 func registerExplainEndpoint(srv *mcpsdk.Server, tools *Tools) {
 	mcpsdk.AddTool(srv, &mcpsdk.Tool{
 		Name:        "explain_endpoint",
-		Description: "Explain an HTTP endpoint's contract: operationId, summary, request/response schemas, security, tags.",
+		Description: "Explain an HTTP endpoint: contract (operationId, summary, request/response schemas, security, tags) plus implemented_by handler symbol(s) with a confidence tier.",
 	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args explainEndpointArgs) (*mcpsdk.CallToolResult, any, error) {
-		op, err := tools.ExplainEndpoint(args.Repo, args.Method, args.Path)
+		expl, err := tools.ExplainEndpoint(args.Repo, args.Method, args.Path)
 		if err != nil {
 			return toolErr(err)
 		}
-		return textResult(mustJSON(op)), nil, nil
+		return textResult(mustJSON(expl)), nil, nil
 	})
 }
 

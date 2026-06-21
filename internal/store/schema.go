@@ -141,6 +141,16 @@ CREATE INDEX IF NOT EXISTS idx_proto_rpcs_service ON proto_rpcs(proto_service_id
 CREATE INDEX IF NOT EXISTS idx_proto_messages_file ON proto_messages(proto_file_id);
 CREATE INDEX IF NOT EXISTS idx_proto_enums_file ON proto_enums(proto_file_id);
 CREATE INDEX IF NOT EXISTS idx_proto_rpc_impls_rpc ON proto_rpc_impls(proto_rpc_id);
+CREATE TABLE IF NOT EXISTS http_operation_impls (
+  id           INTEGER PRIMARY KEY,
+  index_id     INTEGER NOT NULL REFERENCES indexes(id),
+  method       TEXT NOT NULL,
+  path         TEXT NOT NULL,
+  node_id      TEXT NOT NULL,
+  confidence   REAL NOT NULL,
+  match_reason TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_http_op_impls_lookup ON http_operation_impls(index_id, method, path);
 CREATE TABLE IF NOT EXISTS dependencies (
   id          INTEGER PRIMARY KEY,
   index_id    INTEGER NOT NULL REFERENCES indexes(id),

@@ -227,3 +227,57 @@ func (s *Store) FindSchemas(indexID int64, query string) ([]APISchema, error) {
 	}
 	return out, rows.Err()
 }
+
+// HTTPOpImplLink is an HTTP operation → handler impl link keyed by (index_id,
+// method, path), written by the OpenAPI handler linker.
+type HTTPOpImplLink struct {
+	Method      string
+	Path        string
+	NodeID      string
+	Confidence  float64
+	MatchReason string
+}
+
+// LinkHTTPOpImpls replaces all HTTP operation impl links for indexID. Idempotent.
+func (s *Store) LinkHTTPOpImpls(indexID int64, links []HTTPOpImplLink) error {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err := tx.Exec(`DELETE FROM http_operation_impls WHERE index_id=?`, indexID); err != nil {
+		return err
+	}
+	for _, l := range links {
+		if _, err := tx.Exec(
+			`INSERT INTO http_operation_impls(index_id, method, path, node_id, confidence, match_reason)
+			 VALUES(?,?,?,?,?,?)`,
+			indexID, l.Method, l.Path, l.NodeID, l.Confidence, l.MatchReason); err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
+}
+
+// HTTPOpImpls returns impl links for an operation (method+path) in indexID.
+// Method matches case-insensitively; path matches exactly — the same identity
+// OperationByMethodPath uses.
+func (s *Store) HTTPOpImpls(indexID int64, method, path string) ([]HTTPOpImplLink, error) {
+	rows, err := s.DB.Query(
+		`SELECT method, path, node_id, confidence, COALESCE(match_reason,'')
+		 FROM http_operation_impls
+		 WHERE index_id=? AND UPPER(method)=UPPER(?) AND path=?`, indexID, method, path)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []HTTPOpImplLink
+	for rows.Next() {
+		var l HTTPOpImplLink
+		if err := rows.Scan(&l.Method, &l.Path, &l.NodeID, &l.Confidence, &l.MatchReason); err != nil {
+			return nil, err
+		}
+		out = append(out, l)
+	}
+	return out, rows.Err()
+}
