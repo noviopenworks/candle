@@ -22,3 +22,10 @@ baseline green (`go build ./...`, `go vet ./...`, `go test ./...`, `mise exec --
 - [x] 5.1 Extend the e2e (`internal/mcp/e2e_test.go` / `e2e_surface_test.go`) to assert HTTP `implemented_by`, mirroring the proto assertion.
 - [x] 5.2 Reconcile any doc/count drift introduced by the new field (design.md "deferred" note, getting-started, concepts).
 - [x] 5.3 Flip roadmap item 0.2 status (🔎 → ✅) in `Roadmap.md` and update the matching deferred note in `docs/`.
+
+## Code review outcome
+Reviewed at HEAD (commit before this note). Verdict: ready to merge, no Critical.
+- Important I2 (bare `"Handle"` inflated MEDIUM repo-wide) — **fixed** (commit b516819).
+- Important I1 (multi-candidate false-positive untested) — **fixed**: added disambiguation test (handler HIGH vs same-named non-handler LOW).
+- Minor M1/M2 (tier-string divergence from explain_rpc; tierLabel thresholds vs link constants) — **addressed** with clarifying comments.
+- Minor M3 (`httpSignatureScan` line-based fallback) and M4 (`titleFirst` ASCII-only) — **accepted as-is**: both faithfully mirror the established gRPC linker pattern (`signatureMatches`, exported-symbol naming) and are documented in code.
