@@ -24,7 +24,7 @@ knows, then with a topic for focused, Context7-style retrieval.
  "capabilities": {"code_graph": {"count": 412, "tools": ["query_repo", "explain_symbol", "..."]},
                   "openapi": {"count": 1}, "protobuf": {"count": 1}, "private_libraries": {"count": 1}},
  "suggested_next_calls": [{"tool": "get_context", "args": {"topic": "<symbol …>"}}],
- "limitations": ["OpenAPI endpoint implementation linking is not yet available …"]}
+ "limitations": ["OpenAPI/HTTP handler linking is name-based; path→handler binding is coarse …"]}
 ```
 
 **Step 2 — focused topic** (`get_context` with `topic`):

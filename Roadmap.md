@@ -48,7 +48,7 @@ promise must **hold**. Today neither is fully true.
 | # | Item | Status | Why it matters |
 |---|---|---|---|
 | 0.1 | **Runnable demo.** A `demo/` tree (or `candlegraph demo`) with pre-built `graph.json` + contracts + manifest + sample queries, so `index && serve` answers a real question end-to-end with no user data. | 🔎 | Zero-cost evaluation. Removes the Graphify activation wall for first contact. |
-| 0.2 | **OpenAPI → handler linking.** Add `MatchOpenAPI` to `internal/link` (analogous to `MatchRPCs`) so `explain_endpoint` returns `implemented_by`. | 🔎 | The README's flagship question — *"which handler implements this endpoint?"* — cannot be answered today; `explain_endpoint` returns the raw operation with no link. (`internal/mcp/context_tools.go:261` admits it.) REST is the majority case. |
+| 0.2 | **OpenAPI → handler linking.** Add `MatchOpenAPI` to `internal/link` (analogous to `MatchRPCs`) so `explain_endpoint` returns `implemented_by`. | ✅ | Answers the README's flagship question — *"which handler implements this endpoint?"* — via operationId-derived name candidates + AST-confirmed handler shape (HIGH), with route-registration presence as a coarse MEDIUM signal. Path→handler binding stays coarse (precise per-router binding is a later follow-on). REST is the majority case. |
 | 0.3 | **Graphify quickstart.** A verified, versioned walkthrough for producing a compliant `graph.json` (exact commands, expected schema, validation), or a built-in fallback extractor. | 🔎 | candlegraph does nothing without graph inputs; today producing them is undocumented. (`docs/getting-started.md:9-12`.) |
 
 **Exit criterion:** a stranger can clone, run `demo`, and watch an agent answer
