@@ -1,0 +1,15 @@
+{
+  "change": "add-openapi-handler-linking",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "2e3629bce5bb06d2a0d53ae4663e61511ea53560b2a312ef80fcbec800b4d862",
+  "files": [
+    { "path": "openspec/changes/add-openapi-handler-linking/proposal.md", "sha256": "5f19a4f96e608520917a9ca372e614ee5c6603baf1f8f6d4e10a32be3dad6716" },
+    { "path": "openspec/changes/add-openapi-handler-linking/design.md", "sha256": "66dcf97fb6163b84a7f4226811cefe02f6b971cff2f8fbf2477564d5e279dca0" },
+    { "path": "openspec/changes/add-openapi-handler-linking/tasks.md", "sha256": "f46de30689fe2d3deb9b2c5950bd3684e028837708f61e9486e024abf00245fa" },
+    { "path": "openspec/changes/add-openapi-handler-linking/specs/ast-linking/spec.md", "sha256": "7f17d43f0b7dec8c0da2cf1973a190a033c3203387e01c540d1d16c91d3cae15" },
+    { "path": "openspec/changes/add-openapi-handler-linking/specs/openapi-tools/spec.md", "sha256": "f4824c954bee49ef93e27886ba77776aae71157a406d8d3ab1990a7d771be89f" }
+  ]
+}
