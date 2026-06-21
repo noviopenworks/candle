@@ -51,6 +51,7 @@ func TestEndToEndToolSurface(t *testing.T) {
 	writeFixture(t, inv, "graph.json", `{
 		"nodes": [
 			{"id":"grpc_server_reserveproduct","label":"ReserveProduct","file_type":"code","source_file":"internal/grpc/server.go","source_location":"L10"},
+			{"id":"http_reserveproduct","label":"ReserveProduct","file_type":"code","source_file":"internal/http/handler.go","source_location":"L8"},
 			{"id":"grpc_register","label":"RegisterInventoryServiceServer","file_type":"code","source_file":"internal/grpc/register.go"},
 			{"id":"svc_reserve","label":"ReserveSvc","file_type":"code","source_file":"internal/svc/service.go"}
 		],
@@ -73,6 +74,16 @@ func (s *Server) ReserveProduct(ctx context.Context, req *ReserveProductRequest)
 
 type ReserveProductRequest struct{}
 type ReserveProductResponse struct{}
+`)
+
+	// Real HTTP handler source so the OpenAPI linker confirms the handler shape.
+	writeFixture(t, inv, "internal/http/handler.go", `package http
+
+import "net/http"
+
+type Handler struct{}
+
+func (h *Handler) ReserveProduct(w http.ResponseWriter, r *http.Request) {}
 `)
 
 	// Protobuf contract.
@@ -238,6 +249,10 @@ func (c *Client) Verify(token string) bool { return token != "" }
 	// AST-confirmed RPC implementation (HIGH tier with "ast" reason).
 	rpcBody := call("explain_rpc", map[string]any{"repo": "org/inventory", "service": "InventoryService", "rpc": "ReserveProduct"})
 	mustContain("explain_rpc", rpcBody, "grpc_server_reserveproduct", "ast", "0.9")
+
+	// AST-confirmed HTTP handler implementation (HIGH tier for reserveProduct).
+	epBody := call("explain_endpoint", map[string]any{"repo": "org/inventory", "method": "POST", "path": "/reservations"})
+	mustContain("explain_endpoint", epBody, "http_reserveproduct", "implemented_by", "HIGH")
 
 	// find_rpc.
 	mustContain("find_rpc", call("find_rpc", map[string]any{"repo": "org/inventory", "query": "ReserveProduct", "stream_kind": ""}), "ReserveProduct")
