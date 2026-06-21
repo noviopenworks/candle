@@ -49,7 +49,9 @@ func (t *Tools) FindEndpoint(repo, query string) ([]store.HTTPOperation, error) 
 	return t.s.FindOperations(ri.IndexID, query)
 }
 
-// HTTPOpImpl is one handler implementation link for explain_endpoint.
+// HTTPOpImpl is one handler implementation link for explain_endpoint. Note the
+// deliberate divergence from explain_rpc's ProtoRPCImpl, which exposes the raw
+// confidence float: explain_endpoint renders the tier as an agent-facing label.
 type HTTPOpImpl struct {
 	Symbol     string `json:"symbol"`
 	Confidence string `json:"confidence"` // HIGH | MEDIUM | LOW
@@ -92,7 +94,10 @@ func (t *Tools) ExplainEndpoint(repo, method, path string) (EndpointExplanation,
 	return out, nil
 }
 
-// tierLabel maps a confidence float to its agent-facing tier name.
+// tierLabel maps a confidence float to its agent-facing tier name. Thresholds
+// sit between the linker's tier constants (link.confHigh=0.9, confMedium=0.6,
+// confLow=0.3) so float rounding cannot cross a boundary; if those constants are
+// retuned, revisit these midpoints.
 func tierLabel(conf float64) string {
 	switch {
 	case conf >= 0.85:

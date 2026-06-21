@@ -83,6 +83,66 @@ func TestMatchOpenAPIMediumViaRoute(t *testing.T) {
 	}
 }
 
+// TestMatchOpenAPIBareHandleDoesNotInflate: a lone symbol named "Handle" (an
+// extremely common method name) must NOT be treated as route-registration
+// presence; the route signal requires specific router constructors. A name-only
+// candidate therefore stays LOW, not MEDIUM.
+func TestMatchOpenAPIBareHandleDoesNotInflate(t *testing.T) {
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	id, _ := s.UpsertIndex("acme", "inventory", "abc", "main", "/g")
+	mustNode(t, s, id, "h1", "ReserveProduct", "/nonexistent/handler.go")
+	mustNode(t, s, id, "x1", "Handle", "/nonexistent/other.go") // common name, not a router
+
+	ops := []Op{{Method: "POST", Path: "/x", OperationID: "ReserveProduct"}}
+	links, err := MatchOpenAPI(s, id, ops, "")
+	if err != nil {
+		t.Fatalf("match: %v", err)
+	}
+	if len(links) != 1 || links[0].Confidence != 0.3 || links[0].MatchReason != "name" {
+		t.Fatalf("expected LOW name (bare Handle must not inflate), got: %+v", links)
+	}
+}
+
+// TestMatchOpenAPIMultiCandidateDisambiguation: when two same-named nodes exist —
+// a real HTTP handler and a non-handler (e.g. a gRPC method) — both are linked,
+// but the AST gate keeps them on distinct tiers (handler HIGH, non-handler LOW),
+// so the tier disambiguates which is the real handler.
+func TestMatchOpenAPIMultiCandidateDisambiguation(t *testing.T) {
+	dir := t.TempDir()
+	handlerSrc := filepath.Join(dir, "handler.go")
+	if err := os.WriteFile(handlerSrc, []byte("package h\nimport \"net/http\"\n"+
+		"func (h *Handler) ReserveProduct(w http.ResponseWriter, r *http.Request) {}\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	grpcSrc := filepath.Join(dir, "server.go")
+	if err := os.WriteFile(grpcSrc, []byte("package g\nimport \"context\"\n"+
+		"func (s *Server) ReserveProduct(ctx context.Context, req *Req) (*Resp, error) { return nil, nil }\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	id, _ := s.UpsertIndex("acme", "inventory", "abc", "main", "/g")
+	mustNode(t, s, id, "http1", "ReserveProduct", "handler.go")
+	mustNode(t, s, id, "grpc1", "ReserveProduct", "server.go")
+
+	ops := []Op{{Method: "POST", Path: "/x", OperationID: "ReserveProduct"}}
+	links, err := MatchOpenAPI(s, id, ops, dir)
+	if err != nil {
+		t.Fatalf("match: %v", err)
+	}
+	byNode := map[string]store.HTTPOpImplLink{}
+	for _, l := range links {
+		byNode[l.NodeID] = l
+	}
+	if got := byNode["http1"]; got.Confidence < 0.85 {
+		t.Fatalf("expected HTTP handler HIGH, got %+v", got)
+	}
+	if got := byNode["grpc1"]; got.Confidence != 0.3 || got.MatchReason != "name" {
+		t.Fatalf("expected gRPC method LOW name (not promoted), got %+v", got)
+	}
+}
+
 // TestMatchOpenAPILowForNonHandler: a same-named domain-service method (not an
 // HTTP handler) with no route presence stays LOW and is never promoted to HIGH.
 func TestMatchOpenAPILowForNonHandler(t *testing.T) {
