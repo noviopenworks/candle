@@ -1,5 +1,5 @@
 workflow: full
-phase: verify
+phase: archive
 context_compression: off
 build_mode: executing-plans
 build_pause: null
@@ -11,11 +11,11 @@ auto_transition: true
 base_ref: 7181f9d43a83f5223ce69063009c3b2a2b60162b
 design_doc: docs/superpowers/specs/2026-06-21-openapi-handler-linking-design.md
 plan: docs/superpowers/plans/2026-06-21-openapi-handler-linking.md
-verify_result: pending
+verify_result: pass
 verification_report: docs/superpowers/reports/2026-06-21-add-openapi-handler-linking-verify.md
-branch_status: pending
+branch_status: handled
 created_at: 2026-06-20
-verified_at: null
+verified_at: 2026-06-21
 archived: false
 handoff_context: openspec/changes/add-openapi-handler-linking/.comet/handoff/design-context.json
 handoff_hash: 2e3629bce5bb06d2a0d53ae4663e61511ea53560b2a312ef80fcbec800b4d862
