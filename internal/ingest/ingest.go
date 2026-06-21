@@ -68,6 +68,17 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 		if err := s.ReplaceAPISpecs(indexID, bundles); err != nil {
 			return rep, err
 		}
+		ops := collectOps(bundles)
+		if len(ops) > 0 && r.Root == "" {
+			rep.Warnings = append(rep.Warnings, fmt.Sprintf("%s: no source root configured; HTTP handler links use heuristic (AST precision off)", r.Repo))
+		}
+		opLinks, err := link.MatchOpenAPI(s, indexID, ops, r.Root)
+		if err != nil {
+			return rep, err
+		}
+		if err := s.LinkHTTPOpImpls(indexID, opLinks); err != nil {
+			return rep, err
+		}
 
 		// Protobuf contracts.
 		pfiles, pwarns, perr := proto.ParseFiles(r.Proto.Roots, r.Proto.Files)
@@ -154,6 +165,16 @@ func toProtoBundles(files []proto.File) []store.ProtoFileBundle {
 			b.Enums = append(b.Enums, pe)
 		}
 		out = append(out, b)
+	}
+	return out
+}
+
+func collectOps(bundles []store.APISpecBundle) []link.Op {
+	var out []link.Op
+	for _, b := range bundles {
+		for _, op := range b.Operations {
+			out = append(out, link.Op{Method: op.Method, Path: op.Path, OperationID: op.OperationID})
+		}
 	}
 	return out
 }

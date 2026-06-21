@@ -249,6 +249,53 @@ func TestRunLinksRPCWithoutRootDegrades(t *testing.T) {
 	}
 }
 
+// TestIngestLinksHTTPHandler verifies that ingestion runs MatchOpenAPI and
+// persists an AST-confirmed HTTP handler link when a source root is set.
+func TestIngestLinksHTTPHandler(t *testing.T) {
+	dir := t.TempDir()
+	// Handler source under the repo root so AST confirms the handler shape.
+	if err := os.MkdirAll(filepath.Join(dir, "internal", "http"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	handler := "package http\nimport \"net/http\"\n" +
+		"type Handler struct{}\n" +
+		"func (h *Handler) ReserveProduct(w http.ResponseWriter, r *http.Request) {}\n"
+	if err := os.WriteFile(filepath.Join(dir, "internal", "http", "handler.go"), []byte(handler), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	graphJSON := `{"nodes":[{"id":"h1","label":"ReserveProduct","file_type":"code","source_file":"internal/http/handler.go"}],"edges":[],"hyperedges":[]}`
+	graphPath := filepath.Join(dir, "graph.json")
+	if err := os.WriteFile(graphPath, []byte(graphJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	spec := "openapi: 3.0.3\ninfo:\n  title: I\n  version: \"1\"\n" +
+		"paths:\n  /x:\n    post:\n      operationId: reserveProduct\n" +
+		"      responses:\n        '200': { description: ok }\n"
+	specPath := filepath.Join(dir, "openapi.yaml")
+	if err := os.WriteFile(specPath, []byte(spec), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg := &config.Config{Repos: []config.RepoConfig{{
+		Repo: "org/svc", Graph: graphPath, Commit: "abc", Branch: "main", Root: dir,
+		OpenAPI: []string{specPath},
+	}}}
+	s, _ := store.Open(":memory:")
+	defer s.Close()
+	if _, err := Run(s, cfg); err != nil {
+		t.Fatalf("run: %v", err)
+	}
+
+	id, _ := s.UpsertIndex("org", "svc", "abc", "main", graphPath)
+	impls, err := s.HTTPOpImpls(id, "POST", "/x")
+	if err != nil || len(impls) == 0 {
+		t.Fatalf("expected HTTP impl link, got %+v err=%v", impls, err)
+	}
+	if impls[0].NodeID != "h1" || impls[0].Confidence < 0.85 {
+		t.Fatalf("expected HIGH link to h1, got %+v", impls)
+	}
+}
+
 // TestRunToleratesBadOpenAPISpecs verifies that a missing spec file and a
 // Swagger 2.0 spec are each skipped with a warning while the repo's graph is
 // still indexed and the run does not abort.
