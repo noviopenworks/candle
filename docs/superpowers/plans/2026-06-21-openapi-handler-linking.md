@@ -6,7 +6,7 @@ base-ref: 7181f9d43a83f5223ce69063009c3b2a2b60162b
 
 # OpenAPI Handler Linking Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Make `explain_endpoint` answer "which handler implements this endpoint?" by adding an OpenAPI-operation → handler-symbol linker that mirrors the proven gRPC `MatchRPCs` pipeline end to end.
 
@@ -59,7 +59,7 @@ Adds the `http_operation_impls` table to the embedded schema, keyed by the opera
 **Interfaces:**
 - Produces: a `http_operation_impls` table with columns `id, index_id, method, path, node_id, confidence, match_reason` and index `idx_http_op_impls_lookup ON http_operation_impls(index_id, method, path)`.
 
-- [ ] **Step 1: Add the table to the embedded DDL**
+- [x] **Step 1: Add the table to the embedded DDL**
 
 In `internal/store/schema.go`, immediately after the `proto_rpc_impls` index line `CREATE INDEX IF NOT EXISTS idx_proto_rpc_impls_rpc ON proto_rpc_impls(proto_rpc_id);` (line 143), insert:
 
@@ -78,12 +78,12 @@ CREATE INDEX IF NOT EXISTS idx_http_op_impls_lookup ON http_operation_impls(inde
 
 (Insert these lines inside the backtick string literal; keep the trailing backtick on its own line at `schema.go:185`.)
 
-- [ ] **Step 2: Verify the schema still compiles and applies**
+- [x] **Step 2: Verify the schema still compiles and applies**
 
 Run: `go test ./internal/store/ -run TestStore -v`
 Expected: PASS (the existing `store_test.go` opens an in-memory DB and applies `schemaSQL`; a malformed DDL would fail `Open`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add internal/store/schema.go
@@ -107,7 +107,7 @@ Adds `HTTPOpImplLink`, `LinkHTTPOpImpls` (idempotent replace), and `HTTPOpImpls`
   - `func (s *Store) LinkHTTPOpImpls(indexID int64, links []HTTPOpImplLink) error`
   - `func (s *Store) HTTPOpImpls(indexID int64, method, path string) ([]HTTPOpImplLink, error)` — matches case-insensitively on method (`UPPER(method)=UPPER(?)`) and exactly on path, mirroring `OperationByMethodPath` (`internal/store/api.go:181-193`).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `internal/store/api_test.go`:
 
@@ -150,12 +150,12 @@ func TestLinkHTTPOpImplsRoundTrip(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/store/ -run TestLinkHTTPOpImplsRoundTrip -v`
 Expected: FAIL — compile error, `s.LinkHTTPOpImpls`/`s.HTTPOpImpls`/`HTTPOpImplLink` undefined.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 Append to `internal/store/api.go` (after `FindSchemas`, line 229):
 
@@ -215,17 +215,17 @@ func (s *Store) HTTPOpImpls(indexID int64, method, path string) ([]HTTPOpImplLin
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `go test ./internal/store/ -run TestLinkHTTPOpImplsRoundTrip -v`
 Expected: PASS
 
-- [ ] **Step 5: Run the store package + vet**
+- [x] **Step 5: Run the store package + vet**
 
 Run: `go vet ./internal/store/ && go test ./internal/store/`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/store/api.go internal/store/api_test.go
@@ -250,7 +250,7 @@ The HTTP handler shape is `func (recv) Name(w http.ResponseWriter, r *http.Reque
   - `type Op struct { Method string; Path string; OperationID string }`
   - `func MatchOpenAPI(s *store.Store, indexID int64, ops []Op, root string) ([]store.HTTPOpImplLink, error)`
 
-- [ ] **Step 1: Write the handler testdata fixture**
+- [x] **Step 1: Write the handler testdata fixture**
 
 Create `internal/link/testdata/repo/internal/http/handler.go`:
 
@@ -273,14 +273,14 @@ type Service struct{}
 func (s *Service) ReserveProductDomain(req string) (string, error) { return "", nil }
 ```
 
-- [ ] **Step 2: Write the failing test (full test body is in Task 4)**
+- [x] **Step 2: Write the failing test (full test body is in Task 4)**
 
 Task 4 holds the test file; this step only confirms the fixture compiles standalone.
 
 Run: `go build ./internal/link/testdata/...` (will error harmlessly if the dir is not a buildable package — that's fine; testdata is excluded from normal builds). Instead verify with: `gofmt -l internal/link/testdata/repo/internal/http/handler.go`
 Expected: no output (file is gofmt-clean).
 
-- [ ] **Step 3: Write `internal/link/openapi.go`**
+- [x] **Step 3: Write `internal/link/openapi.go`**
 
 ```go
 package link
@@ -495,12 +495,12 @@ func httpSignatureScan(sourceFile, name string) bool {
 }
 ```
 
-- [ ] **Step 4: Run package build + vet**
+- [x] **Step 4: Run package build + vet**
 
 Run: `go build ./internal/link/ && go vet ./internal/link/`
 Expected: PASS (no test yet — Task 4 adds tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/link/openapi.go internal/link/testdata/repo/internal/http/handler.go
@@ -519,7 +519,7 @@ Covers every delta-spec scenario (`openspec/changes/add-openapi-handler-linking/
 **Interfaces:**
 - Consumes: `MatchOpenAPI`, `Op` (Task 3), `store.HTTPOpImplLink` (Task 2), the package-local `mustNode` helper, and the AST fixture `internal/link/testdata/repo/internal/http/handler.go` (Task 3, root = `internal/link/testdata/repo`).
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `internal/link/openapi_test.go`:
 
@@ -660,19 +660,19 @@ func TestMatchOpenAPINoLink(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they pass**
+- [x] **Step 2: Run tests to verify they pass**
 
 Run: `go test ./internal/link/ -run TestMatchOpenAPI -v`
 Expected: PASS for all five tests.
 
 (If `TestMatchOpenAPILowForNonHandler` fails because the node's `source_file` does not resolve under `root`, confirm `mustNode` stores `source_file` exactly `"service.go"` and `root` is the temp dir — `readSourceUnderRoot` joins them. The fixture name must match.)
 
-- [ ] **Step 3: Run the full link package + vet**
+- [x] **Step 3: Run the full link package + vet**
 
 Run: `go vet ./internal/link/ && go test ./internal/link/`
 Expected: PASS (existing RPC/export tests still green).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add internal/link/openapi_test.go
@@ -693,7 +693,7 @@ Builds `[]link.Op` from the indexed OpenAPI bundles, calls `MatchOpenAPI` gated 
 - Consumes: `link.MatchOpenAPI`, `link.Op` (Task 3), `store.LinkHTTPOpImpls` (Task 2), the `bundles []store.APISpecBundle` already built at `internal/ingest/ingest.go:59-67`, and `r.Root`.
 - Produces: persisted `http_operation_impls` rows after each repo is indexed.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Inspect `internal/ingest/ingest_test.go` first (it already asserts RPC `implemented_by` per the codegraph blast-radius note). Add a focused test that indexes a fixture with an OpenAPI op + a handler node + handler source under root, then asserts an HTTP impl link is persisted. Append:
 
@@ -746,12 +746,12 @@ func TestIngestLinksHTTPHandler(t *testing.T) {
 
 Add `"os"`, `"path/filepath"`, and the `config`/`store` imports to the test file's import block if not already present (match the existing imports in `internal/ingest/ingest_test.go`; the `config.Repo` field names — `Repo`, `Graph`, `Commit`, `Branch`, `Root`, `OpenAPI` — must match `internal/config`; verify exact field names there before writing).
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/ingest/ -run TestIngestLinksHTTPHandler -v`
 Expected: FAIL — `s.HTTPOpImpls` returns 0 links (ingest does not link HTTP yet).
 
-- [ ] **Step 3: Add the `collectOps` helper**
+- [x] **Step 3: Add the `collectOps` helper**
 
 In `internal/ingest/ingest.go`, after `collectRPCs` (ends line 172), add:
 
@@ -767,7 +767,7 @@ func collectOps(bundles []store.APISpecBundle) []link.Op {
 }
 ```
 
-- [ ] **Step 4: Wire the linker into `Run`**
+- [x] **Step 4: Wire the linker into `Run`**
 
 In `internal/ingest/ingest.go`, replace the `ReplaceAPISpecs` block (lines 68-70):
 
@@ -796,17 +796,17 @@ with:
 		}
 ```
 
-- [ ] **Step 5: Run the test to verify it passes**
+- [x] **Step 5: Run the test to verify it passes**
 
 Run: `go test ./internal/ingest/ -run TestIngestLinksHTTPHandler -v`
 Expected: PASS
 
-- [ ] **Step 6: Run the ingest package + vet**
+- [x] **Step 6: Run the ingest package + vet**
 
 Run: `go vet ./internal/ingest/ && go test ./internal/ingest/`
 Expected: PASS (existing ingest tests still green).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add internal/ingest/ingest.go internal/ingest/ingest_test.go
@@ -832,7 +832,7 @@ git commit -m "feat(ingest): run MatchOpenAPI and persist HTTP handler links"
 
 > NOTE: `ExplainEndpoint`'s return type changes from `store.HTTPOperation` to `EndpointExplanation`. Update every caller — search with `grep -rn "ExplainEndpoint" internal/ cmd/` and adjust (the MCP server registration in the `serve` wiring and any tests). The operation moves under `.Operation`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 In `internal/mcp/openapi_tools_test.go`, add (and adapt the existing `ExplainEndpoint` test to the new `.Operation` field):
 
@@ -884,12 +884,12 @@ func TestExplainEndpointImplementedBy(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/mcp/ -run TestExplainEndpointImplementedBy -v`
 Expected: FAIL — `expl.Operation`/`expl.ImplementedBy` undefined (return type is still `store.HTTPOperation`).
 
-- [ ] **Step 3: Rewrite `ExplainEndpoint`**
+- [x] **Step 3: Rewrite `ExplainEndpoint`**
 
 In `internal/mcp/openapi_tools.go`, replace the `ExplainEndpoint` method (lines 52-69) with:
 
@@ -950,17 +950,17 @@ func tierLabel(conf float64) string {
 }
 ```
 
-- [ ] **Step 4: Fix every `ExplainEndpoint` caller**
+- [x] **Step 4: Fix every `ExplainEndpoint` caller**
 
 Run: `grep -rn "ExplainEndpoint" internal/ cmd/`
 For each caller outside `openapi_tools.go` (the MCP tool registration in the `serve` wiring, and any test), the result is now `EndpointExplanation`; references to the operation become `.Operation`. Update them.
 
-- [ ] **Step 5: Run the test + package**
+- [x] **Step 5: Run the test + package**
 
 Run: `go test ./internal/mcp/ -run TestExplainEndpointImplementedBy -v && go vet ./internal/mcp/`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/mcp/openapi_tools.go internal/mcp/openapi_tools_test.go
@@ -981,7 +981,7 @@ git commit -m "feat(mcp): explain_endpoint returns implemented_by handler links"
 - Consumes: nothing new.
 - Produces: a `contextLimitations()` slice with no "OpenAPI endpoint implementation linking is not yet available" entry.
 
-- [ ] **Step 1: Write/adjust the failing test**
+- [x] **Step 1: Write/adjust the failing test**
 
 In `internal/mcp/context_tools_test.go`, add an assertion that the stale string is gone:
 
@@ -997,12 +997,12 @@ func TestContextLimitationsNoStaleOpenAPINote(t *testing.T) {
 
 Ensure `"strings"` and `"testing"` are imported in that test file.
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `go test ./internal/mcp/ -run TestContextLimitationsNoStaleOpenAPINote -v`
 Expected: FAIL — the stale string is still in the slice.
 
-- [ ] **Step 3: Edit `contextLimitations()`**
+- [x] **Step 3: Edit `contextLimitations()`**
 
 In `internal/mcp/context_tools.go`, replace:
 
@@ -1030,12 +1030,12 @@ func contextLimitations() []string {
 }
 ```
 
-- [ ] **Step 4: Run the test + package**
+- [x] **Step 4: Run the test + package**
 
 Run: `go test ./internal/mcp/ -run TestContextLimitationsNoStaleOpenAPINote -v && go vet ./internal/mcp/`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add internal/mcp/context_tools.go internal/mcp/context_tools_test.go
@@ -1056,7 +1056,7 @@ The surface e2e (`internal/mcp/e2e_surface_test.go`) already builds the binary, 
 - Consumes: the running `serve` subprocess and the `call`/`mustContain` helpers already defined in `e2e_surface_test.go:198-216`.
 - Produces: an e2e assertion that `explain_endpoint` for `POST /reservations` returns the handler node at HIGH.
 
-- [ ] **Step 1: Add the handler node to the inventory graph fixture**
+- [x] **Step 1: Add the handler node to the inventory graph fixture**
 
 In `internal/mcp/e2e_surface_test.go`, in the consumer-repo `graph.json` (lines 51-61), add a handler node to the `nodes` array (and an edge so the node is non-isolated, optional):
 
@@ -1066,7 +1066,7 @@ In `internal/mcp/e2e_surface_test.go`, in the consumer-repo `graph.json` (lines 
 
 NOTE: the graph already has a node labelled `ReserveProduct` (`grpc_server_reserveproduct`) whose source is `internal/grpc/server.go` (a gRPC unary method, NOT an HTTP handler). That node will also be a name candidate for the operationId `reserveProduct` — it parses under root, fails `classifyHTTPHandler`, and stays LOW/MEDIUM, while the new `http_reserveproduct` node confirms HIGH. The assertion below targets the HIGH node, so both candidates coexisting is expected and correct (mirrors `MatchRPCs` ambiguity behavior).
 
-- [ ] **Step 2: Add the real handler source fixture**
+- [x] **Step 2: Add the real handler source fixture**
 
 After the existing `internal/grpc/server.go` fixture (ends line 76), add:
 
@@ -1081,7 +1081,7 @@ func (h *Handler) ReserveProduct(w http.ResponseWriter, r *http.Request) {}
 `)
 ```
 
-- [ ] **Step 3: Add the assertion**
+- [x] **Step 3: Add the assertion**
 
 After the existing AST-confirmed RPC assertion (`e2e_surface_test.go:238-240`), add:
 
@@ -1091,16 +1091,16 @@ After the existing AST-confirmed RPC assertion (`e2e_surface_test.go:238-240`), 
 	mustContain("explain_endpoint", epBody, "http_reserveproduct", "implemented_by", "HIGH")
 ```
 
-- [ ] **Step 4: Keep `TestEndToEndStdio` green**
+- [x] **Step 4: Keep `TestEndToEndStdio` green**
 
 In `internal/mcp/e2e_test.go`, the existing assertion checks `strings.Contains(epBody, "reserveProduct")` (line 145). The new result nests the operation under `"operation"`, but the operationId string `reserveProduct` is still present in the JSON, so the assertion holds. Verify by running the test (Step 5); no edit expected. If the assertion regresses, change it to look for `"operation"` + `reserveProduct`.
 
-- [ ] **Step 5: Run both e2e tests**
+- [x] **Step 5: Run both e2e tests**
 
 Run: `go test ./internal/mcp/ -run 'TestEndToEnd' -v`
 Expected: PASS — `TestEndToEndToolSurface` shows the HTTP HIGH link; `TestEndToEndStdio` still passes.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add internal/mcp/e2e_surface_test.go internal/mcp/e2e_test.go
@@ -1121,26 +1121,26 @@ Flip Roadmap item 0.2 from 🔎 to ✅ and reconcile the doc drift the new field
 - Consumes: nothing (docs).
 - Produces: Roadmap 0.2 = ✅; no doc claims HTTP `implemented_by` is unavailable.
 
-- [ ] **Step 1: Flip Roadmap 0.2 status**
+- [x] **Step 1: Flip Roadmap 0.2 status**
 
 In `Roadmap.md`, in the Phase 0 table row for 0.2, change the status cell from `🔎` to `✅`. The "Why it matters" cell currently says the flagship question *cannot be answered today*; update its tense to reflect that it now can (e.g. "Answers the README's flagship question — *which handler implements this endpoint?* — via name + AST-confirmed handler shape; path→handler binding remains coarse.").
 
-- [ ] **Step 2: Reconcile design.md**
+- [x] **Step 2: Reconcile design.md**
 
 Run: `grep -n "implemented_by\|handler linking\|deferred\|MatchOpenAPI" docs/design.md`
 For any line that frames OpenAPI handler linking as deferred/future, update it to "implemented (name + AST handler-shape; route binding coarse)." Do NOT touch the unrelated `implemented_by` example payloads (`docs/design.md:116,167,406,509`) — those already show the field and are now accurate.
 
-- [ ] **Step 3: Reconcile concepts.md + getting-started.md**
+- [x] **Step 3: Reconcile concepts.md + getting-started.md**
 
 Run: `grep -n "implemented_by\|handler\|explain_endpoint\|deferred" docs/concepts.md docs/getting-started.md`
 Update any sentence claiming `explain_endpoint` returns only the contract / that HTTP handler linking is unavailable. (`docs/concepts.md:63` already documents `implemented_by` generically — leave it.) If `getting-started.md` enumerates what `explain_endpoint` returns, add `implemented_by`.
 
-- [ ] **Step 4: Sanity check no stale claim remains**
+- [x] **Step 4: Sanity check no stale claim remains**
 
 Run: `grep -rn "endpoint implementation linking is not yet\|handler linking.*deferred\|implemented_by.*not.*available" docs/ Roadmap.md`
 Expected: no output.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add Roadmap.md docs/design.md docs/concepts.md docs/getting-started.md
@@ -1155,27 +1155,27 @@ Run the complete project verification baseline to confirm the whole change is gr
 
 **Files:** none (verification only).
 
-- [ ] **Step 1: Build**
+- [x] **Step 1: Build**
 
 Run: `go build ./...`
 Expected: no output, exit 0.
 
-- [ ] **Step 2: Vet**
+- [x] **Step 2: Vet**
 
 Run: `go vet ./...`
 Expected: no output, exit 0.
 
-- [ ] **Step 3: Full test suite**
+- [x] **Step 3: Full test suite**
 
 Run: `go test ./...`
 Expected: all packages PASS (including the e2e tests; do not pass `-short`).
 
-- [ ] **Step 4: CI task**
+- [x] **Step 4: CI task**
 
 Run: `mise exec -- task ci`
 Expected: PASS (golangci-lint clean + tests). If the linter flags the `#nosec G304` fallback read in `httpSignatureScan`, confirm the comment is present exactly as written in Task 3 (it mirrors the existing `signatureMatches` suppression at `internal/link/link.go:243-244`).
 
-- [ ] **Step 5: Mark tasks.md complete**
+- [x] **Step 5: Mark tasks.md complete**
 
 Tick every box in `openspec/changes/add-openapi-handler-linking/tasks.md` (1.1–5.3) now that each is implemented and verified, then commit.
 
