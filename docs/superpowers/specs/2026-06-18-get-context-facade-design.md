@@ -10,9 +10,9 @@ status: final
 
 ## Summary
 
-Add `get_context` as candlegraph's primary, Context7-style MCP retrieval tool. It is a
+Add `get_context` as candle's primary, Context7-style MCP retrieval tool. It is a
 repo-scoped facade that composes the existing precise tools' underlying queries into two
-shapes: an **overview catalog** (what candlegraph knows about a repo) and **topic
+shapes: an **overview catalog** (what candle knows about a repo) and **topic
 retrieval** (focused context across code, HTTP, protobuf, and private libraries). It is
 purely additive — no existing tool behavior changes.
 

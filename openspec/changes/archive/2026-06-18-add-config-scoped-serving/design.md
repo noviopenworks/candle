@@ -1,6 +1,6 @@
 ## Context
 
-`cmd/candlegraph/main.go` already declares `--config` as a persistent flag (default
+`cmd/candle/main.go` already declares `--config` as a persistent flag (default
 `manifest.yaml`) but `serve` ignores it — only `index` uses it. `registry.Resolve(repo)` lists all
 snapshots (`indexes JOIN repos`, `ORDER BY org, name`) and returns the first `org/name` match, so
 multiple snapshots of one repo resolve arbitrarily. Every tool resolves through `t.reg.Resolve`,
@@ -47,7 +47,7 @@ default when `commit` is omitted — candidate: resolve to the latest snapshot o
 
 ### D5: Discovery and precedence
 `serve` uses `--config` when given; otherwise discovers a config from the working location (default
-filename TBD in design, e.g. `manifest.yaml`/`candlegraph.yaml` in cwd). No config found → serve all
+filename TBD in design, e.g. `manifest.yaml`/`candle.yaml` in cwd). No config found → serve all
 (backward compatible). Exact precedence finalized in brainstorming.
 
 ### D6: Missing configured snapshot is non-fatal

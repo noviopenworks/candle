@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // TestMatchOpenAPIHighViaAST: a handler whose go/ast declaration is a real HTTP

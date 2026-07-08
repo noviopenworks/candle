@@ -48,7 +48,7 @@
 - WARNING: none.
 - SUGGESTION (accepted by design): store query errors inside `contextMatches`/`contextCapabilities`
   are intentionally swallowed (`_`) so the facade returns best-effort partial context rather than
-  failing wholesale — consistent with candlegraph's graceful-degradation theme. `Depth` is accepted
+  failing wholesale — consistent with candle's graceful-degradation theme. `Depth` is accepted
   but a documented v1 no-op (one hop), surfaced in `limitations`.
 
 ## Final assessment

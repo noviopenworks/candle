@@ -20,7 +20,7 @@ archived-with: 2026-06-16-go-private-library-layer
 
 ## Conventions (read before starting)
 
-- Module path: `github.com/noviopenworks/candlegraph`.
+- Module path: `github.com/noviopenworks/candle`.
 - Store tests open `store.Open(":memory:")`; follow `internal/store/proto_test.go`.
 - Pure tool logic in `internal/mcp/*_tools.go`; SDK registration in `internal/mcp/server.go`.
 - Run full suite: `go test ./...`. Build: `go build ./...`. Vet: `go vet ./...`. Format check: `gofmt -l internal/ cmd/`.
@@ -1427,7 +1427,7 @@ Run: `go test ./internal/ingest/ -run TestRunIndexesGoDeps -v` → FAIL.
 
 - [x] **Step 3: Wire the Go pass into `ingest.Run`**
 
-In `internal/ingest/ingest.go`, add `"github.com/noviopenworks/candlegraph/internal/godep"` to imports. After the protobuf block (after `s.LinkRPCImpls(...)`), add:
+In `internal/ingest/ingest.go`, add `"github.com/noviopenworks/candle/internal/godep"` to imports. After the protobuf block (after `s.LinkRPCImpls(...)`), add:
 
 ```go
 		// Go private libraries.
@@ -1529,7 +1529,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func seedGoDepTools(t *testing.T) *Tools {
@@ -1585,7 +1585,7 @@ Run: `go test ./internal/mcp/ -run 'PrivateLibrary|LibraryConsumers' -v` → FAI
 ```go
 package mcp
 
-import "github.com/noviopenworks/candlegraph/internal/store"
+import "github.com/noviopenworks/candle/internal/store"
 
 const consumersDeferred = "deferred: cross-repo consumer aggregation not available in this change"
 

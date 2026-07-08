@@ -6,7 +6,7 @@ This guide takes you from a clone to an agent querying your services.
 
 - **Go 1.26+** (the module targets `go 1.26.4`) — or **[mise](https://mise.jdx.dev)**,
   which pins Go and the dev tools from the repo's `mise.toml` (`mise install`).
-- **A Graphify code graph** per repo you want to index. candlegraph consumes
+- **A Graphify code graph** per repo you want to index. candle consumes
   Graphify's `graph.json` output — it does not extract code itself. See
   [Concepts → Code graph](concepts.md#layer-1-code-graph-graphify) for how to
   produce one.
@@ -18,22 +18,22 @@ This guide takes you from a clone to an agent querying your services.
 Install a ready-to-run binary with `go install` (needs Go 1.26+):
 
 ```bash
-go install github.com/noviopenworks/candlegraph/cmd/candlegraph@latest
-candlegraph --help
+go install github.com/noviopenworks/candle/cmd/candle@latest
+candle --help
 ```
 
 Or grab a prebuilt archive for your OS/arch from the
-[releases page](https://github.com/noviopenworks/candlegraph/releases), extract
-it, and put `candlegraph` on your `PATH`.
+[releases page](https://github.com/noviopenworks/candle/releases), extract
+it, and put `candle` on your `PATH`.
 
 To work from a clone instead:
 
 ```bash
-git clone https://github.com/noviopenworks/candlegraph
-cd candlegraph
+git clone https://github.com/noviopenworks/candle
+cd candle
 go build ./...                       # build all packages
-go build -o candlegraph ./cmd/candlegraph   # or a single binary
-./candlegraph --help
+go build -o candle ./cmd/candle   # or a single binary
+./candle --help
 ```
 
 If you use [mise](https://mise.jdx.dev), `mise install` pins the toolchain and
@@ -43,7 +43,7 @@ If you use [mise](https://mise.jdx.dev), `mise install` pins the toolchain and
 The CLI has two subcommands and two persistent flags:
 
 ```
-candlegraph [--db intel.db] [--config manifest.yaml] <command>
+candle [--db intel.db] [--config manifest.yaml] <command>
 
 Commands:
   index   Ingest repo graphs from the manifest into the store
@@ -87,7 +87,7 @@ Indexing reads each repo's graph + contracts and writes one **snapshot**
 repo's snapshot rather than duplicating it.
 
 ```bash
-go run ./cmd/candlegraph index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config manifest.yaml
 ```
 
 Output:
@@ -102,7 +102,7 @@ stderr (the run still succeeds for the others).
 ## 4. Serve
 
 ```bash
-go run ./cmd/candlegraph serve --db intel.db
+go run ./cmd/candle serve --db intel.db
 ```
 
 The process now speaks MCP on stdin/stdout. It blocks until the client
@@ -115,7 +115,7 @@ SQLite store. For example, [`examples/serve-scope.yaml`](../examples/serve-scope
 exposes only `VendSYSTEM/service-inventory` and `VendSYSTEM/warehouse-service`:
 
 ```bash
-go run ./cmd/candlegraph serve --db intel.db --config examples/serve-scope.yaml
+go run ./cmd/candle serve --db intel.db --config examples/serve-scope.yaml
 ```
 
 Start another `serve` process with a different scope file to give another MCP
@@ -132,8 +132,8 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "candlegraph": {
-      "command": "/absolute/path/to/candlegraph",
+    "candle": {
+      "command": "/absolute/path/to/candle",
       "args": ["serve", "--db", "/absolute/path/to/intel.db"]
     }
   }
@@ -143,12 +143,12 @@ Add to `claude_desktop_config.json`:
 ### Claude Code
 
 ```bash
-claude mcp add candlegraph -- /absolute/path/to/candlegraph serve --db /absolute/path/to/intel.db
+claude mcp add candle -- /absolute/path/to/candle serve --db /absolute/path/to/intel.db
 ```
 
 ### Any MCP client
 
-Launch `candlegraph serve --db <path>` as a stdio MCP server. The server
+Launch `candle serve --db <path>` as a stdio MCP server. The server
 advertises 13 tools and 5 resource templates (see [tools.md](tools.md) and
 [resources.md](resources.md)).
 

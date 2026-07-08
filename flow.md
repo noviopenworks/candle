@@ -1,10 +1,10 @@
-# candlegraph Flow
+# candle Flow
 
-This document explains how candlegraph works from setup to an agent answer.
+This document explains how candle works from setup to an agent answer.
 
-## What candlegraph does
+## What candle does
 
-candlegraph is a private engineering knowledge layer exposed as an MCP stdio
+candle is a private engineering knowledge layer exposed as an MCP stdio
 server. It lets an AI agent answer questions across repositories by joining three
 sources of information:
 
@@ -12,7 +12,7 @@ sources of information:
 2. API contracts from OpenAPI and protobuf files.
 3. Private Go library providers and consumers.
 
-The important part is the linking step. candlegraph does not only store parsed
+The important part is the linking step. candle does not only store parsed
 contracts. It connects contract nodes back to code symbols, so an endpoint or RPC
 can be traced to its handler, service calls, schemas, messages, and library usage.
 
@@ -25,10 +25,10 @@ Repository source code
 Graphify produces graphify-out/graph.json
         |
         v
-manifest.yaml points candlegraph at each repo snapshot
+manifest.yaml points candle at each repo snapshot
         |
         v
-candlegraph index
+candle index
         |
         +--> load code graph nodes and edges
         +--> parse OpenAPI specs
@@ -40,7 +40,7 @@ candlegraph index
 SQLite database, grouped by index_id snapshots
         |
         v
-candlegraph serve
+candle serve
         |
         v
 MCP client asks tools and reads resources
@@ -51,7 +51,7 @@ AI agent returns contract + implementation + dependency context
 
 ## Step 1: Produce a code graph
 
-candlegraph expects each indexed repository to already have a Graphify graph.
+candle expects each indexed repository to already have a Graphify graph.
 The graph contains code nodes, files, symbols, and edges such as calls.
 
 Example input:
@@ -60,7 +60,7 @@ Example input:
 /abs/inventory-service/graphify-out/graph.json
 ```
 
-candlegraph consumes this file. It does not parse source code itself for the main
+candle consumes this file. It does not parse source code itself for the main
 code graph.
 
 ## Step 2: Describe repos in `manifest.yaml`
@@ -90,10 +90,10 @@ Each manifest entry becomes one repo snapshot. The snapshot is stored under an
 ## Step 3: Run the indexer
 
 ```bash
-go run ./cmd/candlegraph index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config manifest.yaml
 ```
 
-During indexing, candlegraph does this per repo:
+During indexing, candle does this per repo:
 
 1. Loads the Graphify `graph.json` through `internal/graph`.
 2. Parses OpenAPI specs through `internal/openapi`.
@@ -118,13 +118,13 @@ Stored data includes:
 - Protobuf files, services, RPCs, messages, and enums.
 - Go dependencies, private library exports, and private library usages.
 
-candlegraph does not merge every repo into one giant graph. Cross-repo answers
+candle does not merge every repo into one giant graph. Cross-repo answers
 are computed by joining snapshots at query time.
 
 ## Step 5: Serve MCP over stdio
 
 ```bash
-go run ./cmd/candlegraph serve --db intel.db
+go run ./cmd/candle serve --db intel.db
 ```
 
 The server opens the SQLite database, registers MCP tools and resources, then
@@ -158,7 +158,7 @@ list_repos
   -> explain_symbol(repo=org/inventory-service, symbol=<handler or operation match>)
 ```
 
-candlegraph answers by combining:
+candle answers by combining:
 
 - OpenAPI operation details: method, path, operation ID, schemas, security, tags.
 - Linking data: which code symbol implements the operation.
@@ -190,7 +190,7 @@ find_rpc(repo=org/inventory-service, query="ReserveProduct")
   -> explain_rpc(repo=org/inventory-service, service=ReservationService, rpc=ReserveProduct)
 ```
 
-candlegraph answers by combining:
+candle answers by combining:
 
 - Proto service and RPC metadata.
 - Request and response message fields.
@@ -212,7 +212,7 @@ find_private_library(repo=org/platform-libs, query="auth")
   -> find_library_consumers(repo=org/inventory-service, module="github.com/org/platform-libs/auth")
 ```
 
-candlegraph answers by combining:
+candle answers by combining:
 
 - Provider-side exports: packages, functions, types, constructors, interfaces.
 - Consumer-side imports: pinned version, used packages, and used symbols.
@@ -241,7 +241,7 @@ When a repo changes, update its Graphify output and/or contract files, then run
 the index command again.
 
 ```bash
-go run ./cmd/candlegraph index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config manifest.yaml
 ```
 
 Re-indexing replaces that repo snapshot instead of appending duplicate rows. This
@@ -260,11 +260,11 @@ The MVP supports OpenAPI, protobuf, and Go private modules. These are deferred:
 
 ## Mental model
 
-Think of candlegraph as a bridge:
+Think of candle as a bridge:
 
 ```text
 Contracts say what services promise.
 Code graphs say where behavior lives.
 Private library analysis says who shares code with whom.
-candlegraph links them so an agent can explain the real implementation path.
+candle links them so an agent can explain the real implementation path.
 ```

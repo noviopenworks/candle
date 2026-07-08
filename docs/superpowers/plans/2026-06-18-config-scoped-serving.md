@@ -9,7 +9,7 @@ archived-with: 2026-06-18-add-config-scoped-serving
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Scope `candlegraph serve` to a YAML config so an MCP instance exposes only the configured `(repo, commit)` snapshots, deterministically; no config ⇒ serve everything (backward compatible).
+**Goal:** Scope `candle serve` to a YAML config so an MCP instance exposes only the configured `(repo, commit)` snapshots, deterministically; no config ⇒ serve everything (backward compatible).
 
 **Architecture:** A scope is an allow-set of `index_id`s built from the manifest at serve startup and injected into a scope-aware `registry`. Tools resolve through the registry unchanged; cross-repo aggregation filters to the allow-set in the Tools layer. All new entry points are additive `*Scoped` variants so existing callers/tests are untouched.
 
@@ -17,7 +17,7 @@ archived-with: 2026-06-18-add-config-scoped-serving
 
 ## Global Constraints
 
-- Module path `github.com/noviopenworks/candlegraph`.
+- Module path `github.com/noviopenworks/candle`.
 - **Additive / non-breaking:** keep `registry.New`, `mcp.NewTools`, `mcp.NewServer`, `mcp.Serve` signatures; add `*Scoped` variants. No existing test edits required to compile.
 - Scope is `map[int64]bool` (allowed `index_id`s); `nil`/absent ⇒ unscoped (serve all).
 - `commit` set ⇒ exact-commit match; `commit` omitted ⇒ latest snapshot by `ingested_at`.
@@ -49,7 +49,7 @@ package registry
 import (
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func seedTwoSnapshots(t *testing.T) *store.Store {
@@ -204,7 +204,7 @@ Append to `internal/registry/registry_scope_test.go`:
 ```go
 import (
 	// add to existing imports:
-	"github.com/noviopenworks/candlegraph/internal/config"
+	"github.com/noviopenworks/candle/internal/config"
 )
 
 func TestBuildScopePinAndLatestAndMissing(t *testing.T) {
@@ -241,7 +241,7 @@ Expected: FAIL — undefined `BuildScope`.
 
 - [x] **Step 3: Implement BuildScope**
 
-Add to `internal/registry/registry.go` (add `"github.com/noviopenworks/candlegraph/internal/config"` to imports):
+Add to `internal/registry/registry.go` (add `"github.com/noviopenworks/candle/internal/config"` to imports):
 
 ```go
 // snapshot is one indexes row used for scope resolution.
@@ -475,14 +475,14 @@ archived-with: 2026-06-18-add-config-scoped-serving
 ### Task 5: Wire `serve` to discover and apply the scope config
 
 **Files:**
-- Modify: `cmd/candlegraph/main.go`
+- Modify: `cmd/candle/main.go`
 
 **Interfaces:**
 - Consumes: cobra `cmd.Flags().Changed("config")`, `config.Load`, `registry.BuildScope`, `mcp.ServeScoped`, `mcp.Serve`.
 
 - [x] **Step 1: Implement serve scope resolution**
 
-Replace the `serveCmd` `RunE` body in `cmd/candlegraph/main.go`:
+Replace the `serveCmd` `RunE` body in `cmd/candle/main.go`:
 
 ```go
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -525,17 +525,17 @@ Replace the `serveCmd` `RunE` body in `cmd/candlegraph/main.go`:
 		},
 ```
 
-Add imports as needed: `"os"` (already present), `"github.com/noviopenworks/candlegraph/internal/config"`, `"github.com/noviopenworks/candlegraph/internal/registry"`.
+Add imports as needed: `"os"` (already present), `"github.com/noviopenworks/candle/internal/config"`, `"github.com/noviopenworks/candle/internal/registry"`.
 
 - [x] **Step 2: Build the binary**
 
-Run: `go build ./cmd/candlegraph`
+Run: `go build ./cmd/candle`
 Expected: compiles cleanly.
 
 - [x] **Step 3: Commit**
 
 ```bash
-git add cmd/candlegraph/main.go
+git add cmd/candle/main.go
 git commit -m "feat(cli): serve scopes to a discovered/explicit config (back-compat serve-all)"
 ```
 
@@ -554,7 +554,7 @@ Create `examples/serve-scope.yaml` (a manifest subset; `graph:` is required by t
 
 ```yaml
 # Serve-scope example: expose only inventory + warehouse from a larger store.
-# `candlegraph serve --db intel.db --config examples/serve-scope.yaml`
+# `candle serve --db intel.db --config examples/serve-scope.yaml`
 repos:
   - repo: VendSYSTEM/service-inventory
     graph: /abs/path/service-inventory/graphify-out/graph.json
@@ -574,9 +574,9 @@ In `docs/getting-started.md` + `README.md`, add a short "Running multiple scoped
 Run (using the existing 5-repo store at /tmp/vs/intel.db, with a scope file pinning the two repos' commits):
 
 ```bash
-go build -o /tmp/candlegraph ./cmd/candlegraph
+go build -o /tmp/candle ./cmd/candle
 # scope file lists only service-inventory + warehouse-service (with their commits)
-/tmp/candlegraph serve --db /tmp/vs/intel.db --config /tmp/vs/scope-inv-wh.yaml
+/tmp/candle serve --db /tmp/vs/intel.db --config /tmp/vs/scope-inv-wh.yaml
 # Then via an MCP client: list_repos returns ONLY service-inventory + warehouse-service.
 ```
 

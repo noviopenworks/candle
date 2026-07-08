@@ -4,7 +4,7 @@ The project's "what's deferred" notes are scattered across `docs/concepts.md`
 ("What's deferred"), `docs/design.md` ("Updated MVP Scope", "Final Direction"),
 and inline code comments (`internal/mcp/context_tools.go`,
 `internal/mcp/proto_tools.go`). A new user or contributor has no single forward-
-looking view of where candlegraph is going or what is deliberately out of scope.
+looking view of where candle is going or what is deliberately out of scope.
 A deep analysis of "what's missing to make this useful to others" produced a
 prioritized set of gaps; capturing them as a committed `Roadmap.md` makes the
 direction canonical, reviewable, and maintainable.

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // fixtureRoot is the testdata repo root containing parseable Go fixtures.

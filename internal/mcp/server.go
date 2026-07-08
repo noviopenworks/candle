@@ -8,8 +8,8 @@ import (
 
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
-	"github.com/noviopenworks/candlegraph/internal/version"
+	"github.com/noviopenworks/candle/internal/store"
+	"github.com/noviopenworks/candle/internal/version"
 )
 
 // ToolNames lists every base tool the server advertises, in registration order.
@@ -44,7 +44,7 @@ func NewServer(s *store.Store) *mcpsdk.Server {
 func NewServerScoped(s *store.Store, allowed map[int64]bool) *mcpsdk.Server {
 	tools := NewToolsScoped(s, allowed)
 	srv := mcpsdk.NewServer(&mcpsdk.Implementation{
-		Name:    "candlegraph",
+		Name:    "candle",
 		Version: version.String(),
 	}, nil)
 

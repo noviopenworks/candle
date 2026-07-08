@@ -1,6 +1,6 @@
 # Examples
 
-Runnable starting points for candlegraph.
+Runnable starting points for candle.
 
 ## `manifest.yaml`
 
@@ -16,13 +16,13 @@ Copy it to the repo root and edit the paths:
 ```bash
 cp examples/manifest.yaml manifest.yaml
 # edit the `graph:` paths to point at your real graphify-out/graph.json files
-candlegraph index --db intel.db --config manifest.yaml
-candlegraph serve --db intel.db
+candle index --db intel.db --config manifest.yaml
+candle serve --db intel.db
 ```
 
 ## What you need first
 
-Each repo needs a Graphify `graph.json`. candlegraph consumes that output — it
+Each repo needs a Graphify `graph.json`. candle consumes that output — it
 does not extract code itself. Produce one per repo with Graphify, then point the
 manifest's `graph:` field at the resulting `graphify-out/graph.json`.
 
@@ -33,7 +33,7 @@ analysis, library consumers), see **[../docs/examples.md](../docs/examples.md)**
 
 ## Minimal graph fixture
 
-The smallest valid Graphify graph candlegraph will index — a handler that calls
+The smallest valid Graphify graph candle will index — a handler that calls
 a service:
 
 ```json

@@ -6,13 +6,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/noviopenworks/candlegraph/internal/config"
-	"github.com/noviopenworks/candlegraph/internal/godep"
-	"github.com/noviopenworks/candlegraph/internal/graph"
-	"github.com/noviopenworks/candlegraph/internal/link"
-	"github.com/noviopenworks/candlegraph/internal/openapi"
-	"github.com/noviopenworks/candlegraph/internal/proto"
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/config"
+	"github.com/noviopenworks/candle/internal/godep"
+	"github.com/noviopenworks/candle/internal/graph"
+	"github.com/noviopenworks/candle/internal/link"
+	"github.com/noviopenworks/candle/internal/openapi"
+	"github.com/noviopenworks/candle/internal/proto"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // Report summarizes an ingestion run.

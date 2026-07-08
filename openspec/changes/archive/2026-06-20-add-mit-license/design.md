@@ -14,7 +14,7 @@ reference it explicitly.
 ## Decision
 
 MIT, copyright holder `noviopenworks` (matches the module path
-`github.com/noviopenworks/candlegraph`). Year `2026` (creation year).
+`github.com/noviopenworks/candle`). Year `2026` (creation year).
 
 ## Files
 

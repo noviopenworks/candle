@@ -17,7 +17,7 @@ archived-with: 2026-06-18-add-explain-private-library
 
 ## Global Constraints
 
-- Module path: `github.com/noviopenworks/candlegraph`.
+- Module path: `github.com/noviopenworks/candle`.
 - Additive only: do NOT change `find_private_library` / `find_library_consumers` behavior or existing outputs.
 - `:memory:` caveat: in cross-index store queries, fully scan and **close the cursor before** issuing nested queries (a second pooled connection to `:memory:` is a separate empty DB). Reuse existing index-scoped helpers after closing.
 - Export linking uses `PrivateExport.NodeID` (resolve via `NodeByID`); fall back to `NodesByLabel` only if `NodeID` is empty; mark unresolved otherwise.
@@ -303,7 +303,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func seedExplain(t *testing.T) *Tools {
@@ -390,7 +390,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // LibraryExplanation is the explain_private_library result: provider definition

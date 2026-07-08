@@ -1,11 +1,11 @@
 # Architecture
 
-How candlegraph is put together internally, for contributors and the curious.
+How candle is put together internally, for contributors and the curious.
 
 ## Package layout
 
 ```
-cmd/candlegraph/        CLI entrypoint (cobra): `index` and `serve`
+cmd/candle/        CLI entrypoint (cobra): `index` and `serve`
 internal/
   config/               manifest.yaml loading + validation (viper)
   graph/                Graphify graph.json loader (tolerant schema)
@@ -98,12 +98,12 @@ package, both the proto and Go layers reuse one matcher.
 
 `internal/graph` reads `graph.json` defensively: unknown fields are ignored and
 missing optional fields (e.g. `source_location`, `hyperedges`) are tolerated, so
-candlegraph keeps working as Graphify's output evolves.
+candle keeps working as Graphify's output evolves.
 
 ## Testing
 
 Pure tool methods and parsers are unit-tested; `internal/mcp` has an
-end-to-end test that builds the `candlegraph` binary, indexes a fixture graph,
+end-to-end test that builds the `candle` binary, indexes a fixture graph,
 and drives the stdio server. Run the suite with:
 
 ```bash

@@ -18,7 +18,7 @@ OpenSpec remains the canonical capability spec. This handoff is a deterministic,
 ```md
 ## Why
 
-A candlegraph store can hold many repos, and the same repo at multiple commits/versions
+A candle store can hold many repos, and the same repo at multiple commits/versions
 (`indexes` is keyed by `UNIQUE(repo_id, commit_sha)`). But `registry.Resolve(repo)` matches
 on `org/name` only and returns the **first** snapshot it finds (`ORDER BY org, name`, no tiebreak
 among a repo's snapshots) — so with multiple versions indexed, every repo-scoped tool silently
@@ -28,7 +28,7 @@ set of repos at specific versions — cannot: an instance exposes whatever happe
 
 ## What Changes
 
-- `candlegraph serve` SHALL **scope the served surface to a YAML config** (the existing manifest).
+- `candle serve` SHALL **scope the served surface to a YAML config** (the existing manifest).
   An instance exposes **only** the `(repo, commit)` pairs declared in its config and **omits**
   every other repo/version present in the store.
 - The config **pins each repo to a version** (the manifest's existing `commit:`), making
@@ -57,7 +57,7 @@ all indexed snapshots are served — so this is additive/opt-in.
 
 ## Impact
 
-- **Code:** `cmd/candlegraph/main.go` (wire `--config` into `serve` + discovery), `internal/registry`
+- **Code:** `cmd/candle/main.go` (wire `--config` into `serve` + discovery), `internal/registry`
   (config-aware, deterministic resolution + scoped `List`/`Match`), `internal/config` (serve-scope
   usage of the existing manifest schema; possibly a thin scope accessor), and the cross-repo
   aggregation entry (`internal/store` `PrivateConsumersAcrossRepos`) to respect the configured set.
@@ -77,7 +77,7 @@ all indexed snapshots are served — so this is additive/opt-in.
 ```md
 ## Context
 
-`cmd/candlegraph/main.go` already declares `--config` as a persistent flag (default
+`cmd/candle/main.go` already declares `--config` as a persistent flag (default
 `manifest.yaml`) but `serve` ignores it — only `index` uses it. `registry.Resolve(repo)` lists all
 snapshots (`indexes JOIN repos`, `ORDER BY org, name`) and returns the first `org/name` match, so
 multiple snapshots of one repo resolve arbitrarily. Every tool resolves through `t.reg.Resolve`,
@@ -124,7 +124,7 @@ default when `commit` is omitted — candidate: resolve to the latest snapshot o
 
 ### D5: Discovery and precedence
 `serve` uses `--config` when given; otherwise discovers a config from the working location (default
-filename TBD in design, e.g. `manifest.yaml`/`candlegraph.yaml` in cwd). No config found → serve all
+filename TBD in design, e.g. `manifest.yaml`/`candle.yaml` in cwd). No config found → serve all
 (backward compatible). Exact precedence finalized in brainstorming.
 
 ### D6: Missing configured snapshot is non-fatal
@@ -177,7 +177,7 @@ still serves the present entries.
 ## 3. Wire `serve` to the scope config
 
 - [ ] 3.1 Add a failing test (or e2e surface assertion) that `serve` with a config scoping to a subset exposes only those repos via `tools/list`-reachable tools (`list_repos` returns only configured repos)
-- [ ] 3.2 Wire `--config` into `serve` in `cmd/candlegraph/main.go`; on startup build the scope and construct a scoped registry/Tools; no config → serve-all
+- [ ] 3.2 Wire `--config` into `serve` in `cmd/candle/main.go`; on startup build the scope and construct a scoped registry/Tools; no config → serve-all
 - [ ] 3.3 Implement working-location discovery + precedence (explicit `--config` wins; else discover from cwd; else serve-all) per design
 - [ ] 3.4 Run and confirm pass
 
@@ -246,7 +246,7 @@ always resolve to that snapshot, never to another snapshot of the same repo.
 ## ADDED Requirements
 
 ### Requirement: Config-scoped serving
-`candlegraph serve` SHALL accept a scope config (the manifest schema, via the existing `--config`
+`candle serve` SHALL accept a scope config (the manifest schema, via the existing `--config`
 flag or discovery from the working location). When a scope config is present, the server SHALL
 expose only the `(repo, commit)` snapshots declared in it and SHALL omit every other repo and
 snapshot in the store from all tools and resources. When no scope config is present, the server

@@ -1,6 +1,6 @@
 ## Why
 
-candlegraph can locate an internal library (`find_private_library`) and report a single
+candle can locate an internal library (`find_private_library`) and report a single
 repo's usage of it (`find_library_consumers`), but the latter explicitly **defers
 cross-repo consumer aggregation** — it returns a `deferred` marker for the cross-repo
 dimension. So no tool answers "who across the whole org uses this internal library, at

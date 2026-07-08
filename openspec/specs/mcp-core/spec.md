@@ -67,7 +67,7 @@ The system SHALL expose `repo://org/name` and `graph://org/name/commit/<sha>/...
 - **THEN** it returns the node JSON for that pinned snapshot; if no commit is recorded, the resource degrades to branch or latest
 
 ### Requirement: Config-scoped serving
-`candlegraph serve` SHALL accept a scope config (the manifest schema, via the existing `--config`
+`candle serve` SHALL accept a scope config (the manifest schema, via the existing `--config`
 flag or discovery from the working location). When a scope config is present, the server SHALL
 expose only the `(repo, commit)` snapshots declared in it and SHALL omit every other repo and
 snapshot in the store from all tools and resources. When no scope config is present, the server

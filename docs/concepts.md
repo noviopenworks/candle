@@ -1,6 +1,6 @@
 # Concepts
 
-candlegraph answers cross-repo questions by joining three layers of information
+candle answers cross-repo questions by joining three layers of information
 about your services into one graph, then linking the contract layers back to the
 code layer. This document explains the model.
 
@@ -8,7 +8,7 @@ code layer. This document explains the model.
 
 ### Layer 1: Code graph (Graphify)
 
-candlegraph does **not** parse source code. It consumes the `graph.json` produced
+candle does **not** parse source code. It consumes the `graph.json` produced
 by a [Graphify](https://github.com/safishamsi/graphify) loader, which already
 extracted:
 
@@ -34,7 +34,7 @@ A minimal graph fixture:
 
 ### Layer 2: API contract layer
 
-candlegraph parses contract files and normalizes them into graph nodes that
+candle parses contract files and normalizes them into graph nodes that
 **link to code symbols**:
 
 - **OpenAPI** (`openapi.{yaml,yml,json}`, `swagger.{yaml,json}`, `api/**`) →
@@ -81,7 +81,7 @@ rows hang off it. This is the unit of:
 
 ## Cross-repo relations are query-time joins
 
-candlegraph does **not** merge all repos into one giant graph. Each repo stays
+candle does **not** merge all repos into one giant graph. Each repo stays
 its own snapshot. Cross-repo questions ("who consumes this library?") are
 answered by **joining at query time** across snapshots. This keeps each repo's
 graph reproducible and lets you re-index one repo without rebuilding others.

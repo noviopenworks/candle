@@ -1,4 +1,4 @@
-# candlegraph documentation
+# candle documentation
 
 Start here, then follow the path that matches what you're doing.
 
@@ -41,4 +41,4 @@ full DDL, edge catalog, end-to-end walkthrough).
   without a `json:` tag serialize with their Go name (e.g. `OperationID`,
   `SourceFile`); fields with a tag use the tagged name (e.g. `module_path`).
   Each tool's doc notes which casing applies.
-- Shell snippets assume you built the `candlegraph` binary or use `go run ./cmd/candlegraph`.
+- Shell snippets assume you built the `candle` binary or use `go run ./cmd/candle`.

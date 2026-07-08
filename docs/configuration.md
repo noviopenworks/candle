@@ -1,6 +1,6 @@
 # Configuration: `manifest.yaml`
 
-The manifest tells `candlegraph index` which repos to ingest and where to find
+The manifest tells `candle index` which repos to ingest and where to find
 each repo's Graphify graph and contract files. It is passed with `--config`
 (default `manifest.yaml`).
 
@@ -86,7 +86,7 @@ go:
 
 ## Serve scope
 
-`candlegraph serve` can use the same manifest shape as a serve-time scope. When
+`candle serve` can use the same manifest shape as a serve-time scope. When
 started with `--config <path>`, the MCP server exposes only snapshots matching the
 listed repos. Without an explicit `--config`, serve looks for the default
 `manifest.yaml` in the working directory; if it exists, that manifest scopes the
@@ -109,7 +109,7 @@ Example: run an MCP instance that exposes only inventory and warehouse from a
 larger multi-repo store:
 
 ```bash
-candlegraph serve --db intel.db --config examples/serve-scope.yaml
+candle serve --db intel.db --config examples/serve-scope.yaml
 ```
 
 ## Worked examples

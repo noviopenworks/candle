@@ -18,7 +18,7 @@ OpenSpec remains the canonical capability spec. This handoff is a deterministic,
 ```md
 ## Why
 
-candlegraph can locate an internal library (`find_private_library`) and report a single
+candle can locate an internal library (`find_private_library`) and report a single
 repo's usage of it (`find_library_consumers`), but the latter explicitly **defers
 cross-repo consumer aggregation** — it returns a `deferred` marker for the cross-repo
 dimension. So no tool answers "who across the whole org uses this internal library, at
@@ -82,7 +82,7 @@ is the tool that delivers the cross-repo dimension.
 ```md
 ## Context
 
-candlegraph indexes private Go libraries from both sides. The provider lookup
+candle indexes private Go libraries from both sides. The provider lookup
 `Store.PrivateLibraryByModule(modulePath)` is already **global** (not index-scoped) and
 returns the defining index plus exports. Consumer data, however, is index-scoped:
 `Store.PrivateUsagesByModule(indexID, modulePath)` and `Store.DependencyByModule` operate

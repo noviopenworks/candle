@@ -1,4 +1,4 @@
-# Contributing to candlegraph
+# Contributing to candle
 
 ## Development
 
@@ -8,7 +8,7 @@ go vet ./...        # static checks
 go test ./...       # full suite (incl. the MCP end-to-end test)
 ```
 
-The `internal/mcp` e2e test builds the `candlegraph` binary, indexes a fixture
+The `internal/mcp` e2e test builds the `candle` binary, indexes a fixture
 graph, and drives the stdio server — so a green `go test ./...` means the whole
 index → serve path works.
 
@@ -29,8 +29,8 @@ SDK-free so they can be unit-tested directly.
 
 ## Project conventions
 
-- **Module path:** `github.com/noviopenworks/candlegraph`.
-- **Binary / command:** `candlegraph` (`cmd/candlegraph`).
+- **Module path:** `github.com/noviopenworks/candle`.
+- **Binary / command:** `candle` (`cmd/candle`).
 - Match the surrounding code's naming, comment density, and idioms.
 - One logical change per commit; messages describe intent, not mechanics.
 
@@ -56,7 +56,7 @@ follow the phase prompts. At archive, the change's delta spec is merged into the
 main specs under `openspec/specs/` and the change is moved to the archive dir.
 
 Browse `openspec/changes/archive/` for worked examples (e.g.
-`2026-06-17-rename-to-candlegraph`), each with its proposal, spec, design, tasks,
+`2026-06-17-rename-to-candle`), each with its proposal, spec, design, tasks,
 and verification report.
 
 ## Where the design lives

@@ -1,6 +1,6 @@
 ## Context
 
-candlegraph exposes 13 MCP tools today, each a thin pure method on `*Tools` over the
+candle exposes 13 MCP tools today, each a thin pure method on `*Tools` over the
 SQLite store, registered in `internal/mcp/server.go`. Resolution goes through
 `t.reg.Resolve(repo) -> (registry.RepoInfo, ok, err)`; `RepoInfo` carries `IndexID`,
 `Repo` (`org/name`), `Branch`, and `Commit`. The precise tools already implement every

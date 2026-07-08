@@ -5,7 +5,7 @@ just says "See the repository for license terms." — so the project is, in
 effect, **all-rights-reserved** by default copyright law. That blocks
 redistribution, forks, and corporate adoption: anyone receiving the code has
 no granted rights. The project is meant to be shared (public GitHub module
-path `github.com/noviopenworks/candlegraph`, MCP ecosystem), so an explicit
+path `github.com/noviopenworks/candle`, MCP ecosystem), so an explicit
 permissive license is required.
 
 ## What Changes

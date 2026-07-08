@@ -32,4 +32,4 @@ tagged release; this file is the human-curated summary.
 - Pinned Go to 1.26.4 to clear two reachable standard-library advisories
   (`GO-2026-5039` in `net/textproto`, `GO-2026-5037` in `crypto/x509`).
 
-[Unreleased]: https://github.com/noviopenworks/candlegraph/commits/master
+[Unreleased]: https://github.com/noviopenworks/candle/commits/master

@@ -185,8 +185,8 @@ func (c *Client) Verify(token string) bool { return token != "" }
 	}
 
 	// --- build + index ------------------------------------------------------
-	binPath := filepath.Join(tmp, "candlegraph")
-	if out, err := exec.Command("go", "build", "-o", binPath, "github.com/noviopenworks/candlegraph/cmd/candlegraph").CombinedOutput(); err != nil {
+	binPath := filepath.Join(tmp, "candle")
+	if out, err := exec.Command("go", "build", "-o", binPath, "github.com/noviopenworks/candle/cmd/candle").CombinedOutput(); err != nil {
 		t.Fatalf("build failed: %v\n%s", err, out)
 	}
 	dbPath := filepath.Join(tmp, "intel.db")

@@ -1,6 +1,6 @@
 ## Context
 
-candlegraph indexes private Go libraries from both sides. The provider lookup
+candle indexes private Go libraries from both sides. The provider lookup
 `Store.PrivateLibraryByModule(modulePath)` is already **global** (not index-scoped) and
 returns the defining index plus exports. Consumer data, however, is index-scoped:
 `Store.PrivateUsagesByModule(indexID, modulePath)` and `Store.DependencyByModule` operate

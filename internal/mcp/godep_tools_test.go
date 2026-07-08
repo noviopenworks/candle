@@ -3,7 +3,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func seedGoDepTools(t *testing.T) *Tools {

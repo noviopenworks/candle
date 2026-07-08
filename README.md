@@ -1,8 +1,8 @@
-# candlegraph
+# candle
 
 **A private engineering knowledge layer, delivered as an [MCP](https://modelcontextprotocol.io) server.**
 
-candlegraph lets an AI coding agent reason about service boundaries across many
+candle lets an AI coding agent reason about service boundaries across many
 repositories. It combines three layers into one queryable graph:
 
 1. **Code graph** — symbols, calls, and files, produced by an existing
@@ -36,24 +36,24 @@ or *"what breaks if I change this proto message?"* resolve across repos.
 
 ## Installation
 
-Any of these gives you a `candlegraph` binary that speaks MCP over stdio.
+Any of these gives you a `candle` binary that speaks MCP over stdio.
 
 **`go install`** (needs Go 1.26+):
 
 ```bash
-go install github.com/noviopenworks/candlegraph/cmd/candlegraph@latest
+go install github.com/noviopenworks/candle/cmd/candle@latest
 ```
 
 It lands in `$(go env GOBIN)` (or `$(go env GOPATH)/bin`) — make sure that's on
 your `PATH`.
 
 **Prebuilt release binary** — download the archive for your OS/arch from the
-[releases page](https://github.com/noviopenworks/candlegraph/releases), extract,
-and put `candlegraph` on your `PATH`:
+[releases page](https://github.com/noviopenworks/candle/releases), extract,
+and put `candle` on your `PATH`:
 
 ```bash
-tar -xzf candlegraph_<version>_<os>_<arch>.tar.gz
-./candlegraph --help
+tar -xzf candle_<version>_<os>_<arch>.tar.gz
+./candle --help
 ```
 
 **From source (for development)** — the repo pins its toolchain with
@@ -61,10 +61,10 @@ tar -xzf candlegraph_<version>_<os>_<arch>.tar.gz
 [Task](https://taskfile.dev):
 
 ```bash
-git clone https://github.com/noviopenworks/candlegraph
-cd candlegraph
+git clone https://github.com/noviopenworks/candle
+cd candle
 mise install   # Go + linter + release tools, versions from mise.toml
-task install   # go install ./cmd/candlegraph
+task install   # go install ./cmd/candle
 ```
 
 Run `task -l` for all developer tasks (build, test, lint, vuln, coverage,
@@ -80,18 +80,18 @@ go build ./...
 cp examples/manifest.yaml manifest.yaml
 
 # 3. Index the repos into a SQLite snapshot store
-go run ./cmd/candlegraph index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config manifest.yaml
 # → indexed=2 skipped=0
 
 # 4. Run the MCP stdio server
-go run ./cmd/candlegraph serve --db intel.db
+go run ./cmd/candle serve --db intel.db
 ```
 
 Then point an MCP client (Claude Desktop, Claude Code, any MCP-compatible agent)
 at the `serve` command. See **[docs/getting-started.md](docs/getting-started.md)**.
 
 Agents typically start with `get_context`: call it with a repo for a catalog of
-what candlegraph knows, or with a repo plus a topic for focused Context7-style retrieval.
+what candle knows, or with a repo plus a topic for focused Context7-style retrieval.
 
 To run isolated MCP instances over the same store, pass a manifest subset to
 `serve --config`. For example,
@@ -99,7 +99,7 @@ To run isolated MCP instances over the same store, pass a manifest subset to
 `VendSYSTEM/service-inventory` and `VendSYSTEM/warehouse-service`:
 
 ```bash
-go run ./cmd/candlegraph serve --db intel.db --config examples/serve-scope.yaml
+go run ./cmd/candle serve --db intel.db --config examples/serve-scope.yaml
 ```
 
 Use a different scope file per MCP client; omit `--config` only when the client

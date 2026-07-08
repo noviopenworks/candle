@@ -21,7 +21,7 @@ library exports. RPC confirmation today (`signatureMatches`) reads the source wi
 - only reaches its HIGH-confidence tier when `source_file` is readable from the
   process working directory (its own doc-comment admits this).
 
-The contract→code links are candlegraph's differentiator, so this change makes the
+The contract→code links are candle's differentiator, so this change makes the
 HIGH tier *earned* by real `go/ast` analysis, behind an explicit source root, with
 a clean fallback to the current heuristic.
 

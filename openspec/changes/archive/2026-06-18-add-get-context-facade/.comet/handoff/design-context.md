@@ -18,10 +18,10 @@ OpenSpec remains the canonical capability spec. This handoff is a deterministic,
 ```md
 ## Why
 
-Agents querying candlegraph today must already know which precise tool to reach for
+Agents querying candle today must already know which precise tool to reach for
 (`explain_symbol`, `find_endpoint`, `find_rpc`, `find_private_library`, …) and how a
 repo's knowledge is organized before they can ask anything useful. There is no single
-"start here" entry point that tells an agent what candlegraph knows about a repo and
+"start here" entry point that tells an agent what candle knows about a repo and
 routes it to the right follow-up. This mirrors the Context7 retrieval pattern: one call
 to discover capabilities, then focused topic lookups.
 
@@ -77,7 +77,7 @@ and composes existing store queries.
 ```md
 ## Context
 
-candlegraph exposes 13 MCP tools today, each a thin pure method on `*Tools` over the
+candle exposes 13 MCP tools today, each a thin pure method on `*Tools` over the
 SQLite store, registered in `internal/mcp/server.go`. Resolution goes through
 `t.reg.Resolve(repo) -> (registry.RepoInfo, ok, err)`; `RepoInfo` carries `IndexID`,
 `Repo` (`org/name`), `Branch`, and `Commit`. The precise tools already implement every

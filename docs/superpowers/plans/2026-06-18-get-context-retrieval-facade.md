@@ -45,7 +45,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func seedContextTools(t *testing.T) *Tools {
@@ -567,7 +567,7 @@ Add after `resolve_repo`:
 ```markdown
 ### `get_context`
 
-Context7-style retrieval entry point. With only `repo`, returns a catalog of what candlegraph knows about that repo. With `topic`, searches code symbols, HTTP endpoints, schemas, RPCs, proto messages, and private libraries in that repo.
+Context7-style retrieval entry point. With only `repo`, returns a catalog of what candle knows about that repo. With `topic`, searches code symbols, HTTP endpoints, schemas, RPCs, proto messages, and private libraries in that repo.
 
 | Arg | Type | Description |
 |-----|------|-------------|

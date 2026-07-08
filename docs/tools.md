@@ -55,7 +55,7 @@ For a fuzzy query like `"invent"`, `best` is null and `candidates` lists matches
 ### `get_context`
 
 Context7-style retrieval entry point — the recommended **first** call. With only
-`repo`, it returns a catalog of what candlegraph knows about that repo (code graph,
+`repo`, it returns a catalog of what candle knows about that repo (code graph,
 OpenAPI, protobuf, private libraries) with counts and the precise follow-up tools for
 each surface. With `topic`, it searches code symbols, HTTP endpoints, schemas, RPCs,
 proto messages, and private libraries in that repo, returning code matches with one-hop

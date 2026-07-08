@@ -1,23 +1,23 @@
 ## Context
 
-The module shipped under a placeholder identity (`github.com/candlegraph/intel-mcp`, binary `intel-mcp`). The canonical repository is `github.com/noviopenworks/candlegraph`. This is a mechanical identity correction with no behavioral change. It was implemented and verified in the working tree before this change was opened; the design below records the approach taken.
+The module shipped under a placeholder identity (`github.com/candle/intel-mcp`, binary `intel-mcp`). The canonical repository is `github.com/noviopenworks/candle`. This is a mechanical identity correction with no behavioral change. It was implemented and verified in the working tree before this change was opened; the design below records the approach taken.
 
 ## Approach
 
 A two-pass, order-sensitive find-and-replace across tracked files (excluding generated artifacts and archived records):
 
-1. **Module path first** — replace `github.com/candlegraph/intel-mcp` → `github.com/noviopenworks/candlegraph` everywhere. Doing this first means the resulting path no longer contains the substring `intel-mcp`, so the second pass cannot corrupt it.
-2. **Bare name second** — replace remaining literal `intel-mcp` → `candlegraph` (cobra `Use`, MCP server `Name`, e2e binary path/comment).
-3. **Directory move** — `git mv cmd/intel-mcp cmd/candlegraph` to preserve history.
+1. **Module path first** — replace `github.com/candle/intel-mcp` → `github.com/noviopenworks/candle` everywhere. Doing this first means the resulting path no longer contains the substring `intel-mcp`, so the second pass cannot corrupt it.
+2. **Bare name second** — replace remaining literal `intel-mcp` → `candle` (cobra `Use`, MCP server `Name`, e2e binary path/comment).
+3. **Directory move** — `git mv cmd/intel-mcp cmd/candle` to preserve history.
 
 ```
    pass 1: module path          pass 2: bare name
    ┌──────────────────────┐     ┌──────────────────────┐
-   │ candlegraph/intel-mcp│     │ intel-mcp (literal)  │
+   │ candle/intel-mcp│     │ intel-mcp (literal)  │
    │        │             │     │        │             │
    │        ▼             │     │        ▼             │
-   │ noviopenworks/       │     │   candlegraph        │
-   │   candlegraph        │     │                      │
+   │ noviopenworks/       │     │   candle        │
+   │   candle        │     │                      │
    └──────────────────────┘     └──────────────────────┘
    ordering guarantees pass 2 cannot touch the new module path
 ```

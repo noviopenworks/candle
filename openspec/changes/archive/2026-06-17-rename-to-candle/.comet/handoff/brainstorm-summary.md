@@ -1,15 +1,15 @@
 # Brainstorm Summary
 
-- Change: rename-to-candlegraph
+- Change: rename-to-candle
 - Date: 2026-06-17
 
 ## Confirmed Technical Approach
 
 Mechanical identity correction, already implemented and verified in the working tree before this change was opened. Two-pass, order-sensitive textual replacement:
 
-1. Module path: `github.com/candlegraph/intel-mcp` → `github.com/noviopenworks/candlegraph` (pass 1, first — the new path no longer contains `intel-mcp`).
-2. Bare name: `intel-mcp` → `candlegraph` (pass 2 — cobra `Use`, MCP server `Name`, e2e binary path/comment).
-3. `git mv cmd/intel-mcp cmd/candlegraph` to preserve history.
+1. Module path: `github.com/candle/intel-mcp` → `github.com/noviopenworks/candle` (pass 1, first — the new path no longer contains `intel-mcp`).
+2. Bare name: `intel-mcp` → `candle` (pass 2 — cobra `Use`, MCP server `Name`, e2e binary path/comment).
+3. `git mv cmd/intel-mcp cmd/candle` to preserve history.
 
 ## Key Trade-offs and Risks
 

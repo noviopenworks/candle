@@ -11,7 +11,7 @@ Assume two repos are indexed: `org/inventory-service` (HTTP + gRPC + Go) and
 
 ## 0. Start with `get_context`
 
-The recommended entry point. Call it with just a repo to discover what candlegraph
+The recommended entry point. Call it with just a repo to discover what candle
 knows, then with a topic for focused, Context7-style retrieval.
 
 **Step 1 — repo catalog** (`get_context`):

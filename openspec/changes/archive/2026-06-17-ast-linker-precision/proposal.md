@@ -1,6 +1,6 @@
 ## Why
 
-candlegraph's value is linking contracts back to code. Today that linking
+candle's value is linking contracts back to code. Today that linking
 (`internal/link`) decides `implemented_by` for gRPC RPCs with a **line-by-line
 string scan** of the source (`signatureMatches`): it matches an RPC to a code
 node by label, checks for a `Register<Svc>Server` label, and confirms the impl

@@ -21,7 +21,7 @@
 ## 3. Wire `serve` to the scope config
 
 - [x] 3.1 Add a failing test (or e2e surface assertion) that `serve` with a config scoping to a subset exposes only those repos via `tools/list`-reachable tools (`list_repos` returns only configured repos)
-- [x] 3.2 Wire `--config` into `serve` in `cmd/candlegraph/main.go`; on startup build the scope and construct a scoped registry/Tools; no config → serve-all
+- [x] 3.2 Wire `--config` into `serve` in `cmd/candle/main.go`; on startup build the scope and construct a scoped registry/Tools; no config → serve-all
 - [x] 3.3 Implement working-location discovery + precedence (explicit `--config` wins; else discover from cwd; else serve-all) per design
 - [x] 3.4 Run and confirm pass
 

@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // Op is the subset of an HTTP operation the linker needs.

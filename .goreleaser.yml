@@ -2,23 +2,23 @@
 # Run locally with `task release-snapshot`; CI publishes on a `v*` tag.
 version: 2
 
-project_name: candlegraph
+project_name: candle
 
 before:
   hooks:
     - go mod tidy
 
 builds:
-  - id: candlegraph
-    main: ./cmd/candlegraph
-    binary: candlegraph
+  - id: candle
+    main: ./cmd/candle
+    binary: candle
     env:
       - CGO_ENABLED=0
     flags:
       - -trimpath
     ldflags:
       - -s -w
-      - -X github.com/noviopenworks/candlegraph/internal/version.version={{.Version}}
+      - -X github.com/noviopenworks/candle/internal/version.version={{.Version}}
     goos:
       - linux
       - darwin
@@ -27,7 +27,7 @@ builds:
       - arm64
 
 archives:
-  - id: candlegraph
+  - id: candle
     formats: [tar.gz]
     name_template: >-
       {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}

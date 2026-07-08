@@ -8,11 +8,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/noviopenworks/candlegraph/internal/config"
-	"github.com/noviopenworks/candlegraph/internal/ingest"
-	"github.com/noviopenworks/candlegraph/internal/mcp"
-	"github.com/noviopenworks/candlegraph/internal/registry"
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/config"
+	"github.com/noviopenworks/candle/internal/ingest"
+	"github.com/noviopenworks/candle/internal/mcp"
+	"github.com/noviopenworks/candle/internal/registry"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 type serveFunc func(context.Context, *store.Store) error
@@ -20,7 +20,7 @@ type serveScopedFunc func(context.Context, *store.Store, map[int64]bool) error
 
 func main() {
 	var dbPath, manifest string
-	root := &cobra.Command{Use: "candlegraph"}
+	root := &cobra.Command{Use: "candle"}
 	root.PersistentFlags().StringVar(&dbPath, "db", "intel.db", "SQLite database path")
 	root.PersistentFlags().StringVar(&manifest, "config", "manifest.yaml", "repo manifest path")
 

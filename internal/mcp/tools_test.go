@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 var _ func(context.Context, *store.Store, map[int64]bool) error = ServeScoped

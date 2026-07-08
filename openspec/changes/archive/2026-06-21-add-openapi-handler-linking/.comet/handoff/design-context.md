@@ -18,7 +18,7 @@ OpenSpec remains the canonical capability spec. This handoff is a deterministic,
 ```md
 ## Why
 
-candlegraph's flagship promise is *"where is this contract implemented?"*, yet
+candle's flagship promise is *"where is this contract implemented?"*, yet
 `explain_endpoint` answers it only for the contract side: it returns the OpenAPI
 operation with **no link to the handler that implements it**. The gRPC path already
 does this (`explain_rpc` returns `implemented_by` via the AST linker); the HTTP path —

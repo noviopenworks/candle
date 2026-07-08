@@ -1,4 +1,4 @@
-module github.com/noviopenworks/candlegraph
+module github.com/noviopenworks/candle
 
 go 1.26.4
 

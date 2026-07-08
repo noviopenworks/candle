@@ -17,7 +17,7 @@ archived-with: 2026-06-21-add-openapi-handler-linking
 
 ## Global Constraints
 
-- Module path is `github.com/noviopenworks/candlegraph`; all imports use it verbatim.
+- Module path is `github.com/noviopenworks/candle`; all imports use it verbatim.
 - Confidence tiers are the existing `link` package constants: `confHigh = 0.9`, `confMedium = 0.6`, `confLow = 0.3` (`internal/link/link.go:25-29`). Do NOT introduce new tier values.
 - The HTTP linker MUST mirror `MatchRPCs` behavior exactly: every name candidate becomes a link; ambiguous matches keep their tier rather than being dropped or collapsed (`internal/link/link.go:31-55`).
 - AST is authoritative: a name match whose declaration is NOT an HTTP handler (e.g. a same-named domain-service method) MUST stay at LOW/MEDIUM and MUST NOT be promoted to HIGH.
@@ -297,7 +297,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // Op is the subset of an HTTP operation the linker needs.
@@ -537,7 +537,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // TestMatchOpenAPIHighViaAST: a handler whose go/ast declaration is a real HTTP

@@ -1,4 +1,4 @@
-# Verification Report — rename-to-candlegraph
+# Verification Report — rename-to-candle
 
 - Date: 2026-06-17
 - Mode: full
@@ -18,7 +18,7 @@
 | 4 | Capability spec scenarios pass | PASS | all 3 `module-identity` requirements (see below) |
 | 5 | proposal.md goals satisfied | PASS | canonical module path + single binary name achieved |
 | 6 | delta spec ↔ design doc consistent | PASS | req-3 clarification reflected in both |
-| 7 | design docs locatable | PASS | `docs/superpowers/specs/2026-06-17-rename-to-candlegraph-design.md` exists |
+| 7 | design docs locatable | PASS | `docs/superpowers/specs/2026-06-17-rename-to-candle-design.md` exists |
 
 ## Build / test evidence (fresh)
 
@@ -28,9 +28,9 @@
 
 ## module-identity requirement evidence
 
-- **Req 1 (canonical module path):** `go.mod` → `module github.com/noviopenworks/candlegraph`; all imports resolve under it (build passes).
-- **Req 2 (single binary name):** `cmd/candlegraph/`, cobra `Use: "candlegraph"`, MCP server `Name: "candlegraph"`.
-- **Req 3 (no stale prior name in source/config):** `git grep` for `intel-mcp` / `vend-ai` / `candlegraph/intel-mcp` over tracked source/config — excluding `graphify-out/` and this change's own docs — returns **zero** matches.
+- **Req 1 (canonical module path):** `go.mod` → `module github.com/noviopenworks/candle`; all imports resolve under it (build passes).
+- **Req 2 (single binary name):** `cmd/candle/`, cobra `Use: "candle"`, MCP server `Name: "candle"`.
+- **Req 3 (no stale prior name in source/config):** `git grep` for `intel-mcp` / `vend-ai` / `candle/intel-mcp` over tracked source/config — excluding `graphify-out/` and this change's own docs — returns **zero** matches.
 
 ## Findings
 

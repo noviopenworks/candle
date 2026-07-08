@@ -1,0 +1,14 @@
+{
+  "change": "rename-to-candle",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "7a6de8832cbfceee25f22685d0c97dc974a151cb1e0c7aeefb33b7e1f86b011d",
+  "files": [
+    { "path": "openspec/changes/rename-to-candle/proposal.md", "sha256": "f136516c4b9b4affb2f8a53586aa06527cc8bb9da537d34cbf7999e5f26f84aa" },
+    { "path": "openspec/changes/rename-to-candle/design.md", "sha256": "53679a3ad37ec697dcc3ac3b8f6cded0139798008260d8e4beed333a3fcffa83" },
+    { "path": "openspec/changes/rename-to-candle/tasks.md", "sha256": "55bb7c6762ec572a89a308cb05fb365f4cc88e454a505c8ccfbeddcd30ba92ce" },
+    { "path": "openspec/changes/rename-to-candle/specs/module-identity/spec.md", "sha256": "a780cd25c05c7a54d8a23d3b0c53f445ab2d71a4984e0073b0baa430c4e92d1f" }
+  ]
+}

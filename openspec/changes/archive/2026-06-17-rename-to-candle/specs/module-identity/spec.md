@@ -1,8 +1,7 @@
-# module-identity Specification
+# module-identity
 
-## Purpose
-TBD - created by archiving change rename-to-candle. Update Purpose after archive.
-## Requirements
+## ADDED Requirements
+
 ### Requirement: Canonical Go module path
 
 The project SHALL declare its Go module path as `github.com/noviopenworks/candle`, matching the canonical repository, and all internal imports SHALL resolve under that path.
@@ -34,4 +33,3 @@ Tracked source and configuration files SHALL contain no references to any prior 
 
 - **WHEN** `git grep` for `intel-mcp`, `vend-ai`, and `candle/intel-mcp` is run over tracked source and configuration files — excluding `graphify-out/`, the change's own directory `openspec/changes/rename-to-candle/`, and the rename's design/plan docs
 - **THEN** zero matches are returned
-

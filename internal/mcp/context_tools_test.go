@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func TestContextLimitationsNoStaleOpenAPINote(t *testing.T) {

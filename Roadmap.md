@@ -1,6 +1,6 @@
 # Roadmap
 
-This is candlegraph's forward-looking roadmap: what works today, where it's
+This is candle's forward-looking roadmap: what works today, where it's
 going, and what is deliberately out of scope. It is the single source of truth
 for project direction and supersedes the scattered "deferred" notes in
 [`docs/concepts.md`](docs/concepts.md) and [`docs/design.md`](docs/design.md).
@@ -11,7 +11,7 @@ Status legend: ✅ done · 🔄 in progress · 🔎 not started
 
 ## Current state (what works today)
 
-candlegraph ships a working **MCP stdio server** that joins three layers into
+candle ships a working **MCP stdio server** that joins three layers into
 one queryable SQLite-backed graph:
 
 - **Code graph** — consumes Graphify `graph.json` (does not parse source).
@@ -28,7 +28,7 @@ See [`docs/getting-started.md`](docs/getting-started.md) to use it, and
 
 ## North star
 
-From [`docs/design.md`](docs/design.md) — candlegraph exists so an agent can
+From [`docs/design.md`](docs/design.md) — candle exists so an agent can
 answer, across many repos:
 
 > What does this service expose? What does it consume? Which private libraries
@@ -47,9 +47,9 @@ promise must **hold**. Today neither is fully true.
 
 | # | Item | Status | Why it matters |
 |---|---|---|---|
-| 0.1 | **Runnable demo.** A `demo/` tree (or `candlegraph demo`) with pre-built `graph.json` + contracts + manifest + sample queries, so `index && serve` answers a real question end-to-end with no user data. | 🔎 | Zero-cost evaluation. Removes the Graphify activation wall for first contact. |
+| 0.1 | **Runnable demo.** A `demo/` tree (or `candle demo`) with pre-built `graph.json` + contracts + manifest + sample queries, so `index && serve` answers a real question end-to-end with no user data. | 🔎 | Zero-cost evaluation. Removes the Graphify activation wall for first contact. |
 | 0.2 | **OpenAPI → handler linking.** Add `MatchOpenAPI` to `internal/link` (analogous to `MatchRPCs`) so `explain_endpoint` returns `implemented_by`. | ✅ | Answers the README's flagship question — *"which handler implements this endpoint?"* — via operationId-derived name candidates + AST-confirmed handler shape (HIGH), with route-registration presence as a coarse MEDIUM signal. Path→handler binding stays coarse (precise per-router binding is a later follow-on). REST is the majority case. |
-| 0.3 | **Graphify quickstart.** A verified, versioned walkthrough for producing a compliant `graph.json` (exact commands, expected schema, validation), or a built-in fallback extractor. | 🔎 | candlegraph does nothing without graph inputs; today producing them is undocumented. (`docs/getting-started.md:9-12`.) |
+| 0.3 | **Graphify quickstart.** A verified, versioned walkthrough for producing a compliant `graph.json` (exact commands, expected schema, validation), or a built-in fallback extractor. | 🔎 | candle does nothing without graph inputs; today producing them is undocumented. (`docs/getting-started.md:9-12`.) |
 
 **Exit criterion:** a stranger can clone, run `demo`, and watch an agent answer
 "which handler implements endpoint X?" in under five minutes — without
@@ -96,10 +96,10 @@ For shared and long-running deployments.
 These are deliberately **not** on the roadmap right now, to keep focus. They may
 return later.
 
-- **Multi-language code graphs.** candlegraph consumes Graphify output; it will
+- **Multi-language code graphs.** candle consumes Graphify output; it will
   not grow its own multi-language source parser. (A single-language fallback
   extractor for Phase 0.3 is the exception, and only to unblock evaluation.)
-- **A web UI.** candlegraph is an MCP server; the agent is the UI.
+- **A web UI.** candle is an MCP server; the agent is the UI.
 - **Replacing your service catalog / service mesh.** This is a knowledge layer
   for agents, not a control plane.
 - **Real-time.** Snapshots are commit-pinned and indexed on demand.

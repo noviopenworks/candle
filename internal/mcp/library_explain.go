@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // LibraryExplanation is the explain_private_library result: provider definition

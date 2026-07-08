@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/noviopenworks/candlegraph/internal/store"
+import "github.com/noviopenworks/candle/internal/store"
 
 // LoadResult reports how many rows were ingested.
 type LoadResult struct {

@@ -6,8 +6,8 @@ Date: 2026-06-18
 
 ### Build
 
-- `go build -o /tmp/candlegraph ./cmd/candlegraph` — PASS
-- `go build ./cmd/candlegraph` — PASS
+- `go build -o /tmp/candle ./cmd/candle` — PASS
+- `go build ./cmd/candle` — PASS
 
 ### Manual MCP verification
 
@@ -28,13 +28,13 @@ Commands:
 
 ```bash
 go run . /tmp/vs/scope-inv-wh.yaml
-go run . /home/mg/candlegraph/examples/serve-scope.yaml
+go run . /home/mg/candle/examples/serve-scope.yaml
 ```
 
-Both commands used a temporary MCP SDK client in `/tmp/opencode/candlegraph-scope-verify` to launch:
+Both commands used a temporary MCP SDK client in `/tmp/opencode/candle-scope-verify` to launch:
 
 ```bash
-/tmp/candlegraph serve --db /tmp/vs/intel.db --config <scope-file>
+/tmp/candle serve --db /tmp/vs/intel.db --config <scope-file>
 ```
 
 The client called `list_repos` and then checked all repo-scoped tools with each
@@ -78,8 +78,8 @@ Regression verification:
 Manual rerun:
 
 ```bash
-go build -o /tmp/candlegraph ./cmd/candlegraph
-go run . /home/mg/candlegraph/examples/serve-scope.yaml
+go build -o /tmp/candle ./cmd/candle
+go run . /home/mg/candle/examples/serve-scope.yaml
 ```
 
 Result: PASS. `list_repos` returned only `VendSYSTEM/service-inventory` and
@@ -103,4 +103,4 @@ Results:
 
 - `go test ./...` — PASS. All 12 packages passed.
 - `go vet ./...` — PASS. No diagnostics.
-- `git diff 52222b301e473956102b78d2cad37923e3c7dc61 --stat` — PASS. Diff scope is limited to the planned registry, MCP tools/server/library explain, `cmd/candlegraph`, examples, docs, OpenSpec/comet metadata, plan, tasks, and verification artifacts.
+- `git diff 52222b301e473956102b78d2cad37923e3c7dc61 --stat` — PASS. Diff scope is limited to the planned registry, MCP tools/server/library explain, `cmd/candle`, examples, docs, OpenSpec/comet metadata, plan, tasks, and verification artifacts.

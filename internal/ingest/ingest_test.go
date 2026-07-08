@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/config"
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/config"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func TestRunIngestsAndToleratesMissing(t *testing.T) {

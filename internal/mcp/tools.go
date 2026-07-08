@@ -3,8 +3,8 @@ package mcp
 import (
 	"errors"
 
-	"github.com/noviopenworks/candlegraph/internal/registry"
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/registry"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // ErrNotFound is returned when a repo, symbol, or file cannot be resolved.

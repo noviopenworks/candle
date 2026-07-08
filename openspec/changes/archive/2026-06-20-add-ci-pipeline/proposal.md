@@ -15,7 +15,7 @@ change is gated and tagged releases produce cross-platform binaries.
   uploading the coverage report as an artifact.
 - Add **`.github/workflows/release.yml`** — on a `v*` tag, set up the same
   toolchain and run `task release` (GoReleaser) with `GITHUB_TOKEN`.
-- Add **`.goreleaser.yml`** — build `cmd/candlegraph` → `candlegraph` for
+- Add **`.goreleaser.yml`** — build `cmd/candle` → `candle` for
   linux/darwin × amd64/arm64, `-trimpath`, stripped, with the version injected
   via ldflags; produce `.tar.gz` archives (incl. LICENSE + README), checksums,
   and a filtered changelog.

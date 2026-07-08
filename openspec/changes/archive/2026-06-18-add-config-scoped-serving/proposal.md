@@ -1,6 +1,6 @@
 ## Why
 
-A candlegraph store can hold many repos, and the same repo at multiple commits/versions
+A candle store can hold many repos, and the same repo at multiple commits/versions
 (`indexes` is keyed by `UNIQUE(repo_id, commit_sha)`). But `registry.Resolve(repo)` matches
 on `org/name` only and returns the **first** snapshot it finds (`ORDER BY org, name`, no tiebreak
 among a repo's snapshots) — so with multiple versions indexed, every repo-scoped tool silently
@@ -10,7 +10,7 @@ set of repos at specific versions — cannot: an instance exposes whatever happe
 
 ## What Changes
 
-- `candlegraph serve` SHALL **scope the served surface to a YAML config** (the existing manifest).
+- `candle serve` SHALL **scope the served surface to a YAML config** (the existing manifest).
   An instance exposes **only** the `(repo, commit)` pairs declared in its config and **omits**
   every other repo/version present in the store.
 - The config **pins each repo to a version** (the manifest's existing `commit:`), making
@@ -39,7 +39,7 @@ all indexed snapshots are served — so this is additive/opt-in.
 
 ## Impact
 
-- **Code:** `cmd/candlegraph/main.go` (wire `--config` into `serve` + discovery), `internal/registry`
+- **Code:** `cmd/candle/main.go` (wire `--config` into `serve` + discovery), `internal/registry`
   (config-aware, deterministic resolution + scoped `List`/`Match`), `internal/config` (serve-scope
   usage of the existing manifest schema; possibly a thin scope accessor), and the cross-repo
   aggregation entry (`internal/store` `PrivateConsumersAcrossRepos`) to respect the configured set.

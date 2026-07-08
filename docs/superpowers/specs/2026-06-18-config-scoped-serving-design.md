@@ -10,7 +10,7 @@ status: final
 
 ## Summary
 
-Make `candlegraph serve` scope its surface to a YAML config (the existing manifest). An instance
+Make `candle serve` scope its surface to a YAML config (the existing manifest). An instance
 exposes only the `(repo, commit)` snapshots in its config and omits everything else in the store,
 making resolution deterministic and version-correct and enabling multiple isolated instances. With
 no config, `serve` behaves as today (serve-all) — additive and backward compatible.
@@ -18,7 +18,7 @@ no config, `serve` behaves as today (serve-all) — additive and backward compat
 ## Architecture
 
 ```
-candlegraph serve --db DB [--config FILE]
+candle serve --db DB [--config FILE]
    │  resolve config: explicit --config | discover ./manifest.yaml | none
    ▼
 scope.Build(store, manifestEntries) -> {allowed []index_id, warnings}   (nil when no config)
@@ -32,7 +32,7 @@ tools resolve through reg (scoped) ; cross-repo aggregation filtered to `allowed
 
 ## Components
 
-### Config resolution (cmd/candlegraph/main.go)
+### Config resolution (cmd/candle/main.go)
 `serve` resolves which config file to use: if `--config` was set explicitly (`cmd.Flags().Changed("config")`)
 use that path (error if it does not exist); else if the default `manifest.yaml` exists in the working
 dir, use it; else no scope. Loads via the existing `config.Load`.

@@ -1,6 +1,6 @@
 package mcp
 
-import "github.com/noviopenworks/candlegraph/internal/store"
+import "github.com/noviopenworks/candle/internal/store"
 
 // consumedByDeferred is the explicit marker returned until cross-repo consumer
 // linking ships in a later change.

@@ -27,7 +27,7 @@ Date: 2026-06-18
 ## Correctness
 
 - `internal/registry.Registry` supports scoped `List`, `Resolve`, `Match`, and `InScope`; `BuildScope` resolves pinned commits, omitted commits, and missing snapshots with warnings.
-- `cmd/candlegraph/main.go` wires `serve` to explicit `--config`, default `manifest.yaml` discovery, and serve-all fallback.
+- `cmd/candle/main.go` wires `serve` to explicit `--config`, default `manifest.yaml` discovery, and serve-all fallback.
 - `internal/mcp` exposes additive scoped constructors and filters repo-scoped tools through the scoped registry.
 - `explain_private_library` filters both consumers and provider candidates so out-of-scope providers are not exposed.
 

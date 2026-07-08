@@ -1,4 +1,4 @@
-# mise — pinned tool versions for candlegraph.
+# mise — pinned tool versions for candle.
 # Single source of truth used by local dev and CI (via jdx/mise-action).
 # https://mise.jdx.dev
 [tools]

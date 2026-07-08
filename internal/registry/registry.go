@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/noviopenworks/candlegraph/internal/config"
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/config"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // RepoInfo describes a resolved repo snapshot.

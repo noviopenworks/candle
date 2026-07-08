@@ -17,7 +17,7 @@ archived-with: 2026-06-18-add-get-context-facade
 
 ## Global Constraints
 
-- Go module path: `github.com/noviopenworks/candlegraph` (use in test imports).
+- Go module path: `github.com/noviopenworks/candle` (use in test imports).
 - Additive only: do NOT change existing tool behavior, `internal/store`, parsers, or the registry.
 - Repo field on the result MUST be the typed `RepoSummary` struct (design D3) — not `any`.
 - `mode:"overview"` returns the catalog only and suppresses topic matches even when a topic is given (design D6).
@@ -47,7 +47,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 func seedContextTools(t *testing.T) *Tools {
@@ -143,7 +143,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/noviopenworks/candlegraph/internal/store"
+	"github.com/noviopenworks/candle/internal/store"
 )
 
 // GetContextArgs is the pure-tool input for get_context. Repo is required.
@@ -618,7 +618,7 @@ Change the tool count to **14 tools** and insert a `get_context` reference secti
 ```markdown
 ### `get_context`
 
-Context7-style retrieval entry point. With only `repo`, returns a catalog of what candlegraph knows about that repo. With `topic`, searches code symbols, HTTP endpoints, schemas, RPCs, proto messages, and private libraries in that repo.
+Context7-style retrieval entry point. With only `repo`, returns a catalog of what candle knows about that repo. With `topic`, searches code symbols, HTTP endpoints, schemas, RPCs, proto messages, and private libraries in that repo.
 
 | Arg | Type | Description |
 |-----|------|-------------|
