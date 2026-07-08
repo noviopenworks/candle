@@ -4,7 +4,7 @@ This guide takes you from a clone to an agent querying your services.
 
 ## Prerequisites
 
-- **Go 1.26+** (the module targets `go 1.26.4`) — or **[mise](https://mise.jdx.dev)**,
+- **Go 1.26+** (the module targets `go 1.26.5`) — or **[mise](https://mise.jdx.dev)**,
   which pins Go and the dev tools from the repo's `mise.toml` (`mise install`).
 - **A Graphify code graph** per repo you want to index. candle consumes
   Graphify's `graph.json` output — it does not extract code itself. See the

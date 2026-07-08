@@ -1,6 +1,6 @@
 module github.com/noviopenworks/candle
 
-go 1.26.4
+go 1.26.5
 
 require (
 	github.com/bufbuild/protocompile v0.14.1

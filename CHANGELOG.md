@@ -58,8 +58,9 @@ implements this endpoint?" and "what breaks if I change this?" across repos.
   unchecked close errors.
 
 ### Security
-- Pinned Go to 1.26.4 to clear two reachable standard-library advisories
-  (`GO-2026-5039` in `net/textproto`, `GO-2026-5037` in `crypto/x509`).
+- Pinned Go to 1.26.5 to clear reachable standard-library advisories
+  (`GO-2026-5039` in `net/textproto`, `GO-2026-5037` in `crypto/x509`,
+  `GO-2026-5856` in `crypto/tls`).
 
 [Unreleased]: https://github.com/noviopenworks/candle/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/noviopenworks/candle/releases/tag/v1.0.0
