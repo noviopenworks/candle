@@ -955,16 +955,19 @@ Extended MVP:
 7. Tools:
    - list_repos
    - resolve_repo
+   - get_context
    - query_repo
    - explain_symbol
    - get_file_context
    - list_apis
    - find_endpoint
    - explain_endpoint
+   - find_schema
    - find_rpc
    - explain_rpc
    - find_private_library
    - find_library_consumers
+   - explain_private_library
 8. Resources:
    - repo://...
    - graph://...
