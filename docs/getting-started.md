@@ -50,9 +50,15 @@ Commands:
   serve   Run the MCP stdio server
 
 Flags:
-  --db      SQLite database path   (default "intel.db")
-  --config  repo manifest path     (default "manifest.yaml")
+  --db       SQLite database path   (default "intel.db")
+  --config   repo manifest path     (default "manifest.yaml")
+  --verbose  emit structured debug logs on stderr (default off)
 ```
+
+All logging goes to **stderr**, so it never corrupts the MCP stdio transport
+(which speaks JSON-RPC on stdout). With `--verbose`, `index` logs per-repo
+progress and `serve` logs startup and repo-resolution misses; without it, only
+warnings and errors are emitted.
 
 ## 2. Write a manifest
 

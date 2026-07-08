@@ -3,6 +3,7 @@ package registry
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/noviopenworks/candle/internal/config"
@@ -120,6 +121,7 @@ func (r *Registry) Resolve(repo string) (RepoInfo, bool, error) {
 			return ri, true, nil
 		}
 	}
+	slog.Debug("repo not found", "repo", repo, "in_scope", len(all))
 	return RepoInfo{}, false, nil
 }
 

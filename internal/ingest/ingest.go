@@ -3,6 +3,7 @@ package ingest
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -27,6 +28,7 @@ type Report struct {
 func Run(s *store.Store, cfg *config.Config) (Report, error) {
 	var rep Report
 	for _, r := range cfg.Repos {
+		slog.Info("indexing repo", "repo", r.Repo)
 		f, err := os.Open(r.Graph)
 		if err != nil {
 			rep.Skipped++
@@ -54,6 +56,7 @@ func Run(s *store.Store, cfg *config.Config) (Report, error) {
 			return rep, err
 		}
 		rep.Indexed++
+		slog.Info("indexed repo", "repo", r.Repo, "index_id", indexID, "nodes", len(g.Nodes))
 
 		// OpenAPI specs (pure contract serving).
 		var bundles []store.APISpecBundle
