@@ -7,7 +7,7 @@ import (
 )
 
 func TestLoadManifest(t *testing.T) {
-	cfg, err := Load("testdata/manifest.yaml")
+	cfg, err := Load("testdata/candle.yaml")
 	if err != nil {
 		t.Fatalf("load: %v", err)
 	}
@@ -24,7 +24,7 @@ func TestLoadManifest(t *testing.T) {
 }
 
 func TestRepoRoot(t *testing.T) {
-	cfg, err := Load("testdata/manifest.yaml")
+	cfg, err := Load("testdata/candle.yaml")
 	if err != nil {
 		t.Fatalf("load: %v", err)
 	}
@@ -38,7 +38,7 @@ func TestRepoRoot(t *testing.T) {
 }
 
 func TestOpenAPIPaths(t *testing.T) {
-	cfg, err := Load("testdata/manifest.yaml")
+	cfg, err := Load("testdata/candle.yaml")
 	if err != nil {
 		t.Fatalf("load: %v", err)
 	}
@@ -49,7 +49,7 @@ func TestOpenAPIPaths(t *testing.T) {
 
 func TestProtoConfigParses(t *testing.T) {
 	dir := t.TempDir()
-	path := filepath.Join(dir, "manifest.yaml")
+	path := filepath.Join(dir, "candle.yaml")
 	yaml := "repos:\n" +
 		"  - repo: acme/inventory\n" +
 		"    graph: /tmp/g.json\n" +
@@ -74,7 +74,7 @@ func TestProtoConfigParses(t *testing.T) {
 
 func TestGoConfigParses(t *testing.T) {
 	dir := t.TempDir()
-	path := filepath.Join(dir, "manifest.yaml")
+	path := filepath.Join(dir, "candle.yaml")
 	yaml := "repos:\n" +
 		"  - repo: acme/web\n" +
 		"    graph: /tmp/g.json\n" +

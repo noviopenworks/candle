@@ -2,7 +2,7 @@
 
 Runnable starting points for candle.
 
-## `manifest.yaml`
+## `candle.yaml`
 
 A fully-commented sample manifest covering all four shapes:
 
@@ -14,9 +14,9 @@ A fully-commented sample manifest covering all four shapes:
 Copy it to the repo root and edit the paths:
 
 ```bash
-cp examples/manifest.yaml manifest.yaml
+cp examples/candle.yaml candle.yaml
 # edit the `graph:` paths to point at your real graphify-out/graph.json files
-candle index --db intel.db --config manifest.yaml
+candle index --db intel.db --config candle.yaml
 candle serve --db intel.db
 ```
 

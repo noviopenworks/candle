@@ -43,7 +43,7 @@ If you use [mise](https://mise.jdx.dev), `mise install` pins the toolchain and
 The CLI has two subcommands and two persistent flags:
 
 ```
-candle [--db intel.db] [--config manifest.yaml] <command>
+candle [--db intel.db] [--config candle.yaml] <command>
 
 Commands:
   index   Ingest repo graphs from the manifest into the store
@@ -51,7 +51,7 @@ Commands:
 
 Flags:
   --db       SQLite database path   (default "intel.db")
-  --config   repo manifest path     (default "manifest.yaml")
+  --config   repo manifest path     (default "candle.yaml")
   --verbose  emit structured debug logs on stderr (default off)
 ```
 
@@ -80,7 +80,7 @@ repos:
 Copy the starter and edit it:
 
 ```bash
-cp examples/manifest.yaml manifest.yaml
+cp examples/candle.yaml candle.yaml
 ```
 
 Full field reference (protobuf roots, Go modules, private prefixes) is in
@@ -93,7 +93,7 @@ Indexing reads each repo's graph + contracts and writes one **snapshot**
 repo's snapshot rather than duplicating it.
 
 ```bash
-go run ./cmd/candle index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config candle.yaml
 ```
 
 Output:
@@ -126,7 +126,7 @@ go run ./cmd/candle serve --db intel.db --config examples/serve-scope.yaml
 
 Start another `serve` process with a different scope file to give another MCP
 client a different repo view. If `--config` is omitted, serve discovers
-`manifest.yaml` in the working directory when present; if no config is found, it
+`candle.yaml` in the working directory when present; if no config is found, it
 serves every indexed snapshot.
 
 ## 5. Connect a client

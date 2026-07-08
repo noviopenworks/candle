@@ -1,8 +1,8 @@
-# Configuration: `manifest.yaml`
+# Configuration: `candle.yaml`
 
 The manifest tells `candle index` which repos to ingest and where to find
 each repo's Graphify graph and contract files. It is passed with `--config`
-(default `manifest.yaml`).
+(default `candle.yaml`).
 
 ## Top-level shape
 
@@ -89,7 +89,7 @@ go:
 `candle serve` can use the same manifest shape as a serve-time scope. When
 started with `--config <path>`, the MCP server exposes only snapshots matching the
 listed repos. Without an explicit `--config`, serve looks for the default
-`manifest.yaml` in the working directory; if it exists, that manifest scopes the
+`candle.yaml` in the working directory; if it exists, that manifest scopes the
 server. If no config is supplied or discovered, serve remains unscoped and exposes
 all indexed snapshots in the SQLite store.
 
@@ -181,4 +181,4 @@ repos:
 - `repo` must be `org/name` (used to derive `Org()` and `Name()`).
 - Re-running `index` **replaces** a repo's snapshot — safe to run repeatedly.
 
-A ready-to-edit starter lives at [`examples/manifest.yaml`](../examples/manifest.yaml).
+A ready-to-edit starter lives at [`examples/candle.yaml`](../examples/candle.yaml).

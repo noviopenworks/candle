@@ -7,7 +7,7 @@ How candle is put together internally, for contributors and the curious.
 ```
 cmd/candle/        CLI entrypoint (cobra): `index` and `serve`
 internal/
-  config/               manifest.yaml loading + validation (viper)
+  config/               candle.yaml loading + validation (viper)
   graph/                Graphify graph.json loader (tolerant schema)
   store/                SQLite storage: schema, ingestion, query helpers
   ingest/               orchestrates per-repo indexing into the store
@@ -45,7 +45,7 @@ manifest →  config.Load  →  ingest.Run( store, cfg )                   │
 
 ### `index` pipeline
 
-1. **`config.Load`** parses `manifest.yaml` into `Config{ Repos []RepoConfig }`.
+1. **`config.Load`** parses `candle.yaml` into `Config{ Repos []RepoConfig }`.
 2. **`ingest.Run`** iterates repos. For each it:
    - loads the Graphify graph (`graph.Load`),
    - parses any OpenAPI specs, proto files, and Go modules,

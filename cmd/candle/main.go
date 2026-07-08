@@ -24,7 +24,7 @@ func main() {
 	var verbose bool
 	root := &cobra.Command{Use: "candle"}
 	root.PersistentFlags().StringVar(&dbPath, "db", "intel.db", "SQLite database path")
-	root.PersistentFlags().StringVar(&manifest, "config", "manifest.yaml", "repo manifest path")
+	root.PersistentFlags().StringVar(&manifest, "config", "candle.yaml", "repo manifest path")
 	root.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "enable structured debug logging on stderr")
 
 	// slog writes to stderr so the MCP stdio server (JSON-RPC on stdout) is

@@ -33,14 +33,14 @@ func TestRunServeResolvesScopeConfig(t *testing.T) {
 		},
 		{
 			name:         "discovers default manifest in cwd",
-			manifestArg:  "manifest.yaml",
+			manifestArg:  "candle.yaml",
 			writeDefault: manifestFor("org/other", "other1"),
 			wantScoped:   true,
 			wantRepos:    []string{"org/other"},
 		},
 		{
 			name:        "absent config serves all",
-			manifestArg: "manifest.yaml",
+			manifestArg: "candle.yaml",
 			wantScoped:  false,
 		},
 		{
@@ -60,7 +60,7 @@ func TestRunServeResolvesScopeConfig(t *testing.T) {
 			seedServeStore(t, dbPath)
 
 			if tt.writeDefault != "" {
-				writeFile(t, filepath.Join(tmp, "manifest.yaml"), tt.writeDefault)
+				writeFile(t, filepath.Join(tmp, "candle.yaml"), tt.writeDefault)
 			}
 			manifestArg := tt.manifestArg
 			if tt.writeExplicit != "" {

@@ -25,7 +25,7 @@ Repository source code
 Graphify produces graphify-out/graph.json
         |
         v
-manifest.yaml points candle at each repo snapshot
+candle.yaml points candle at each repo snapshot
         |
         v
 candle index
@@ -63,7 +63,7 @@ Example input:
 candle consumes this file. It does not parse source code itself for the main
 code graph.
 
-## Step 2: Describe repos in `manifest.yaml`
+## Step 2: Describe repos in `candle.yaml`
 
 The manifest tells the indexer which repo snapshots to ingest and where their
 inputs live.
@@ -90,7 +90,7 @@ Each manifest entry becomes one repo snapshot. The snapshot is stored under an
 ## Step 3: Run the indexer
 
 ```bash
-go run ./cmd/candle index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config candle.yaml
 ```
 
 During indexing, candle does this per repo:
@@ -241,7 +241,7 @@ When a repo changes, update its Graphify output and/or contract files, then run
 the index command again.
 
 ```bash
-go run ./cmd/candle index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config candle.yaml
 ```
 
 Re-indexing replaces that repo snapshot instead of appending duplicate rows. This

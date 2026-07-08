@@ -179,7 +179,7 @@ func (c *Client) Verify(token string) bool { return token != "" }
 		"    root: " + prov + "\n" +
 		"    go:\n      modules:\n        - " + filepath.Join(prov, "go.mod") + "\n" +
 		"      private_prefixes:\n        - git.acme.local/\n"
-	manifestPath := filepath.Join(tmp, "manifest.yaml")
+	manifestPath := filepath.Join(tmp, "candle.yaml")
 	if err := os.WriteFile(manifestPath, []byte(manifest), 0o644); err != nil {
 		t.Fatal(err)
 	}

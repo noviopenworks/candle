@@ -47,7 +47,7 @@ snapshot; contract/library tables hang off it.
 Key packages (see [docs/architecture.md](docs/architecture.md) for the full map):
 
 - `cmd/candle` — CLI entrypoint (`index`, `serve`).
-- `internal/config` — manifest parsing (`manifest.yaml` → `RepoConfig`).
+- `internal/config` — manifest parsing (`candle.yaml` → `RepoConfig`).
 - `internal/graph` — Graphify `graph.json` loader.
 - `internal/openapi`, `internal/proto` — contract parsers.
 - `internal/godep` — Go module / private-library parser (`go.mod`/`go.work`).

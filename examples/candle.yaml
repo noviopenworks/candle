@@ -1,7 +1,7 @@
 # Example candle manifest.
 #
-# Copy to the repo root as manifest.yaml and edit. Then:
-#   candle index --db intel.db --config manifest.yaml
+# Copy to the repo root as candle.yaml and edit. Then:
+#   candle index --db intel.db --config candle.yaml
 #   candle serve --db intel.db
 #
 # Field reference: ../docs/configuration.md

@@ -77,10 +77,10 @@ release). Full walkthrough in **[docs/getting-started.md](docs/getting-started.m
 go build ./...
 
 # 2. Describe your repos in a manifest (see docs/configuration.md)
-cp examples/manifest.yaml manifest.yaml
+cp examples/candle.yaml candle.yaml
 
 # 3. Index the repos into a SQLite snapshot store
-go run ./cmd/candle index --db intel.db --config manifest.yaml
+go run ./cmd/candle index --db intel.db --config candle.yaml
 # → indexed=2 skipped=0
 
 # 4. Run the MCP stdio server
@@ -103,7 +103,7 @@ go run ./cmd/candle serve --db intel.db --config examples/serve-scope.yaml
 ```
 
 Use a different scope file per MCP client; omit `--config` only when the client
-should use the default `manifest.yaml` scope or, if no config is present, see all
+should use the default `candle.yaml` scope or, if no config is present, see all
 indexed snapshots.
 
 ## Documentation
@@ -113,7 +113,7 @@ indexed snapshots.
 | [Getting started](docs/getting-started.md) | Install, index, serve, connect a client |
 | [How it works](flow.md) | End-to-end narrative from setup to an agent's answer |
 | [Concepts](docs/concepts.md) | The three layers, the graph model, cross-repo joins, commit pinning |
-| [Configuration](docs/configuration.md) | Full `manifest.yaml` reference |
+| [Configuration](docs/configuration.md) | Full `candle.yaml` reference |
 | [Tools reference](docs/tools.md) | All 15 MCP tools with arguments and example I/O |
 | [Resources reference](docs/resources.md) | The 5 URI schemes for commit-pinned lookups |
 | [Examples](docs/examples.md) | End-to-end walkthroughs (find a handler, impact analysis, consumers) |

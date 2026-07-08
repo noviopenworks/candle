@@ -61,7 +61,7 @@ func TestEndToEndStdio(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	manifestPath := filepath.Join(tmp, "manifest.yaml")
+	manifestPath := filepath.Join(tmp, "candle.yaml")
 	if err := os.WriteFile(manifestPath, []byte(
 		"repos:\n  - repo: org/svc\n    graph: "+graphPath+"\n    commit: abc\n    branch: main\n    openapi:\n      - "+specPath+"\n"), 0o644); err != nil {
 		t.Fatal(err)
