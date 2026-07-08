@@ -52,8 +52,8 @@ func TestExplainRPC(t *testing.T) {
 	if out.RPC.StreamKind != "unary" || len(out.ImplementedBy) != 1 || out.ImplementedBy[0].NodeID != "n1" {
 		t.Fatalf("explain shape: %+v", out)
 	}
-	if out.ConsumedBy == "" {
-		t.Fatalf("consumed_by should be a deferred marker, got empty")
+	if out.ConsumedBy != "" {
+		t.Fatalf("consumed_by should be empty (cross-repo aggregation not implemented), got %q", out.ConsumedBy)
 	}
 	if len(out.RequestMessageFields) != 1 || out.RequestMessageFields[0].Name != "sku" {
 		t.Fatalf("request fields: %+v", out.RequestMessageFields)

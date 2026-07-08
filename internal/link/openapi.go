@@ -77,7 +77,7 @@ func titleFirst(s string) string {
 // hasRouteRegistration is a coarse, existence-based signal analogous to
 // hasServiceRegistration: it reports whether the repo contains any HTTP
 // route-registration infrastructure node. It is computed once per MatchOpenAPI
-// call, not per op. Precise path→handler binding is deferred. The label set is
+// call, not per op. Precise path→handler binding is not yet implemented. The label set is
 // deliberately specific (router constructors / setup), excluding the bare name
 // "Handle" which collides with countless unrelated methods and would inflate the
 // signal repo-wide.

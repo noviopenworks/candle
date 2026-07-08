@@ -56,7 +56,7 @@ type UsageLink struct {
 func explainLimitations() []string {
 	return []string{
 		"Version-diff and breaking-change analysis are out of scope for explain_private_library.",
-		"Multi-hop call-path expansion and transitive dependents are deferred.",
+		"Multi-hop call-path expansion and transitive dependents are not yet supported.",
 		"Only Go private libraries are supported.",
 	}
 }

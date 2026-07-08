@@ -125,7 +125,7 @@ indexed snapshots.
 MVP. Contract parsers cover three ecosystems: **OpenAPI**, **protobuf**, and
 **Go modules**. Cross-repo `consumed_by` aggregation, automatic breaking-change
 detection, and additional dependency ecosystems (npm, pyproject, Maven, Cargo)
-are deferred — see [docs/concepts.md](docs/concepts.md#whats-deferred).
+are not yet implemented — see [docs/concepts.md](docs/concepts.md#whats-not-yet-implemented).
 
 The complete design spec lives in **[docs/design.md](docs/design.md)**.
 

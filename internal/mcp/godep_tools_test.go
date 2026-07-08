@@ -63,8 +63,8 @@ func TestFindLibraryConsumers(t *testing.T) {
 	if out.Version != "v1.2.0" || len(out.UsedSymbols) != 1 || out.UsedSymbols[0].Symbol != "NewClient" {
 		t.Fatalf("shape: %+v", out)
 	}
-	if out.ConsumedAcrossRepos == "" {
-		t.Fatalf("expected deferred marker")
+	if out.ConsumedAcrossRepos != "" {
+		t.Fatalf("consumed_across_repos should be empty (cross-repo aggregation not implemented), got %q", out.ConsumedAcrossRepos)
 	}
 	if _, err := tools.FindLibraryConsumers("acme/web", "git.acme.local/none"); err != ErrNotFound {
 		t.Fatalf("want ErrNotFound, got %v", err)

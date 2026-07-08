@@ -2,7 +2,7 @@
 
 This is candle's forward-looking roadmap: what works today, where it's
 going, and what is deliberately out of scope. It is the single source of truth
-for project direction and supersedes the scattered "deferred" notes in
+for project direction and supersedes the scattered "not yet implemented" notes in
 [`docs/concepts.md`](docs/concepts.md) and [`docs/design.md`](docs/design.md).
 
 Status legend: ✅ done · 🔄 in progress · 🔎 not started
@@ -64,7 +64,7 @@ Make the value prop reliable and the project credible.
 | 1.1 | **Documentation sweep.** Reconcile tool-count drift (`getting-started.md` says 13, reality is 15), the stale tool list in `design.md` "Updated MVP Scope", and resource counts across docs. | 🔎 | Cheap credibility win; the first number a new user reads is currently wrong. |
 | 1.2 | **Observability.** `--verbose`/`--debug` structured logging of index + serve activity, and not-found reasons on every tool. | 🔎 | Today a silent empty result is indistinguishable from "broken." Worst first-impression failure mode. |
 | 1.3 | **Multi-hop traversal.** A `call_path` / `traverse` tool (or a `depth` arg on `explain_symbol`) so handler → service → repository → client is one call, not manual chaining. | 🔎 | Deepens "what breaks if I change X." Currently one-hop only (`internal/mcp/context_tools.go:264`). |
-| 1.4 | **Cross-repo RPC `consumed_by`.** Aggregate gRPC consumers across indexed repos, mirroring what `explain_private_library` does for libraries. | 🔎 | Completes the gRPC side of "what breaks." Today the field is an empty deferred marker (`internal/mcp/proto_tools.go:7`). |
+| 1.4 | **Cross-repo RPC `consumed_by`.** Aggregate gRPC consumers across indexed repos, mirroring what `explain_private_library` does for libraries. | 🔎 | Completes the gRPC side of "what breaks." Today the field is returned empty (`internal/mcp/proto_tools.go` `ExplainRPC`); 1.4 populates it for real. |
 | 1.5 | **Stability policy.** A `docs/stability.md` tagging each tool/resource as stable or experimental, plus a semver/deprecation policy. | 🔎 | Pre-1.0, early adopters have no guarantee the surface won't break. |
 
 ## Phase 2 — Reach

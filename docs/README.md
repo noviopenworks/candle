@@ -26,7 +26,7 @@ full DDL, edge catalog, end-to-end walkthrough).
 |----------|---------|
 | [getting-started.md](getting-started.md) | Install prerequisites, build, index repos, run the server, connect Claude. |
 | [flow.md](../flow.md) | End-to-end narrative: how a repo becomes an indexed snapshot and how an agent query is answered. |
-| [concepts.md](concepts.md) | Why three layers, the graph node/edge model, `index_id`, query-time cross-repo joins, commit pinning, what's deferred. |
+| [concepts.md](concepts.md) | Why three layers, the graph node/edge model, `index_id`, query-time cross-repo joins, commit pinning, what's not yet implemented. |
 | [configuration.md](configuration.md) | Every `manifest.yaml` field with examples for OpenAPI, protobuf, and Go. |
 | [tools.md](tools.md) | All 13 MCP tools: arguments, behavior, example request and response JSON. |
 | [resources.md](resources.md) | The `repo://`, `graph://`, `openapi://`, `proto://`, `lib://` URI schemes. |

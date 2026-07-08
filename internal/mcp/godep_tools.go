@@ -2,8 +2,6 @@ package mcp
 
 import "github.com/noviopenworks/candle/internal/store"
 
-const consumersDeferred = "deferred: cross-repo consumer aggregation not available in this change"
-
 // LibraryConsumers is the find_library_consumers result for one repo.
 type LibraryConsumers struct {
 	ModulePath          string               `json:"module_path"`
@@ -66,7 +64,7 @@ func (t *Tools) FindLibraryConsumers(repo, modulePath string) (LibraryConsumers,
 	}
 	out := LibraryConsumers{
 		ModulePath: modulePath, Version: dep.Version,
-		UsedSymbols: usages, ConsumedAcrossRepos: consumersDeferred,
+		UsedSymbols: usages, ConsumedAcrossRepos: "",
 	}
 	seen := map[string]bool{}
 	for _, u := range usages {

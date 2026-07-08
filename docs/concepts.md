@@ -108,12 +108,12 @@ fuzzy query into a snapshot: it tries an **exact** identity match first, then
 returns fuzzy **candidates**. Most tools resolve the repo internally and return
 a graceful not-found error for unknown repos rather than a protocol error.
 
-## What's deferred
+## What's not yet implemented
 
 These are explicitly **out of MVP scope**:
 
 - Automatic breaking-change detection and API diffing
-- Cross-repo `consumed_by` aggregation for RPCs (the field exists but is deferred)
+- Cross-repo `consumed_by` aggregation for RPCs (the field exists but is empty — not yet implemented)
 - Generated-client analysis, SDK generation, PR-review automation
 - Dependency ecosystems beyond Go: npm, pyproject, Maven/Gradle, Cargo
 

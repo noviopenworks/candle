@@ -247,9 +247,9 @@ go run ./cmd/candle index --db intel.db --config manifest.yaml
 Re-indexing replaces that repo snapshot instead of appending duplicate rows. This
 makes repeated indexing safe during development.
 
-## What is deferred in the MVP
+## What is not yet implemented
 
-The MVP supports OpenAPI, protobuf, and Go private modules. These are deferred:
+The MVP supports OpenAPI, protobuf, and Go private modules. The following are not yet implemented:
 
 - Automatic breaking-change detection.
 - Full cross-repo RPC consumer aggregation.

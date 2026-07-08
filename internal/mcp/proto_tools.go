@@ -2,10 +2,6 @@ package mcp
 
 import "github.com/noviopenworks/candle/internal/store"
 
-// consumedByDeferred is the explicit marker returned until cross-repo consumer
-// linking ships in a later change.
-const consumedByDeferred = "deferred: cross-repo consumed_by not available in this change"
-
 // SchemaInfo is a kind-discriminated find_schema entry (openapi_schema|proto_message).
 type SchemaInfo struct {
 	Kind     string `json:"kind"`
@@ -36,7 +32,8 @@ func (t *Tools) FindRPC(repo, query, streamKind string) ([]store.ProtoRPCResult,
 }
 
 // ExplainRPC implements explain_rpc: proto facts + resolved messages + same-repo
-// impls + best-effort one-hop calls + deferred consumed_by marker.
+// impls + best-effort one-hop calls. Cross-repo consumed_by aggregation is not
+// yet implemented; the field is returned empty.
 func (t *Tools) ExplainRPC(repo, service, rpc string) (RPCExplanation, error) {
 	ri, ok, err := t.reg.Resolve(repo)
 	if err != nil {
@@ -52,7 +49,7 @@ func (t *Tools) ExplainRPC(repo, service, rpc string) (RPCExplanation, error) {
 	if !found {
 		return RPCExplanation{}, ErrNotFound
 	}
-	out := RPCExplanation{RPC: r, ConsumedBy: consumedByDeferred}
+	out := RPCExplanation{RPC: r}
 	out.RequestMessageFields = t.messageFields(ri.IndexID, r.RequestMessage)
 	out.ResponseMessageFields = t.messageFields(ri.IndexID, r.ResponseMessage)
 	impls, err := t.s.ProtoRPCImpls(ri.IndexID, r.FullName)

@@ -257,8 +257,8 @@ one-hop calls.
 }
 ```
 
-> `consumed_by` is **deferred** in the MVP — cross-repo RPC consumer aggregation
-> is not yet populated. The field is present for forward compatibility.
+> `consumed_by` is empty in this release — cross-repo RPC consumer aggregation
+> is not yet implemented. The field is present for forward compatibility.
 
 ---
 
@@ -299,8 +299,9 @@ symbols actually used.
 }
 ```
 
-> `consumed_across_repos` is **deferred** (cross-repo aggregation), like
-> `explain_rpc`'s `consumed_by`.
+> `consumed_across_repos` is empty in this release (cross-repo aggregation is not
+> yet implemented), like `explain_rpc`'s `consumed_by`. For cross-repo library
+> consumers, use `explain_private_library`.
 
 ### `explain_private_library`
 
@@ -316,7 +317,7 @@ Explain an internal Go library from both sides: the provider definition (exports
 {"query": "auth"}
 ```
 
-**Response:** `provider` (module path, exports with `node`/`resolved`, packages), `consumers` (per repo: version, used packages, usages with `node`/`resolved`), `candidates` when ambiguous, and `limitations`. Unlike `find_library_consumers` (single repo, deferred cross-repo marker), this aggregates consumers across all indexed repos.
+**Response:** `provider` (module path, exports with `node`/`resolved`, packages), `consumers` (per repo: version, used packages, usages with `node`/`resolved`), `candidates` when ambiguous, and `limitations`. Unlike `find_library_consumers` (single repo, empty `consumed_across_repos`), this aggregates consumers across all indexed repos.
 
 ---
 

@@ -259,9 +259,9 @@ func contextResourceSchemes() []ResourceScheme {
 func contextLimitations() []string {
 	return []string{
 		"OpenAPI/HTTP handler linking is name-based: path→handler binding is coarse (route-registration presence), not router-precise.",
-		"Cross-repo RPC consumed_by aggregation is deferred.",
-		"Cross-repo private library consumer aggregation is deferred.",
-		"Graph traversal is one hop; depth > 1 is deferred.",
+		"Cross-repo RPC consumed_by aggregation is not yet available.",
+		"Cross-repo private library consumer aggregation is available via explain_private_library, not find_library_consumers.",
+		"Graph traversal is one hop; depth > 1 is not yet supported.",
 	}
 }
 

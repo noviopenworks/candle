@@ -108,8 +108,8 @@ Find the endpoint, then explain it, then walk into the code.
 ```
 
 → `implemented_by` points at the gRPC server method. `consumed_by` is empty
-because cross-repo RPC consumer aggregation is deferred (see
-[concepts.md](concepts.md#whats-deferred)).
+because cross-repo RPC consumer aggregation is not yet implemented (see
+[concepts.md](concepts.md#whats-not-yet-implemented)).
 
 ---
 
@@ -130,7 +130,7 @@ explain_symbol{"repo": "org/inventory-service", "symbol": "ReserveProductRequest
 
 Combine the results into: **affected contracts** (OpenAPI schema + proto
 message), **affected operations/RPCs**, **implementations** (handlers/servers),
-and a **risk** read. Cross-repo consumer expansion is the deferred piece.
+and a **risk** read. Cross-repo consumer expansion is the piece not yet implemented.
 
 ---
 
