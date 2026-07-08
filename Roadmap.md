@@ -65,7 +65,7 @@ Make the value prop reliable and the project credible.
 | 1.2 | **Observability.** `--verbose`/`--debug` structured logging of index + serve activity, and not-found reasons on every tool. | ✅ | Today a silent empty result is indistinguishable from "broken." Worst first-impression failure mode. |
 | 1.3 | **Multi-hop traversal.** A `call_path` / `traverse` tool (or a `depth` arg on `explain_symbol`) so handler → service → repository → client is one call, not manual chaining. | ✅ | Deepens "what breaks if I change X." Added `call_path`: multi-hop call traversal (up to 5 hops, callees/callers/both) returned as a tree, with per-path cycle cutting. `explain_symbol` stays one-hop. |
 | 1.4 | **Cross-repo RPC `consumed_by`.** Aggregate gRPC consumers across indexed repos, mirroring what `explain_private_library` does for libraries. | ✅ | Completes the gRPC side of "what breaks." Implemented as a heuristic: repos with a node labelled like the RPC (gRPC client calls are not indexed), excluding providers. `ConsumedBy` is now a `[]string` of consumer repos. |
-| 1.5 | **Stability policy.** A `docs/stability.md` tagging each tool/resource as stable or experimental, plus a semver/deprecation policy. | 🔎 | Pre-1.0, early adopters have no guarantee the surface won't break. |
+| 1.5 | **Stability policy.** A `docs/stability.md` tagging each tool/resource as stable or experimental, plus a semver/deprecation policy. | ✅ | Pre-1.0, early adopters have no guarantee the surface won't break. |
 
 ## Phase 2 — Reach
 

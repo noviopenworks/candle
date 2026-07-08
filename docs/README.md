@@ -31,6 +31,7 @@ full DDL, edge catalog, end-to-end walkthrough).
 | [tools.md](tools.md) | All 16 MCP tools: arguments, behavior, example request and response JSON. |
 | [resources.md](resources.md) | The `repo://`, `graph://`, `openapi://`, `proto://`, `lib://` URI schemes. |
 | [examples.md](examples.md) | Concrete, copy-pasteable walkthroughs that chain tools together. |
+| [stability.md](stability.md) | Per-tool/resource stability tiers and the semver/deprecation policy. |
 | [architecture.md](architecture.md) | Package layout, ingestion pipeline, storage, how linking works. |
 | [design.md](design.md) | The complete design spec. |
 
