@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "candle": {
+      "command": "/absolute/path/to/candle",
+      "args": ["serve", "--db", "/absolute/path/to/intel.db"]
+    }
+  }
+}

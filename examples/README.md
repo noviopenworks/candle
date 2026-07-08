@@ -31,6 +31,18 @@ manifest's `graph:` field at the resulting `graphify-out/graph.json`.
 For copy-pasteable agent tool calls (find an endpoint, explain an RPC, impact
 analysis, library consumers), see **[../docs/examples.md](../docs/examples.md)**.
 
+## Client configs
+
+Ready-to-copy MCP client configs for `candle serve`:
+
+- [`clients/opencode.json`](clients/opencode.json) — opencode (`mcp` block, local stdio).
+- [`clients/claude-desktop.json`](clients/claude-desktop.json) — Claude Desktop (`mcpServers` block).
+
+Copy the one for your client, replace the `/absolute/path/to/` placeholders with
+real paths to the `candle` binary and your `intel.db`, and load it. Claude Code
+uses a CLI command instead of a config file — see
+[../docs/getting-started.md](../docs/getting-started.md#5-connect-a-client).
+
 ## Minimal graph fixture
 
 The smallest valid Graphify graph candle will index — a handler that calls

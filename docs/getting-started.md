@@ -131,9 +131,13 @@ serves every indexed snapshot.
 
 ## 5. Connect a client
 
+candle speaks MCP over stdio, so any MCP-compatible client works. Ready-to-copy
+configs live in [`examples/clients/`](../examples/README.md#client-configs).
+
 ### Claude Desktop
 
-Add to `claude_desktop_config.json`:
+Add to `claude_desktop_config.json` (see
+[`examples/clients/claude-desktop.json`](../examples/clients/claude-desktop.json)):
 
 ```json
 {
@@ -151,6 +155,29 @@ Add to `claude_desktop_config.json`:
 ```bash
 claude mcp add candle -- /absolute/path/to/candle serve --db /absolute/path/to/intel.db
 ```
+
+### opencode
+
+Add to `opencode.json` or `opencode.jsonc` at the project root, or to
+`~/.config/opencode/opencode.json` for global use (see
+[`examples/clients/opencode.json`](../examples/clients/opencode.json)):
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "candle": {
+      "type": "local",
+      "command": ["/absolute/path/to/candle", "serve", "--db", "/absolute/path/to/intel.db"],
+      "enabled": true
+    }
+  }
+}
+```
+
+To serve a scoped subset of repos, add `--config` and a path to a
+[`candle.yaml`](configuration.md#serve-scope) scope file to the `args`/`command`
+list.
 
 ### Any MCP client
 
