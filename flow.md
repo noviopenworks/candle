@@ -249,7 +249,7 @@ makes repeated indexing safe during development.
 
 ## What is not yet implemented
 
-The MVP supports OpenAPI, protobuf, and Go private modules. The following are not yet implemented:
+candle supports OpenAPI, protobuf, and Go private modules. The following are not yet implemented:
 
 - Automatic breaking-change detection.
 - Full cross-repo RPC consumer aggregation.

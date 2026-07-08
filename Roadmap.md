@@ -20,8 +20,9 @@ one queryable SQLite-backed graph:
 
 **16 tools**, **5 resource URI schemes**, commit-pinned lookups, idempotent
 per-repo indexing, scoped multi-instance serving, and a real end-to-end test
-(127 tests, 12 packages). MIT-licensed; mise + task + golangci-lint + GitHub
-Actions CI + GoReleaser all in place.
+(134 tests, 12 packages). MIT-licensed; mise + task + golangci-lint + GitHub
+Actions CI + GoReleaser all in place. Phase 0 and Phase 1 are complete; this
+is the **1.0** release.
 
 See [`docs/getting-started.md`](docs/getting-started.md) to use it, and
 [`docs/architecture.md`](docs/architecture.md) for the package map.
@@ -111,7 +112,7 @@ return later.
 2. Treat the item's "why it matters" as the change motivation; the file:line
    references as the impact map.
 3. Keep the verification baseline green: `go build ./...`, `go vet ./...`,
-   `go test ./...` (127/12), `mise exec -- task ci`.
+   `go test ./...` (134/12), `mise exec -- task ci`.
 4. On merge, flip the item's status here (🔎 → ✅, or 🔎 → 🔄 when started).
 
 ## Maintaining this roadmap

@@ -110,7 +110,7 @@ a graceful not-found error for unknown repos rather than a protocol error.
 
 ## What's not yet implemented
 
-These are explicitly **out of MVP scope**:
+These are explicitly **out of scope for 1.0**:
 
 - Automatic breaking-change detection and API diffing
 - Generated-client analysis, SDK generation, PR-review automation

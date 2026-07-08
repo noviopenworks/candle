@@ -122,12 +122,13 @@ indexed snapshots.
 
 ## Status
 
-MVP. Contract parsers cover three ecosystems: **OpenAPI**, **protobuf**, and
-**Go modules**. Automatic breaking-change detection and additional dependency
-ecosystems (npm, pyproject, Maven, Cargo) are not yet implemented — see
+**1.0** — the code graph, OpenAPI/protobuf, and Go private-library layers are
+linked and queryable via 16 MCP tools and 5 resource schemes. Not yet
+implemented: automatic breaking-change detection and non-Go dependency
+ecosystems (npm, pyproject, Maven, Cargo) — see
 [docs/concepts.md](docs/concepts.md#whats-not-yet-implemented). Surface
-stability is tagged per tool/resource in
-[docs/stability.md](docs/stability.md).
+stability is tagged per tool/resource in [docs/stability.md](docs/stability.md);
+the forward roadmap is in [Roadmap.md](Roadmap.md).
 
 The complete design spec lives in **[docs/design.md](docs/design.md)**.
 
