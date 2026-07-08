@@ -254,12 +254,14 @@ one-hop calls.
   "calls": [
     {"Source": "reservation_server_reserveproduct", "Target": "reservation_service_reserveproduct", "Relation": "calls"}
   ],
-  "consumed_by": ""
+  "consumed_by": ["org/warehouse-service", "org/order-service"]
 }
 ```
 
-> `consumed_by` is empty in this release — cross-repo RPC consumer aggregation
-> is not yet implemented. The field is present for forward compatibility.
+> `consumed_by` is a **heuristic**: it lists repos whose code graph contains a
+> node labelled like the RPC (a gRPC client-call signal), excluding the provider
+> and any repo that defines the RPC. candle does not index gRPC client calls, so
+> a label match is the available cross-repo signal.
 
 ---
 

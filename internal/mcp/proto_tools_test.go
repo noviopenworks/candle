@@ -53,8 +53,8 @@ func TestExplainRPC(t *testing.T) {
 	if out.RPC.StreamKind != "unary" || len(out.ImplementedBy) != 1 || out.ImplementedBy[0].NodeID != "n1" {
 		t.Fatalf("explain shape: %+v", out)
 	}
-	if out.ConsumedBy != "" {
-		t.Fatalf("consumed_by should be empty (cross-repo aggregation not implemented), got %q", out.ConsumedBy)
+	if len(out.ConsumedBy) != 0 {
+		t.Fatalf("consumed_by should be empty for a single-repo seed, got %v", out.ConsumedBy)
 	}
 	if len(out.RequestMessageFields) != 1 || out.RequestMessageFields[0].Name != "sku" {
 		t.Fatalf("request fields: %+v", out.RequestMessageFields)
@@ -78,6 +78,50 @@ func TestListAPIsIncludesProto(t *testing.T) {
 	}
 	if !sawProto {
 		t.Fatalf("list_apis missing protobuf entry: %+v", apis)
+	}
+}
+
+// TestExplainRPCConsumedByCrossRepo verifies the heuristic consumer aggregation:
+// a second repo whose graph has a node labelled like the RPC (a gRPC client-call
+// signal) is reported in consumed_by, while the provider repo and any repo that
+// defines the RPC are excluded.
+func TestExplainRPCConsumedByCrossRepo(t *testing.T) {
+	tools := seedProtoTools(t)
+	s := tools.s
+
+	// A consumer repo that calls ReserveProduct but does not define the proto.
+	consID, _ := s.UpsertIndex("acme", "warehouse", "w1", "main", "/w")
+	if _, err := s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file) VALUES(?,?,?,?,?)`,
+		consID, "client_reserve", "ReserveProduct", "code", "client.go"); err != nil {
+		t.Fatal(err)
+	}
+
+	// A second provider that also defines the RPC: its ReserveProduct node must
+	// NOT be counted as a consumer of the first provider.
+	otherID, _ := s.UpsertIndex("acme", "inventory2", "i2", "main", "/i2")
+	if _, err := s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file) VALUES(?,?,?,?,?)`,
+		otherID, "server_reserve", "ReserveProduct", "code", "server.go"); err != nil {
+		t.Fatal(err)
+	}
+	other := store.ProtoFileBundle{
+		File: store.ProtoFile{Path: "proto/inventory.proto", Package: "acme.inventory"},
+		Services: []store.ProtoServiceBundle{{
+			Service: store.ProtoService{Name: "InventoryService", FullName: "acme.inventory.InventoryService"},
+			RPCs: []store.ProtoRPC{{Name: "ReserveProduct",
+				FullName:        "acme.inventory.InventoryService.ReserveProduct",
+				RequestMessage:  "acme.inventory.ReserveProductRequest",
+				ResponseMessage: "acme.inventory.ReserveProductResponse", StreamKind: "unary"}}}},
+	}
+	if err := s.ReplaceProtoFiles(otherID, []store.ProtoFileBundle{other}); err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := tools.ExplainRPC("acme/inventory", "InventoryService", "ReserveProduct")
+	if err != nil {
+		t.Fatalf("explain: %v", err)
+	}
+	if len(out.ConsumedBy) != 1 || out.ConsumedBy[0] != "acme/warehouse" {
+		t.Fatalf("consumed_by should be [acme/warehouse], got %v", out.ConsumedBy)
 	}
 }
 

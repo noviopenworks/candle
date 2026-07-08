@@ -312,3 +312,28 @@ func (s *Store) ProtoRPCImpls(indexID int64, rpcFullName string) ([]ProtoRPCImpl
 	}
 	return out, rows.Err()
 }
+
+// ProtoRPCDefiningIndexes returns the distinct index ids whose protobuf defines
+// an RPC with the given full name. Used to exclude providers from cross-repo
+// consumer aggregation: a repo defining an RPC is a provider, not a consumer.
+func (s *Store) ProtoRPCDefiningIndexes(rpcFullName string) ([]int64, error) {
+	rows, err := s.DB.Query(`
+		SELECT DISTINCT f.index_id
+		FROM proto_rpcs r
+		  JOIN proto_services sv ON sv.id=r.proto_service_id
+		  JOIN proto_files f ON f.id=sv.proto_file_id
+		WHERE r.full_name=?`, rpcFullName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		out = append(out, id)
+	}
+	return out, rows.Err()
+}

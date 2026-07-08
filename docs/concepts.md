@@ -113,7 +113,6 @@ a graceful not-found error for unknown repos rather than a protocol error.
 These are explicitly **out of MVP scope**:
 
 - Automatic breaking-change detection and API diffing
-- Cross-repo `consumed_by` aggregation for RPCs (the field exists but is empty — not yet implemented)
 - Generated-client analysis, SDK generation, PR-review automation
 - Dependency ecosystems beyond Go: npm, pyproject, Maven/Gradle, Cargo
 

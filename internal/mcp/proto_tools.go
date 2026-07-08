@@ -2,6 +2,7 @@ package mcp
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/noviopenworks/candle/internal/store"
 )
@@ -20,7 +21,7 @@ type RPCExplanation struct {
 	ResponseMessageFields []store.ProtoField   `json:"response_message_fields"`
 	ImplementedBy         []store.ProtoRPCImpl `json:"implemented_by"`
 	Calls                 []store.EdgeRow      `json:"calls"`
-	ConsumedBy            string               `json:"consumed_by"`
+	ConsumedBy            []string             `json:"consumed_by"`
 }
 
 // FindRPC implements find_rpc (lexical match + optional stream_kind filter).
@@ -36,8 +37,11 @@ func (t *Tools) FindRPC(repo, query, streamKind string) ([]store.ProtoRPCResult,
 }
 
 // ExplainRPC implements explain_rpc: proto facts + resolved messages + same-repo
-// impls + best-effort one-hop calls. Cross-repo consumed_by aggregation is not
-// yet implemented; the field is returned empty.
+// impls + best-effort one-hop calls + cross-repo consumed_by. consumed_by is a
+// heuristic: repos whose graph contains a node labelled like the RPC (a gRPC
+// client-call signal), excluding the provider and any repo that defines the RPC.
+// candle does not index gRPC client calls, so a label match is the available
+// cross-repo signal.
 func (t *Tools) ExplainRPC(repo, service, rpc string) (RPCExplanation, error) {
 	ri, ok, err := t.reg.Resolve(repo)
 	if err != nil {
@@ -68,7 +72,48 @@ func (t *Tools) ExplainRPC(repo, service, rpc string) (RPCExplanation, error) {
 		}
 		out.Calls = calls
 	}
+	out.ConsumedBy = t.rpcConsumers(ri.IndexID, r)
 	return out, nil
+}
+
+// rpcConsumers returns the distinct in-scope repos whose code graph contains a
+// node labelled with the RPC name, excluding the provider and any repo that
+// defines the RPC. Best-effort: candle does not index gRPC client calls, so a
+// label match is the available cross-repo consumer signal.
+func (t *Tools) rpcConsumers(providerIndexID int64, r store.ProtoRPCResult) []string {
+	nodes, err := t.s.NodesByLabelAllIndexes(r.Name)
+	if err != nil || len(nodes) == 0 {
+		return nil
+	}
+	exclude := map[int64]bool{providerIndexID: true}
+	if definers, derr := t.s.ProtoRPCDefiningIndexes(r.FullName); derr == nil {
+		for _, id := range definers {
+			exclude[id] = true
+		}
+	}
+	all, err := t.reg.List()
+	if err != nil {
+		return nil
+	}
+	idToRepo := make(map[int64]string, len(all))
+	for _, ri := range all {
+		idToRepo[ri.IndexID] = ri.Repo
+	}
+	seen := map[string]bool{}
+	var out []string
+	for _, n := range nodes {
+		if exclude[n.IndexID] || !t.reg.InScope(n.IndexID) {
+			continue
+		}
+		repo := idToRepo[n.IndexID]
+		if repo == "" || seen[repo] {
+			continue
+		}
+		seen[repo] = true
+		out = append(out, repo)
+	}
+	sort.Strings(out)
+	return out
 }
 
 func (t *Tools) messageFields(indexID int64, fullName string) []store.ProtoField {

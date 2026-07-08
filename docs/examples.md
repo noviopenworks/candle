@@ -103,12 +103,13 @@ Find the endpoint, then explain it, then walk into the code.
   "rpc": {"Name": "ReserveProduct", "Service": "ReservationService"},
   "request_message_fields": [{"name": "product_id", "type": "string", "number": 1}],
   "implemented_by": [{"NodeID": "reservation_server_reserveproduct", "SourceFile": "internal/grpc/server.go"}],
-  "consumed_by": ""
+  "consumed_by": ["org/warehouse-service"]
 }
 ```
 
-→ `implemented_by` points at the gRPC server method. `consumed_by` is empty
-because cross-repo RPC consumer aggregation is not yet implemented (see
+→ `implemented_by` points at the gRPC server method. `consumed_by` lists repos
+whose graph has a node labelled like the RPC (a gRPC client-call signal) — a
+heuristic, since candle does not index gRPC client calls (see
 [concepts.md](concepts.md#whats-not-yet-implemented)).
 
 ---
