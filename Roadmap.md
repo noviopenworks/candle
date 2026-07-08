@@ -48,7 +48,7 @@ promise must **hold**. Today neither is fully true.
 | # | Item | Status | Why it matters |
 |---|---|---|---|
 | 0.2 | **OpenAPI → handler linking.** Add `MatchOpenAPI` to `internal/link` (analogous to `MatchRPCs`) so `explain_endpoint` returns `implemented_by`. | ✅ | Answers the README's flagship question — *"which handler implements this endpoint?"* — via operationId-derived name candidates + AST-confirmed handler shape (HIGH), with route-registration presence as a coarse MEDIUM signal. Path→handler binding stays coarse (precise per-router binding is a later follow-on). REST is the majority case. |
-| 0.3 | **Graphify quickstart.** A verified, versioned walkthrough for producing a compliant `graph.json` (exact commands, expected schema, validation), or a built-in fallback extractor. | 🔎 | candle does nothing without graph inputs; today producing them is undocumented. (`docs/getting-started.md:9-12`.) |
+| 0.3 | **Graphify quickstart.** A verified, versioned walkthrough for producing a compliant `graph.json` (exact commands, expected schema, validation), or a built-in fallback extractor. | ✅ | candle does nothing without graph inputs; today producing them is undocumented. (`docs/getting-started.md:9-12`.) |
 
 **Exit criterion:** a stranger can clone, follow the Graphify quickstart (0.3)
 to produce a `graph.json` for the example fixture or their own repo, run

@@ -7,9 +7,9 @@ This guide takes you from a clone to an agent querying your services.
 - **Go 1.26+** (the module targets `go 1.26.4`) — or **[mise](https://mise.jdx.dev)**,
   which pins Go and the dev tools from the repo's `mise.toml` (`mise install`).
 - **A Graphify code graph** per repo you want to index. candle consumes
-  Graphify's `graph.json` output — it does not extract code itself. See
-  [Concepts → Code graph](concepts.md#layer-1-code-graph-graphify) for how to
-  produce one.
+  Graphify's `graph.json` output — it does not extract code itself. See the
+  [Graphify quickstart](graphify-quickstart.md) for the schema and how to
+  produce or hand-author a compliant file.
 - **An MCP client** to talk to the server (Claude Desktop, Claude Code, or any
   MCP-compatible agent runner). The server speaks MCP over **stdio**.
 
