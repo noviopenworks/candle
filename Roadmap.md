@@ -47,13 +47,13 @@ promise must **hold**. Today neither is fully true.
 
 | # | Item | Status | Why it matters |
 |---|---|---|---|
-| 0.1 | **Runnable demo.** A `demo/` tree (or `candle demo`) with pre-built `graph.json` + contracts + manifest + sample queries, so `index && serve` answers a real question end-to-end with no user data. | 🔎 | Zero-cost evaluation. Removes the Graphify activation wall for first contact. |
 | 0.2 | **OpenAPI → handler linking.** Add `MatchOpenAPI` to `internal/link` (analogous to `MatchRPCs`) so `explain_endpoint` returns `implemented_by`. | ✅ | Answers the README's flagship question — *"which handler implements this endpoint?"* — via operationId-derived name candidates + AST-confirmed handler shape (HIGH), with route-registration presence as a coarse MEDIUM signal. Path→handler binding stays coarse (precise per-router binding is a later follow-on). REST is the majority case. |
 | 0.3 | **Graphify quickstart.** A verified, versioned walkthrough for producing a compliant `graph.json` (exact commands, expected schema, validation), or a built-in fallback extractor. | 🔎 | candle does nothing without graph inputs; today producing them is undocumented. (`docs/getting-started.md:9-12`.) |
 
-**Exit criterion:** a stranger can clone, run `demo`, and watch an agent answer
-"which handler implements endpoint X?" in under five minutes — without
-Graphify, and against a real (fixture) codebase.
+**Exit criterion:** a stranger can clone, follow the Graphify quickstart (0.3)
+to produce a `graph.json` for the example fixture or their own repo, run
+`candle index` + `candle serve`, and watch an agent answer "which handler
+implements endpoint X?" in under five minutes.
 
 ## Phase 1 — Completeness & trust
 
@@ -107,7 +107,7 @@ return later.
 ## Picking up a roadmap item
 
 1. Open an issue (or claim an existing one) named after the item, e.g.
-   `add-runnable-demo` for 0.1.
+   `graphify-quickstart` for 0.3.
 2. Treat the item's "why it matters" as the change motivation; the file:line
    references as the impact map.
 3. Keep the verification baseline green: `go build ./...`, `go vet ./...`,
