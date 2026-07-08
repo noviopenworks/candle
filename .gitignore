@@ -16,6 +16,9 @@ coverage.html
 # Graphify output (consumed, not committed)
 graphify-out/
 
+# CodeGraph indexer cache (local tool state)
+.codegraph/
+
 # Env / local config
 .env
 *.local.yaml

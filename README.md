@@ -118,7 +118,7 @@ indexed snapshots.
 | [Resources reference](docs/resources.md) | The 5 URI schemes for commit-pinned lookups |
 | [Examples](docs/examples.md) | End-to-end walkthroughs (find a handler, impact analysis, consumers) |
 | [Architecture](docs/architecture.md) | Internal packages, data flow, storage layout |
-| [Contributing](CONTRIBUTING.md) | Build/test, the OpenSpec + Comet workflow |
+| [Contributing](CONTRIBUTING.md) | Build/test gate, conventions, doc style |
 
 ## Status
 

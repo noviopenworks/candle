@@ -49,7 +49,6 @@ changelog:
       - "^docs:"
       - "^test:"
       - "^chore:"
-      - "^chore(comet):"
       - Merge pull request
       - Merge branch
 

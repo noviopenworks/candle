@@ -3,7 +3,7 @@
 ## Supported versions
 
 candle is pre-1.0. Security fixes are applied to the latest released
-`0.1.x` line and the `master` branch.
+`0.1.x` line and the `main` branch.
 
 | Version | Supported |
 |---------|-----------|

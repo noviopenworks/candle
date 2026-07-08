@@ -20,7 +20,7 @@ one queryable SQLite-backed graph:
 
 **15 tools**, **5 resource URI schemes**, commit-pinned lookups, idempotent
 per-repo indexing, scoped multi-instance serving, and a real end-to-end test
-(116 tests, 12 packages). MIT-licensed; mise + task + golangci-lint + GitHub
+(127 tests, 12 packages). MIT-licensed; mise + task + golangci-lint + GitHub
 Actions CI + GoReleaser all in place.
 
 See [`docs/getting-started.md`](docs/getting-started.md) to use it, and
@@ -106,12 +106,12 @@ return later.
 
 ## Picking up a roadmap item
 
-1. Open a Comet change (see [`CONTRIBUTING.md`](CONTRIBUTING.md)) named after the
-   item, e.g. `add-openapi-handler-linking` for 0.2.
-2. Treat the item's "why it matters" as the proposal motivation; the file:line
+1. Open an issue (or claim an existing one) named after the item, e.g.
+   `add-runnable-demo` for 0.1.
+2. Treat the item's "why it matters" as the change motivation; the file:line
    references as the impact map.
 3. Keep the verification baseline green: `go build ./...`, `go vet ./...`,
-   `go test ./...` (116/12), `mise exec -- task ci`.
+   `go test ./...` (127/12), `mise exec -- task ci`.
 4. On merge, flip the item's status here (🔎 → ✅, or 🔎 → 🔄 when started).
 
 ## Maintaining this roadmap

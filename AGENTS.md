@@ -1,9 +1,9 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file orients Claude Code (claude.ai/code) when working in this repository.
+This file orients opencode (and any agent) when working in this repository.
 It is a condensed companion to [docs/design.md](docs/design.md) (the source-of-truth
-design spec) and [CONTRIBUTING.md](CONTRIBUTING.md). opencode users: the same
-guidance lives in [AGENTS.md](AGENTS.md) — keep the two in sync.
+design spec) and [CONTRIBUTING.md](CONTRIBUTING.md). Claude Code users: the same
+guidance lives in [CLAUDE.md](CLAUDE.md) — keep the two in sync.
 
 ## What this is
 
@@ -54,7 +54,7 @@ Key packages (see [docs/architecture.md](docs/architecture.md) for the full map)
 - `internal/link` — links contracts and exports to graph nodes (AST-precise when
   a source `root` is set, heuristic otherwise).
 - `internal/ingest` — orchestrates the per-repo pipeline into the store.
-- `internal/store` — SQLite schema,DDL, and all read/write queries.
+- `internal/store` — SQLite schema, DDL, and all read/write queries.
 - `internal/registry` — resolves repo names to `index_id`; enforces serve scope.
 - `internal/mcp` — the 15 MCP tools and 5 resource URI schemes; SDK types stay
   in `internal/mcp/server.go`, tool methods are pure and SDK-free.
