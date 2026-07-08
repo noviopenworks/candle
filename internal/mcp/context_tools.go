@@ -90,7 +90,7 @@ func (t *Tools) GetContext(args GetContextArgs) (ContextResult, error) {
 		return ContextResult{}, err
 	}
 	if !ok {
-		return ContextResult{}, ErrNotFound
+		return ContextResult{}, repoNotFound(args.Repo)
 	}
 	mode := normalizeContextMode(args.Mode)
 	nodeCount := t.nodeCount(ri.IndexID)

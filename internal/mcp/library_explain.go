@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -70,7 +71,7 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 		return LibraryExplanation{}, err
 	}
 	if len(paths) == 0 {
-		return LibraryExplanation{}, ErrNotFound
+		return LibraryExplanation{}, notFound(fmt.Sprintf("no private library matching %q", query))
 	}
 	visible := paths[:0]
 	for _, p := range paths {
@@ -84,7 +85,7 @@ func (t *Tools) ExplainPrivateLibrary(query string) (LibraryExplanation, error) 
 	}
 	paths = visible
 	if len(paths) == 0 {
-		return LibraryExplanation{}, ErrNotFound
+		return LibraryExplanation{}, notFound(fmt.Sprintf("no in-scope private library matching %q", query))
 	}
 	best := paths[0]
 	for _, p := range paths {

@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/noviopenworks/candle/internal/store"
@@ -79,7 +80,7 @@ func TestExplainPrivateLibraryProviderAndConsumers(t *testing.T) {
 func TestExplainPrivateLibraryUnknownQuery(t *testing.T) {
 	tools := seedExplain(t)
 	_, err := tools.ExplainPrivateLibrary("does-not-exist")
-	if err != ErrNotFound {
+	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expected ErrNotFound, got %v", err)
 	}
 }
@@ -148,7 +149,7 @@ func TestExplainPrivateLibraryIgnoresOutOfScopeProvider(t *testing.T) {
 
 	tools := NewToolsScoped(s, map[int64]bool{inScopeID: true})
 	_, err = tools.ExplainPrivateLibrary("platform")
-	if err != ErrNotFound {
+	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("out-of-scope provider should be hidden, got %v", err)
 	}
 }

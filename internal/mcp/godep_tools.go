@@ -1,6 +1,10 @@
 package mcp
 
-import "github.com/noviopenworks/candle/internal/store"
+import (
+	"fmt"
+
+	"github.com/noviopenworks/candle/internal/store"
+)
 
 // LibraryConsumers is the find_library_consumers result for one repo.
 type LibraryConsumers struct {
@@ -19,7 +23,7 @@ func (t *Tools) FindPrivateLibrary(repo, query string) ([]store.PrivateLibraryRe
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrNotFound
+		return nil, repoNotFound(repo)
 	}
 	libs, err := t.s.FindPrivateLibraries(ri.IndexID, query)
 	if err != nil {
@@ -49,14 +53,14 @@ func (t *Tools) FindLibraryConsumers(repo, modulePath string) (LibraryConsumers,
 		return LibraryConsumers{}, err
 	}
 	if !ok {
-		return LibraryConsumers{}, ErrNotFound
+		return LibraryConsumers{}, repoNotFound(repo)
 	}
 	dep, found, err := t.s.DependencyByModule(ri.IndexID, modulePath)
 	if err != nil {
 		return LibraryConsumers{}, err
 	}
 	if !found {
-		return LibraryConsumers{}, ErrNotFound
+		return LibraryConsumers{}, notFound(fmt.Sprintf("module %q not consumed by %s", modulePath, repo))
 	}
 	usages, err := t.s.PrivateUsagesByModule(ri.IndexID, modulePath)
 	if err != nil {

@@ -1,6 +1,10 @@
 package mcp
 
-import "github.com/noviopenworks/candle/internal/store"
+import (
+	"fmt"
+
+	"github.com/noviopenworks/candle/internal/store"
+)
 
 // SchemaInfo is a kind-discriminated find_schema entry (openapi_schema|proto_message).
 type SchemaInfo struct {
@@ -26,7 +30,7 @@ func (t *Tools) FindRPC(repo, query, streamKind string) ([]store.ProtoRPCResult,
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrNotFound
+		return nil, repoNotFound(repo)
 	}
 	return t.s.FindRPCs(ri.IndexID, query, streamKind)
 }
@@ -40,14 +44,14 @@ func (t *Tools) ExplainRPC(repo, service, rpc string) (RPCExplanation, error) {
 		return RPCExplanation{}, err
 	}
 	if !ok {
-		return RPCExplanation{}, ErrNotFound
+		return RPCExplanation{}, repoNotFound(repo)
 	}
 	r, found, err := t.s.RPCByServiceName(ri.IndexID, service, rpc)
 	if err != nil {
 		return RPCExplanation{}, err
 	}
 	if !found {
-		return RPCExplanation{}, ErrNotFound
+		return RPCExplanation{}, notFound(fmt.Sprintf("rpc %s.%s not found in %s", service, rpc, repo))
 	}
 	out := RPCExplanation{RPC: r}
 	out.RequestMessageFields = t.messageFields(ri.IndexID, r.RequestMessage)

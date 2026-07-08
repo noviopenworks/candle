@@ -8,8 +8,9 @@ The server advertises **15 tools**, in this registration order:
 `find_library_consumers` · `explain_private_library`
 
 Every tool returns a single JSON text payload. Tools that take a `repo` resolve
-it internally; an unknown repo/symbol comes back as a **tool-level error result**
-(graceful `not found`) rather than a protocol error.
+it internally; an unknown repo/symbol comes back as a **tool-level error
+result** (graceful `not found: <reason>`, e.g. `not found: repo "org/x" not
+indexed`) rather than a protocol error.
 
 > **JSON casing.** Example payloads below mirror the actual Go structs. Some
 > structs carry `json:` tags (snake_case, e.g. `module_path`); others serialize

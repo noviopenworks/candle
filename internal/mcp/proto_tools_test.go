@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/noviopenworks/candle/internal/store"
@@ -58,7 +59,7 @@ func TestExplainRPC(t *testing.T) {
 	if len(out.RequestMessageFields) != 1 || out.RequestMessageFields[0].Name != "sku" {
 		t.Fatalf("request fields: %+v", out.RequestMessageFields)
 	}
-	if _, err := tools.ExplainRPC("acme/inventory", "InventoryService", "Nope"); err != ErrNotFound {
+	if _, err := tools.ExplainRPC("acme/inventory", "InventoryService", "Nope"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("want ErrNotFound, got %v", err)
 	}
 }

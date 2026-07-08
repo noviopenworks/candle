@@ -351,12 +351,13 @@ func registerExplainPrivateLibrary(srv *mcpsdk.Server, tools *Tools) {
 }
 
 // toolErr maps a not-found into a tool-level error result (IsError) rather than
-// a protocol error, so unknown repos/symbols degrade gracefully.
+// a protocol error, so unknown repos/symbols degrade gracefully. The error's
+// message carries the specific reason (repo vs symbol vs endpoint).
 func toolErr(err error) (*mcpsdk.CallToolResult, any, error) {
 	if errors.Is(err, ErrNotFound) {
 		return &mcpsdk.CallToolResult{
 			IsError: true,
-			Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: ErrNotFound.Error()}},
+			Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: err.Error()}},
 		}, nil, nil
 	}
 	return nil, nil, err

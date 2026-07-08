@@ -2,13 +2,32 @@ package mcp
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/noviopenworks/candle/internal/registry"
 	"github.com/noviopenworks/candle/internal/store"
 )
 
 // ErrNotFound is returned when a repo, symbol, or file cannot be resolved.
+// Tool methods wrap it via notFound(reason) so the agent sees *why* a result
+// was empty; errors.Is(err, ErrNotFound) still holds for callers.
 var ErrNotFound = errors.New("not found")
+
+// notFoundError wraps ErrNotFound with a specific reason.
+type notFoundError struct{ reason string }
+
+func (e *notFoundError) Error() string        { return "not found: " + e.reason }
+func (e *notFoundError) Is(target error) bool { return target == ErrNotFound }
+
+// notFound returns a not-found error carrying reason.
+func notFound(reason string) error {
+	return &notFoundError{reason: reason}
+}
+
+// repoNotFound is the common reason for an unresolved repo argument.
+func repoNotFound(repo string) error {
+	return notFound(fmt.Sprintf("repo %q not indexed", repo))
+}
 
 // Tools holds the pure tool implementations over the store.
 type Tools struct {
@@ -62,7 +81,7 @@ func (t *Tools) ExplainSymbol(repo, symbol string) (SymbolExplanation, error) {
 		return SymbolExplanation{}, err
 	}
 	if !ok {
-		return SymbolExplanation{}, ErrNotFound
+		return SymbolExplanation{}, repoNotFound(repo)
 	}
 	node, found, err := t.s.NodeByID(ri.IndexID, symbol)
 	if err != nil {
@@ -74,7 +93,7 @@ func (t *Tools) ExplainSymbol(repo, symbol string) (SymbolExplanation, error) {
 			return SymbolExplanation{}, err
 		}
 		if len(byLabel) == 0 {
-			return SymbolExplanation{}, ErrNotFound
+			return SymbolExplanation{}, notFound(fmt.Sprintf("symbol %q not found in %s", symbol, repo))
 		}
 		node = byLabel[0]
 	}
@@ -96,7 +115,7 @@ func (t *Tools) GetFileContext(repo, file string) ([]store.NodeRow, error) {
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrNotFound
+		return nil, repoNotFound(repo)
 	}
 	return t.s.NodesByFile(ri.IndexID, file)
 }
@@ -108,7 +127,7 @@ func (t *Tools) QueryRepo(repo, name string) ([]store.NodeRow, error) {
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrNotFound
+		return nil, repoNotFound(repo)
 	}
 	return t.s.NodesByLabel(ri.IndexID, name)
 }

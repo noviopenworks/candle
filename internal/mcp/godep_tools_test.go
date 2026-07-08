@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/noviopenworks/candle/internal/store"
@@ -66,7 +67,7 @@ func TestFindLibraryConsumers(t *testing.T) {
 	if out.ConsumedAcrossRepos != "" {
 		t.Fatalf("consumed_across_repos should be empty (cross-repo aggregation not implemented), got %q", out.ConsumedAcrossRepos)
 	}
-	if _, err := tools.FindLibraryConsumers("acme/web", "git.acme.local/none"); err != ErrNotFound {
+	if _, err := tools.FindLibraryConsumers("acme/web", "git.acme.local/none"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("want ErrNotFound, got %v", err)
 	}
 }

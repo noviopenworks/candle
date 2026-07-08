@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/noviopenworks/candle/internal/store"
@@ -85,7 +86,7 @@ func TestExplainEndpointImplementedBy(t *testing.T) {
 
 func TestExplainEndpointUnknown(t *testing.T) {
 	tl := seedAPITools(t)
-	if _, err := tl.ExplainEndpoint("org/svc", "GET", "/nope"); err != ErrNotFound {
+	if _, err := tl.ExplainEndpoint("org/svc", "GET", "/nope"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expected ErrNotFound, got %v", err)
 	}
 }
@@ -106,16 +107,16 @@ func TestFindEndpointAndSchema(t *testing.T) {
 // (not a protocol error) for an unresolvable repo.
 func TestOpenAPIToolsUnknownRepo(t *testing.T) {
 	tl := seedAPITools(t)
-	if _, err := tl.ListAPIs("no/such"); err != ErrNotFound {
+	if _, err := tl.ListAPIs("no/such"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("list_apis unknown repo: expected ErrNotFound, got %v", err)
 	}
-	if _, err := tl.FindEndpoint("no/such", "x"); err != ErrNotFound {
+	if _, err := tl.FindEndpoint("no/such", "x"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("find_endpoint unknown repo: expected ErrNotFound, got %v", err)
 	}
-	if _, err := tl.ExplainEndpoint("no/such", "GET", "/x"); err != ErrNotFound {
+	if _, err := tl.ExplainEndpoint("no/such", "GET", "/x"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("explain_endpoint unknown repo: expected ErrNotFound, got %v", err)
 	}
-	if _, err := tl.FindSchema("no/such", "x"); err != ErrNotFound {
+	if _, err := tl.FindSchema("no/such", "x"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("find_schema unknown repo: expected ErrNotFound, got %v", err)
 	}
 }

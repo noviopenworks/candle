@@ -1,6 +1,10 @@
 package mcp
 
-import "github.com/noviopenworks/candle/internal/store"
+import (
+	"fmt"
+
+	"github.com/noviopenworks/candle/internal/store"
+)
 
 // APIInfo is one entry in list_apis output (kind-discriminated for future contract kinds).
 type APIInfo struct {
@@ -17,7 +21,7 @@ func (t *Tools) ListAPIs(repo string) ([]APIInfo, error) {
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrNotFound
+		return nil, repoNotFound(repo)
 	}
 	specs, err := t.s.ListAPISpecs(ri.IndexID)
 	if err != nil {
@@ -44,7 +48,7 @@ func (t *Tools) FindEndpoint(repo, query string) ([]store.HTTPOperation, error) 
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrNotFound
+		return nil, repoNotFound(repo)
 	}
 	return t.s.FindOperations(ri.IndexID, query)
 }
@@ -73,14 +77,14 @@ func (t *Tools) ExplainEndpoint(repo, method, path string) (EndpointExplanation,
 		return EndpointExplanation{}, err
 	}
 	if !ok {
-		return EndpointExplanation{}, ErrNotFound
+		return EndpointExplanation{}, repoNotFound(repo)
 	}
 	op, found, err := t.s.OperationByMethodPath(ri.IndexID, method, path)
 	if err != nil {
 		return EndpointExplanation{}, err
 	}
 	if !found {
-		return EndpointExplanation{}, ErrNotFound
+		return EndpointExplanation{}, notFound(fmt.Sprintf("endpoint %s %s not found in %s", method, path, repo))
 	}
 	out := EndpointExplanation{Operation: op, ImplementedBy: []HTTPOpImpl{}}
 	links, err := t.s.HTTPOpImpls(ri.IndexID, method, path)
@@ -116,7 +120,7 @@ func (t *Tools) FindSchema(repo, query string) ([]SchemaInfo, error) {
 		return nil, err
 	}
 	if !ok {
-		return nil, ErrNotFound
+		return nil, repoNotFound(repo)
 	}
 	out := []SchemaInfo{}
 	schemas, err := t.s.FindSchemas(ri.IndexID, query)

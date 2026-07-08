@@ -2,6 +2,8 @@ package mcp
 
 import (
 	"context"
+	"errors"
+	"strings"
 	"testing"
 
 	"github.com/noviopenworks/candle/internal/store"
@@ -84,8 +86,30 @@ func TestExplainSymbol(t *testing.T) {
 func TestExplainSymbolUnknownReturnsEmpty(t *testing.T) {
 	tl := seedTools(t)
 	_, err := tl.ExplainSymbol("org/svc", "DoesNotExist")
-	if err != ErrNotFound {
+	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expected ErrNotFound, got %v", err)
+	}
+}
+
+// TestNotFoundCarriesReason locks in roadmap 1.2: a not-found result tells the
+// agent *why* (repo vs symbol), not just a bare "not found".
+func TestNotFoundCarriesReason(t *testing.T) {
+	tl := seedTools(t)
+
+	_, err := tl.ExplainSymbol("org/missing", "x")
+	if !errors.Is(err, ErrNotFound) {
+		t.Fatalf("expected ErrNotFound, got %v", err)
+	}
+	if !strings.Contains(err.Error(), "org/missing") {
+		t.Fatalf("repo-not-found reason should mention the repo, got %q", err.Error())
+	}
+
+	_, err = tl.ExplainSymbol("org/svc", "DoesNotExist")
+	if !errors.Is(err, ErrNotFound) {
+		t.Fatalf("expected ErrNotFound, got %v", err)
+	}
+	if !strings.Contains(err.Error(), "DoesNotExist") || !strings.Contains(err.Error(), "symbol") {
+		t.Fatalf("symbol-not-found reason should mention the symbol, got %q", err.Error())
 	}
 }
 

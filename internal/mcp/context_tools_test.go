@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -148,7 +149,7 @@ func TestGetContextOverviewModeSuppressesMatches(t *testing.T) {
 func TestGetContextUnknownRepo(t *testing.T) {
 	tools := seedContextTools(t)
 	_, err := tools.GetContext(GetContextArgs{Repo: "org/missing"})
-	if err != ErrNotFound {
+	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expected ErrNotFound, got %v", err)
 	}
 }
