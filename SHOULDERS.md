@@ -1,8 +1,10 @@
 # Shoulders
 
-candle is vibecoded: built through iterative, human-directed AI coding sessions.
-This file lists the main technologies, libraries, and project infrastructure it
-stands on.
+candle was possible because of the amazing technologies, libraries, tools, and
+communities listed here. It is a vibecoded project, built through iterative,
+human-directed AI coding sessions, but it stands on dependable engineering
+shoulders: Go, SQLite, MCP, Graphify, OpenAPI, protobuf, GitHub Actions, mise,
+Task, GoReleaser, golangci-lint, govulncheck, and the Go module ecosystem.
 
 ## Core Technologies
 

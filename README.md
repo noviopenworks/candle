@@ -1,5 +1,11 @@
 # candle
 
+> [!WARNING]
+> candle is vibecoded: built through iterative, human-directed AI coding
+> sessions. The tests, CI gates, and release artifacts are the source of truth
+> for what is actually supported. See **[SHOULDERS.md](SHOULDERS.md)** for the
+> technologies, libraries, and tools this project stands on.
+
 **A private engineering knowledge layer, delivered as an [MCP](https://modelcontextprotocol.io) server.**
 
 candle lets an AI coding agent reason about service boundaries across many
@@ -14,12 +20,6 @@ repositories. It combines three layers into one queryable graph:
 The core value is **not parsing** contracts — it's **linking contracts back to the
 code graph** so questions like *"which handler implements this OpenAPI operation?"*
 or *"what breaks if I change this proto message?"* resolve across repos.
-
-**Authorship note:** candle is vibecoded: built through iterative,
-human-directed AI coding sessions. The tests, CI gates, and release artifacts are
-kept as the source of truth for what is actually supported. See
-**[SHOULDERS.md](SHOULDERS.md)** for the technologies, libraries, and tools this
-project stands on.
 
 ```
    ┌─────────────┐     ┌──────────────┐     ┌──────────────────┐
