@@ -959,6 +959,7 @@ Extended MVP:
    - query_repo
    - explain_symbol
    - get_file_context
+   - call_path
    - list_apis
    - find_endpoint
    - explain_endpoint

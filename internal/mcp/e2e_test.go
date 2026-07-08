@@ -98,7 +98,7 @@ func TestEndToEndStdio(t *testing.T) {
 	}
 	defer session.Close()
 
-	// 5. tools/list must advertise all five base tools.
+	// 5. tools/list must advertise every tool in ToolNames.
 	lt, err := session.ListTools(ctx, nil)
 	if err != nil {
 		t.Fatalf("tools/list failed: %v", err)

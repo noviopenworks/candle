@@ -28,7 +28,7 @@ full DDL, edge catalog, end-to-end walkthrough).
 | [flow.md](../flow.md) | End-to-end narrative: how a repo becomes an indexed snapshot and how an agent query is answered. |
 | [concepts.md](concepts.md) | Why three layers, the graph node/edge model, `index_id`, query-time cross-repo joins, commit pinning, what's not yet implemented. |
 | [configuration.md](configuration.md) | Every `candle.yaml` field with examples for OpenAPI, protobuf, and Go. |
-| [tools.md](tools.md) | All 15 MCP tools: arguments, behavior, example request and response JSON. |
+| [tools.md](tools.md) | All 16 MCP tools: arguments, behavior, example request and response JSON. |
 | [resources.md](resources.md) | The `repo://`, `graph://`, `openapi://`, `proto://`, `lib://` URI schemes. |
 | [examples.md](examples.md) | Concrete, copy-pasteable walkthroughs that chain tools together. |
 | [architecture.md](architecture.md) | Package layout, ingestion pipeline, storage, how linking works. |

@@ -56,7 +56,7 @@ manifest →  config.Load  →  ingest.Run( store, cfg )                   │
 
 ### `serve` runtime
 
-`mcp.NewServer(store)` registers all 15 tools and 5 resource templates against
+`mcp.NewServer(store)` registers all 16 tools and 5 resource templates against
 the MCP Go SDK, then `Run`s on a `StdioTransport`. Tool handlers call pure
 `Tools` methods on the store and marshal the result to a JSON text payload.
 

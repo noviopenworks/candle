@@ -1,9 +1,9 @@
 # MCP tools reference
 
-The server advertises **15 tools**, in this registration order:
+The server advertises **16 tools**, in this registration order:
 
 `list_repos` · `resolve_repo` · `get_context` · `query_repo` · `explain_symbol` ·
-`get_file_context` · `list_apis` · `find_endpoint` · `explain_endpoint` ·
+`get_file_context` · `call_path` · `list_apis` · `find_endpoint` · `explain_endpoint` ·
 `find_schema` · `find_rpc` · `explain_rpc` · `find_private_library` ·
 `find_library_consumers` · `explain_private_library`
 
@@ -138,6 +138,38 @@ List the symbols defined in a given source file.
 | `file` | string | source file path |
 
 **Response** — array of `NodeRow` defined in that file.
+
+---
+
+### `call_path`
+
+Multi-hop call traversal from a symbol, returned as a tree. `explain_symbol`
+is one-hop; `call_path` walks the call graph up to `depth` hops so a chain like
+handler → service → repository → client is one call.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `symbol` | string | node id or label to traverse from (first label match wins) |
+| `depth` | int | max hops (default 1, max 5) |
+| `direction` | string | `callees` (default) · `callers` · `both` |
+
+Cycles are cut by a per-path visited set, so a diamond or back-edge does not
+loop. Each hop carries the node and the edge that reached it (`via`, nil for the
+root).
+
+```json
+{
+  "node": {"NodeID": "http_reserveproduct", "Label": "ReserveProduct", "SourceFile": "internal/http/handler.go"},
+  "children": [
+    {
+      "node": {"NodeID": "reservation_service_reserveproduct", "Label": "ReserveProduct", "SourceFile": "internal/reservation/service.go"},
+      "via": {"Source": "http_reserveproduct", "Target": "reservation_service_reserveproduct", "Relation": "calls"},
+      "children": []
+    }
+  ]
+}
+```
 
 ---
 

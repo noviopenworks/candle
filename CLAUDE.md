@@ -56,7 +56,7 @@ Key packages (see [docs/architecture.md](docs/architecture.md) for the full map)
 - `internal/ingest` — orchestrates the per-repo pipeline into the store.
 - `internal/store` — SQLite schema,DDL, and all read/write queries.
 - `internal/registry` — resolves repo names to `index_id`; enforces serve scope.
-- `internal/mcp` — the 15 MCP tools and 5 resource URI schemes; SDK types stay
+- `internal/mcp` — the 16 MCP tools and 5 resource URI schemes; SDK types stay
   in `internal/mcp/server.go`, tool methods are pure and SDK-free.
 
 ## Conventions

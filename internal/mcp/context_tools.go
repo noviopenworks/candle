@@ -261,7 +261,7 @@ func contextLimitations() []string {
 		"OpenAPI/HTTP handler linking is name-based: path→handler binding is coarse (route-registration presence), not router-precise.",
 		"consumed_by is heuristic: it lists repos with a node labelled like the RPC (gRPC client calls are not indexed); providers are excluded.",
 		"Cross-repo private library consumer aggregation is available via explain_private_library, not find_library_consumers.",
-		"Graph traversal is one hop; depth > 1 is not yet supported.",
+		"explain_symbol is one-hop; use call_path for multi-hop traversal (up to 5 hops).",
 	}
 }
 

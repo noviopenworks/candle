@@ -29,7 +29,7 @@ func writeFixture(t *testing.T, dir, rel, data string) {
 // Go private-library usage, and a provider repo defining the library), then
 // drives a real stdio serve subprocess to assert the full tool + resource
 // surface end-to-end:
-//   - tools/list advertises all 15 tools
+//   - tools/list advertises all 16 tools
 //   - code-graph tools (query_repo, explain_symbol, get_file_context)
 //   - explain_rpc surfaces the AST-confirmed (HIGH) implemented_by link
 //   - find_rpc, find_private_library, find_library_consumers
@@ -226,7 +226,7 @@ func (c *Client) Verify(token string) bool { return token != "" }
 		}
 	}
 
-	// tools/list advertises all 15.
+	// tools/list advertises all 16.
 	lt, err := session.ListTools(ctx, nil)
 	if err != nil {
 		t.Fatalf("tools/list failed: %v", err)
@@ -245,6 +245,9 @@ func (c *Client) Verify(token string) bool { return token != "" }
 	mustContain("query_repo", call("query_repo", map[string]any{"repo": "org/inventory", "name": "ReserveProduct"}), "ReserveProduct", "internal/grpc/server.go")
 	mustContain("explain_symbol", call("explain_symbol", map[string]any{"repo": "org/inventory", "symbol": "ReserveProduct"}), "ReserveProduct", "svc_reserve")
 	mustContain("get_file_context", call("get_file_context", map[string]any{"repo": "org/inventory", "file": "internal/grpc/server.go"}), "ReserveProduct")
+
+	// Multi-hop call traversal: grpc_server_reserveproduct -> svc_reserve.
+	mustContain("call_path", call("call_path", map[string]any{"repo": "org/inventory", "symbol": "grpc_server_reserveproduct", "depth": 2}), "grpc_server_reserveproduct", "svc_reserve")
 
 	// AST-confirmed RPC implementation (HIGH tier with "ast" reason).
 	rpcBody := call("explain_rpc", map[string]any{"repo": "org/inventory", "service": "InventoryService", "rpc": "ReserveProduct"})

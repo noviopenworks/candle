@@ -28,7 +28,7 @@ or *"what breaks if I change this proto message?"* resolve across repos.
                     └─────────┬─────────┘
                               ▼
                     ┌───────────────────┐
-                    │  MCP stdio server │  15 tools · 5 resource schemes
+                    │  MCP stdio server │  16 tools · 5 resource schemes
                     └───────────────────┘
                               ▼
                          AI agent
@@ -114,7 +114,7 @@ indexed snapshots.
 | [How it works](flow.md) | End-to-end narrative from setup to an agent's answer |
 | [Concepts](docs/concepts.md) | The three layers, the graph model, cross-repo joins, commit pinning |
 | [Configuration](docs/configuration.md) | Full `candle.yaml` reference |
-| [Tools reference](docs/tools.md) | All 15 MCP tools with arguments and example I/O |
+| [Tools reference](docs/tools.md) | All 16 MCP tools with arguments and example I/O |
 | [Resources reference](docs/resources.md) | The 5 URI schemes for commit-pinned lookups |
 | [Examples](docs/examples.md) | End-to-end walkthroughs (find a handler, impact analysis, consumers) |
 | [Architecture](docs/architecture.md) | Internal packages, data flow, storage layout |

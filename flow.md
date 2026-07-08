@@ -133,7 +133,7 @@ or another compatible agent starts this process and calls the tools.
 
 Core tool groups:
 
-- Repo and code graph: `list_repos`, `resolve_repo`, `get_context`, `query_repo`, `explain_symbol`, `get_file_context`.
+- Repo and code graph: `list_repos`, `resolve_repo`, `get_context`, `query_repo`, `explain_symbol`, `get_file_context`, `call_path`.
 - OpenAPI: `list_apis`, `find_endpoint`, `explain_endpoint`, `find_schema`.
 - Protobuf: `find_rpc`, `explain_rpc`.
 - Private libraries: `find_private_library`, `find_library_consumers`, `explain_private_library`.

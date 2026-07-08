@@ -22,6 +22,7 @@ var ToolNames = []string{
 	"query_repo",
 	"explain_symbol",
 	"get_file_context",
+	"call_path",
 	"list_apis",
 	"find_endpoint",
 	"explain_endpoint",
@@ -54,6 +55,7 @@ func NewServerScoped(s *store.Store, allowed map[int64]bool) *mcpsdk.Server {
 	registerQueryRepo(srv, tools)
 	registerExplainSymbol(srv, tools)
 	registerGetFileContext(srv, tools)
+	registerCallPath(srv, tools)
 	registerListAPIs(srv, tools)
 	registerFindEndpoint(srv, tools)
 	registerExplainEndpoint(srv, tools)
@@ -184,6 +186,26 @@ func registerGetFileContext(srv *mcpsdk.Server, tools *Tools) {
 			return toolErr(err)
 		}
 		return textResult(mustJSON(syms)), nil, nil
+	})
+}
+
+type callPathArgs struct {
+	Repo      string `json:"repo" jsonschema:"repo identity (org/name)"`
+	Symbol    string `json:"symbol" jsonschema:"node id or label to traverse from"`
+	Depth     int    `json:"depth,omitempty" jsonschema:"max hops (default 1, max 5)"`
+	Direction string `json:"direction,omitempty" jsonschema:"callees | callers | both (default callees)"`
+}
+
+func registerCallPath(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "call_path",
+		Description: "Multi-hop call traversal from a symbol (up to 5 hops): callees, callers, or both. Returns a tree.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args callPathArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.CallPath(args.Repo, args.Symbol, args.Depth, args.Direction)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(out)), nil, nil
 	})
 }
 
