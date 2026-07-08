@@ -15,6 +15,12 @@ The core value is **not parsing** contracts — it's **linking contracts back to
 code graph** so questions like *"which handler implements this OpenAPI operation?"*
 or *"what breaks if I change this proto message?"* resolve across repos.
 
+**Authorship note:** candle is vibecoded: built through iterative,
+human-directed AI coding sessions. The tests, CI gates, and release artifacts are
+kept as the source of truth for what is actually supported. See
+**[SHOULDERS.md](SHOULDERS.md)** for the technologies, libraries, and tools this
+project stands on.
+
 ```
    ┌─────────────┐     ┌──────────────┐     ┌──────────────────┐
    │  Code graph │     │ API contracts│     │ Private libraries│
@@ -118,6 +124,7 @@ indexed snapshots.
 | [Resources reference](docs/resources.md) | The 5 URI schemes for commit-pinned lookups |
 | [Examples](docs/examples.md) | End-to-end walkthroughs (find a handler, impact analysis, consumers) |
 | [Architecture](docs/architecture.md) | Internal packages, data flow, storage layout |
+| [Shoulders](SHOULDERS.md) | Technologies, libraries, tools, and acknowledgements |
 | [Contributing](CONTRIBUTING.md) | Build/test gate, conventions, doc style |
 
 ## Status
