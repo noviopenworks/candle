@@ -71,6 +71,13 @@ tasks:
       - go mod tidy
       - go mod verify
 
+  tidy-check:
+    desc: Verify go.mod/go.sum are tidy without leaving changes
+    cmds:
+      - go mod tidy
+      - go mod verify
+      - git diff --exit-code -- go.mod go.sum
+
   release:
     desc: Build and publish a release with GoReleaser
     cmds:
@@ -82,9 +89,10 @@ tasks:
       - goreleaser release --snapshot --clean
 
   ci:
-    desc: Run the full CI gate (fmt-check, vet, lint, test, vuln)
+    desc: Run the full CI gate (fmt-check, tidy-check, vet, lint, test, vuln)
     cmds:
       - task: fmt-check
+      - task: tidy-check
       - task: vet
       - task: lint
       - task: test

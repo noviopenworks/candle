@@ -3,6 +3,7 @@
 # https://mise.jdx.dev
 [tools]
 go = "1.26.4"            # must match go.mod
+task = "3.52.0"          # task runner
 golangci-lint = "2.12.2" # linter (built with Go 1.26)
 goreleaser = "2.16.0"    # release automation
 "go:golang.org/x/vuln/cmd/govulncheck" = "latest"

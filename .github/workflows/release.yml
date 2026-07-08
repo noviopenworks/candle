@@ -11,6 +11,7 @@ jobs:
   release:
     name: release
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,7 +23,10 @@ jobs:
           install: true
           cache: true
 
+      - name: CI gate (fmt-check, tidy-check, vet, lint, test, vuln)
+        run: mise exec -- task ci
+
       - name: Release (GoReleaser)
-        run: task release
+        run: mise exec -- task release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
