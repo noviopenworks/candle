@@ -315,10 +315,10 @@ func (h *sourceHydrator) hydrateNode(ctx context.Context, ri registry.RepoInfo, 
 // ReadSourceContentArgs are the arguments to ReadSourceContent. Exactly one of
 // NodeID or File must be set; SourceContent tunes the fetch (nil = defaults).
 type ReadSourceContentArgs struct {
-	Repo          string
-	NodeID        string
-	File          string
-	SourceContent *SourceContentOptions
+	Repo          string                `json:"repo" jsonschema:"repo identity (org/name)"`
+	NodeID        string                `json:"node_id,omitempty" jsonschema:"graph node id to read source for"`
+	File          string                `json:"file,omitempty" jsonschema:"source file path to read source for"`
+	SourceContent *SourceContentOptions `json:"source_content,omitempty"`
 }
 
 // ReadSourceContent implements read_source_content: a direct source-read over

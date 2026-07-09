@@ -29,7 +29,7 @@ func writeFixture(t *testing.T, dir, rel, data string) {
 // Go private-library usage, and a provider repo defining the library), then
 // drives a real stdio serve subprocess to assert the full tool + resource
 // surface end-to-end:
-//   - tools/list advertises all 16 tools
+//   - tools/list advertises all 17 tools
 //   - code-graph tools (query_repo, explain_symbol, get_file_context)
 //   - explain_rpc surfaces the AST-confirmed (HIGH) implemented_by link
 //   - find_rpc, find_private_library, find_library_consumers
@@ -50,7 +50,7 @@ func TestEndToEndToolSurface(t *testing.T) {
 	// signal, and the ReserveProduct node's source_file is a real Go method.
 	writeFixture(t, inv, "graph.json", `{
 		"nodes": [
-			{"id":"grpc_server_reserveproduct","label":"ReserveProduct","file_type":"code","source_file":"internal/grpc/server.go","source_location":"L10"},
+			{"id":"grpc_server_reserveproduct","label":"ReserveProduct","file_type":"code","source_file":"internal/grpc/server.go","source_location":"L10","source_url":"https://raw.githubusercontent.com/org/inventory/abc/internal/grpc/server.go"},
 			{"id":"http_reserveproduct","label":"ReserveProduct","file_type":"code","source_file":"internal/http/handler.go","source_location":"L8"},
 			{"id":"grpc_register","label":"RegisterInventoryServiceServer","file_type":"code","source_file":"internal/grpc/register.go"},
 			{"id":"svc_reserve","label":"ReserveSvc","file_type":"code","source_file":"internal/svc/service.go"}
@@ -226,7 +226,7 @@ func (c *Client) Verify(token string) bool { return token != "" }
 		}
 	}
 
-	// tools/list advertises all 16.
+	// tools/list advertises all 17.
 	lt, err := session.ListTools(ctx, nil)
 	if err != nil {
 		t.Fatalf("tools/list failed: %v", err)
@@ -245,6 +245,11 @@ func (c *Client) Verify(token string) bool { return token != "" }
 	mustContain("query_repo", call("query_repo", map[string]any{"repo": "org/inventory", "name": "ReserveProduct"}), "ReserveProduct", "internal/grpc/server.go")
 	mustContain("explain_symbol", call("explain_symbol", map[string]any{"repo": "org/inventory", "symbol": "ReserveProduct"}), "ReserveProduct", "svc_reserve")
 	mustContain("get_file_context", call("get_file_context", map[string]any{"repo": "org/inventory", "file": "internal/grpc/server.go"}), "ReserveProduct")
+
+	// read_source_content returns a structured status envelope; the e2e must not
+	// depend on GitHub network, so we only assert the envelope shape.
+	sourceBody := call("read_source_content", map[string]any{"repo": "org/inventory", "node_id": "grpc_server_reserveproduct", "source_content": map[string]any{"mode": "snippet"}})
+	mustContain("read_source_content", sourceBody, "status", "source_url")
 
 	// Multi-hop call traversal: grpc_server_reserveproduct -> svc_reserve.
 	mustContain("call_path", call("call_path", map[string]any{"repo": "org/inventory", "symbol": "grpc_server_reserveproduct", "depth": 2}), "grpc_server_reserveproduct", "svc_reserve")
