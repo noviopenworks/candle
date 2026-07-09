@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -131,4 +132,138 @@ func (t *Tools) QueryRepo(repo, name string) ([]store.NodeRow, error) {
 		return nil, repoNotFound(repo)
 	}
 	return t.s.NodesByLabel(ri.IndexID, name)
+}
+
+// SourceNodeResult pairs a query_repo result node with its optional fetched
+// source content. SourceContent.Status is always set; the other fields are
+// populated only when hydration succeeded.
+type SourceNodeResult struct {
+	Node          store.NodeRow `json:"node"`
+	SourceContent SourceContent `json:"source_content"`
+}
+
+// QueryRepoArgs are the arguments to QueryRepoWithSource. SourceContent is
+// optional: nil or mode "off" preserves the existing metadata-only shape.
+type QueryRepoArgs struct {
+	Repo          string                `json:"repo" jsonschema:"repo identity (org/name)"`
+	Name          string                `json:"name" jsonschema:"symbol label to look up"`
+	SourceContent *SourceContentOptions `json:"source_content,omitempty"`
+}
+
+// QueryRepoWithSource is the source-aware query_repo. It resolves nodes via the
+// existing QueryRepo, then optionally hydrates source content:
+//
+//   - nil opts or mode "off" -> returns []store.NodeRow (preserves default shape).
+//   - mode "auto"            -> hydrates when there is more than one node, or any
+//     node lacks a parseable source location while still carrying fetchable
+//     provenance; otherwise returns []store.NodeRow.
+//   - mode "snippet"/"full"  -> hydrates up to req.maxCandidates nodes.
+//
+// When hydration runs the return type is []SourceNodeResult; otherwise it stays
+// []store.NodeRow so callers that opt out see no shape change.
+func (t *Tools) QueryRepoWithSource(args QueryRepoArgs) (any, error) {
+	nodes, err := t.QueryRepo(args.Repo, args.Name)
+	if err != nil {
+		return nil, err
+	}
+	req := sourceContentRequestFromOptions(args.SourceContent, sourceContentModeOff)
+	if req.mode == sourceContentModeOff {
+		return nodes, nil
+	}
+	ri, ok, err := t.reg.Resolve(args.Repo)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, repoNotFound(args.Repo)
+	}
+	if req.mode == sourceContentModeAuto && !queryRepoShouldHydrateAuto(nodes, ri) {
+		return nodes, nil
+	}
+	limit := req.maxCandidates
+	if limit > len(nodes) {
+		limit = len(nodes)
+	}
+	out := make([]SourceNodeResult, 0, len(nodes))
+	ctx := context.Background()
+	for _, n := range nodes {
+		out = append(out, SourceNodeResult{
+			Node:          n,
+			SourceContent: t.sourceHydrator.hydrateNode(ctx, ri, n, req),
+		})
+		if limit > 0 && len(out) >= limit {
+			break
+		}
+	}
+	return out, nil
+}
+
+// queryRepoShouldHydrateAuto reports whether the auto trigger fires for a
+// query_repo result set: when there is ambiguity (more than one node), or when
+// any node with fetchable provenance lacks a parseable source location, the
+// agent benefits from inline source content.
+func queryRepoShouldHydrateAuto(nodes []store.NodeRow, ri registry.RepoInfo) bool {
+	if len(nodes) > 1 {
+		return true
+	}
+	for _, n := range nodes {
+		if n.SourceLocation == "" && nodeHasFetchableSource(ri, n) {
+			return true
+		}
+	}
+	return false
+}
+
+// SourceSymbolExplanation wraps an explain_symbol result with optional source
+// content for the resolved node.
+type SourceSymbolExplanation struct {
+	Explanation   SymbolExplanation `json:"explanation"`
+	SourceContent SourceContent     `json:"source_content"`
+}
+
+// ExplainSymbolArgs are the arguments to ExplainSymbolWithSource. SourceContent
+// is optional: nil or mode "off" preserves the existing metadata-only shape.
+type ExplainSymbolArgs struct {
+	Repo          string                `json:"repo" jsonschema:"repo identity (org/name)"`
+	Symbol        string                `json:"symbol" jsonschema:"node id or label to explain"`
+	SourceContent *SourceContentOptions `json:"source_content,omitempty"`
+}
+
+// ExplainSymbolWithSource is the source-aware explain_symbol. It resolves the
+// explanation via the existing ExplainSymbol, then optionally hydrates source
+// content for the resolved node:
+//
+//   - nil opts or mode "off" -> returns SymbolExplanation (preserves default shape).
+//   - mode "auto"            -> hydrates only when the resolved node has no
+//     parseable source location AND fetchable provenance (otherwise the
+//     metadata alone is enough, or hydration would only yield "skipped").
+//   - mode "snippet"/"full"  -> hydrates the resolved node.
+//
+// When hydration runs the return type is SourceSymbolExplanation.
+func (t *Tools) ExplainSymbolWithSource(args ExplainSymbolArgs) (any, error) {
+	explanation, err := t.ExplainSymbol(args.Repo, args.Symbol)
+	if err != nil {
+		return nil, err
+	}
+	req := sourceContentRequestFromOptions(args.SourceContent, sourceContentModeOff)
+	if req.mode == sourceContentModeOff {
+		return explanation, nil
+	}
+	ri, ok, err := t.reg.Resolve(args.Repo)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, repoNotFound(args.Repo)
+	}
+	if req.mode == sourceContentModeAuto {
+		if _, hasLoc := parseSourceLocation(explanation.Node.SourceLocation); hasLoc {
+			return explanation, nil
+		}
+		if !nodeHasFetchableSource(ri, explanation.Node) {
+			return explanation, nil
+		}
+	}
+	source := t.sourceHydrator.hydrateNode(context.Background(), ri, explanation.Node, req)
+	return SourceSymbolExplanation{Explanation: explanation, SourceContent: source}, nil
 }

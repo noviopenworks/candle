@@ -123,3 +123,65 @@ func TestGetFileContext(t *testing.T) {
 		t.Fatalf("unexpected file context: %+v", syms)
 	}
 }
+
+func TestQueryRepoWithSourcePreservesDefaultShape(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	out, err := tools.QueryRepoWithSource(QueryRepoArgs{Repo: "org/repo", Name: "ReserveProduct"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := out.([]store.NodeRow); !ok {
+		t.Fatalf("default query_repo shape = %T, want []store.NodeRow", out)
+	}
+}
+
+func TestQueryRepoWithSourceHydratesExplicitSnippet(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	tools.sourceHydrator = testHydrator("line1\nline2\nline3\n", "text/plain")
+	out, err := tools.QueryRepoWithSource(QueryRepoArgs{
+		Repo:          "org/repo",
+		Name:          "ReserveProduct",
+		SourceContent: &SourceContentOptions{Mode: sourceContentModeSnippet, LineRadius: 0},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := out.([]SourceNodeResult)
+	if !ok {
+		t.Fatalf("hydrated query_repo shape = %T, want []SourceNodeResult", out)
+	}
+	if len(got) != 1 || got[0].Node.NodeID != "n1" || got[0].SourceContent.Status != sourceContentStatusFetched {
+		t.Fatalf("hydrated query_repo mismatch: %+v", got)
+	}
+}
+
+func TestExplainSymbolWithSourcePreservesDefaultShape(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	out, err := tools.ExplainSymbolWithSource(ExplainSymbolArgs{Repo: "org/repo", Symbol: "ReserveProduct"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := out.(SymbolExplanation); !ok {
+		t.Fatalf("default explain_symbol shape = %T, want SymbolExplanation", out)
+	}
+}
+
+func TestExplainSymbolWithSourceHydratesFullContent(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	tools.sourceHydrator = testHydrator("package server\nfunc ReserveProduct() {}\n", "text/plain")
+	out, err := tools.ExplainSymbolWithSource(ExplainSymbolArgs{
+		Repo:          "org/repo",
+		Symbol:        "ReserveProduct",
+		SourceContent: &SourceContentOptions{Mode: sourceContentModeFull},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := out.(SourceSymbolExplanation)
+	if !ok {
+		t.Fatalf("hydrated explain_symbol shape = %T, want SourceSymbolExplanation", out)
+	}
+	if got.Explanation.Node.NodeID != "n1" || !strings.Contains(got.SourceContent.Content, "ReserveProduct") {
+		t.Fatalf("hydrated explain_symbol mismatch: %+v", got)
+	}
+}
