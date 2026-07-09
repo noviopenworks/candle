@@ -31,8 +31,9 @@ func repoNotFound(repo string) error {
 
 // Tools holds the pure tool implementations over the store.
 type Tools struct {
-	s   *store.Store
-	reg *registry.Registry
+	s              *store.Store
+	reg            *registry.Registry
+	sourceHydrator *sourceHydrator
 }
 
 // NewTools builds an unscoped tool set.
@@ -42,7 +43,7 @@ func NewTools(s *store.Store) *Tools {
 
 // NewToolsScoped builds a tool set limited to the given index ids (nil = all).
 func NewToolsScoped(s *store.Store, allowed map[int64]bool) *Tools {
-	return &Tools{s: s, reg: registry.NewScoped(s, allowed)}
+	return &Tools{s: s, reg: registry.NewScoped(s, allowed), sourceHydrator: newSourceHydrator()}
 }
 
 // ListRepos implements the list_repos tool.

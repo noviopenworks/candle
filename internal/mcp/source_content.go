@@ -311,3 +311,76 @@ func (h *sourceHydrator) hydrateNode(ctx context.Context, ri registry.RepoInfo, 
 	out.Content = content
 	return out
 }
+
+// ReadSourceContentArgs are the arguments to ReadSourceContent. Exactly one of
+// NodeID or File must be set; SourceContent tunes the fetch (nil = defaults).
+type ReadSourceContentArgs struct {
+	Repo          string
+	NodeID        string
+	File          string
+	SourceContent *SourceContentOptions
+}
+
+// ReadSourceContent implements read_source_content: a direct source-read over
+// the code graph. Node reads default to snippet mode when the node carries a
+// parseable source location, else full; file reads default to full mode and
+// pick the first node with fetchable source provenance. Missing-file cases
+// return a skipped status rather than an error so the agent can keep iterating.
+func (t *Tools) ReadSourceContent(args ReadSourceContentArgs) (SourceContent, error) {
+	ri, ok, err := t.reg.Resolve(args.Repo)
+	if err != nil {
+		return SourceContent{}, err
+	}
+	if !ok {
+		return SourceContent{}, repoNotFound(args.Repo)
+	}
+	if strings.TrimSpace(args.NodeID) == "" && strings.TrimSpace(args.File) == "" {
+		return SourceContent{}, fmt.Errorf("read_source_content requires node_id or file")
+	}
+	if strings.TrimSpace(args.NodeID) != "" {
+		node, found, err := t.s.NodeByID(ri.IndexID, args.NodeID)
+		if err != nil {
+			return SourceContent{}, err
+		}
+		if !found {
+			return SourceContent{}, notFound(fmt.Sprintf("node %q not found in %s", args.NodeID, args.Repo))
+		}
+		req := sourceContentRequestFromOptions(args.SourceContent, defaultDirectMode(node))
+		return t.sourceHydrator.hydrateNode(context.Background(), ri, node, req), nil
+	}
+
+	nodes, err := t.s.NodesByFile(ri.IndexID, args.File)
+	if err != nil {
+		return SourceContent{}, err
+	}
+	if len(nodes) == 0 {
+		return SourceContent{Status: sourceContentStatusSkipped, SourceFile: args.File, Reason: "no indexed nodes for file"}, nil
+	}
+	req := sourceContentRequestFromOptions(args.SourceContent, sourceContentModeFull)
+	for _, node := range nodes {
+		if nodeHasFetchableSource(ri, node) {
+			return t.sourceHydrator.hydrateNode(context.Background(), ri, node, req), nil
+		}
+	}
+	got := t.sourceHydrator.hydrateNode(context.Background(), ri, nodes[0], req)
+	if got.SourceFile == "" {
+		got.SourceFile = args.File
+	}
+	return got, nil
+}
+
+// nodeHasFetchableSource reports whether ri plus node carry enough provenance
+// for rawURLForNode to assemble a fetchable GitHub URL.
+func nodeHasFetchableSource(ri registry.RepoInfo, node store.NodeRow) bool {
+	_, ok := rawURLForNode(ri, node)
+	return ok
+}
+
+// defaultDirectMode picks snippet mode when the node pins a source line, else
+// full mode; used by ReadSourceContent for node-id reads.
+func defaultDirectMode(node store.NodeRow) string {
+	if _, ok := parseSourceLocation(node.SourceLocation); ok {
+		return sourceContentModeSnippet
+	}
+	return sourceContentModeFull
+}

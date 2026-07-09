@@ -131,3 +131,66 @@ func TestHydrateSourceContentFetchErrorIsStatus(t *testing.T) {
 		t.Fatalf("fetch error status mismatch: %+v", got)
 	}
 }
+
+func seedSourceContentTools(t *testing.T) (*Tools, int64) {
+	t.Helper()
+	s, err := store.Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = s.Close() })
+	id, err := s.UpsertIndex("org", "repo", "abc", "main", "/g")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file,source_location,source_url) VALUES(?,?,?,?,?,?,?)`,
+		id, "n1", "ReserveProduct", "code", "internal/server.go", "L2", "https://raw.githubusercontent.com/org/repo/abc/internal/server.go"); err != nil {
+		t.Fatal(err)
+	}
+	return NewTools(s), id
+}
+
+func TestReadSourceContentByNode(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	tools.sourceHydrator = testHydrator("line1\nline2\nline3\n", "text/plain")
+
+	got, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo", NodeID: "n1"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Status != sourceContentStatusFetched || got.Mode != sourceContentModeSnippet || !strings.Contains(got.Content, "line2") {
+		t.Fatalf("direct node read mismatch: %+v", got)
+	}
+}
+
+func TestReadSourceContentByFile(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	tools.sourceHydrator = testHydrator("package server\nfunc ReserveProduct() {}\n", "text/plain")
+
+	got, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo", File: "internal/server.go"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Status != sourceContentStatusFetched || got.Mode != sourceContentModeFull || !strings.Contains(got.Content, "ReserveProduct") {
+		t.Fatalf("direct file read mismatch: %+v", got)
+	}
+}
+
+func TestReadSourceContentRequiresNodeOrFile(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	_, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo"})
+	if err == nil || !strings.Contains(err.Error(), "node_id or file") {
+		t.Fatalf("expected node_id/file validation error, got %v", err)
+	}
+}
+
+func TestReadSourceContentFileWithoutResolvableNodeReturnsSkippedStatus(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	got, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo", File: "missing.go"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Status != sourceContentStatusSkipped || !strings.Contains(got.Reason, "no indexed nodes for file") {
+		t.Fatalf("missing file status mismatch: %+v", got)
+	}
+}
