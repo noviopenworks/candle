@@ -155,6 +155,40 @@ func TestQueryRepoWithSourceHydratesExplicitSnippet(t *testing.T) {
 	}
 }
 
+// TestQueryRepoWithSourceKeepsNodesPastCandidateLimit proves that enabling
+// source_content never hides structural matches: every matched node is returned
+// even when there are more nodes than max_candidates, and the overflow nodes
+// carry a "skipped" envelope rather than being dropped.
+func TestQueryRepoWithSourceKeepsNodesPastCandidateLimit(t *testing.T) {
+	tools := seedSourceContentTools(t)
+	if _, err := tools.s.DB.Exec(`INSERT INTO nodes(index_id,node_id,label,file_type,source_file,source_location,source_url) VALUES(1,?,?,?,?,?,?)`,
+		"n2", "ReserveProduct", "code", "internal/handler.go", "L5", "https://raw.githubusercontent.com/org/repo/abc/internal/handler.go"); err != nil {
+		t.Fatal(err)
+	}
+	tools.sourceHydrator = testHydrator("line1\nline2\nline3\n", "text/plain")
+	out, err := tools.QueryRepoWithSource(QueryRepoArgs{
+		Repo:          "org/repo",
+		Name:          "ReserveProduct",
+		SourceContent: &SourceContentOptions{Mode: sourceContentModeFull, MaxCandidates: 1},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := out.([]SourceNodeResult)
+	if !ok {
+		t.Fatalf("hydrated query_repo shape = %T, want []SourceNodeResult", out)
+	}
+	if len(got) != 2 {
+		t.Fatalf("expected all 2 matched nodes returned, got %d: %+v", len(got), got)
+	}
+	if got[0].SourceContent.Status != sourceContentStatusFetched {
+		t.Fatalf("first node should be hydrated: %+v", got[0])
+	}
+	if got[1].SourceContent.Status != sourceContentStatusSkipped {
+		t.Fatalf("overflow node should be skipped, not dropped: %+v", got[1])
+	}
+}
+
 func TestExplainSymbolWithSourcePreservesDefaultShape(t *testing.T) {
 	tools := seedSourceContentTools(t)
 	out, err := tools.ExplainSymbolWithSource(ExplainSymbolArgs{Repo: "org/repo", Symbol: "ReserveProduct"})

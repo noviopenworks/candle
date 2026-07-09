@@ -112,8 +112,10 @@ Structural node lookup in a repo by symbol label.
 ```
 
 With `source_content` enabled the response becomes an array of `{node, source_content}`
-(up to `max_candidates` nodes hydrated). `mode: "auto"` hydrates only on ambiguity (more
-than one node) or when a node with fetchable provenance lacks a parseable source location.
+covering every matched node; only the first `max_candidates` are fetched, and nodes past
+that limit carry a `skipped` envelope so no structural match is hidden. `mode: "auto"`
+hydrates only on ambiguity (more than one node) or when a node with fetchable provenance
+lacks a parseable source location.
 
 ```json
 [

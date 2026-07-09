@@ -209,8 +209,11 @@ type QueryRepoArgs struct {
 //     provenance; otherwise returns []store.NodeRow.
 //   - mode "snippet"/"full"  -> hydrates up to req.maxCandidates nodes.
 //
-// When hydration runs the return type is []SourceNodeResult; otherwise it stays
-// []store.NodeRow so callers that opt out see no shape change.
+// When hydration runs every matched node is returned as a []SourceNodeResult;
+// nodes past req.maxCandidates carry a "skipped" envelope rather than being
+// dropped, so enabling source_content never hides structural matches. When
+// hydration is off the return type stays []store.NodeRow so callers that opt
+// out see no shape change.
 func (t *Tools) QueryRepoWithSource(args QueryRepoArgs) (any, error) {
 	nodes, err := t.QueryRepo(args.Repo, args.Name)
 	if err != nil {
@@ -231,19 +234,17 @@ func (t *Tools) QueryRepoWithSource(args QueryRepoArgs) (any, error) {
 		return nodes, nil
 	}
 	limit := req.maxCandidates
-	if limit > len(nodes) {
-		limit = len(nodes)
-	}
 	out := make([]SourceNodeResult, 0, len(nodes))
 	ctx := context.Background()
 	for _, n := range nodes {
-		out = append(out, SourceNodeResult{
-			Node:          n,
-			SourceContent: t.sourceHydrator.hydrateNode(ctx, ri, n, req),
-		})
-		if limit > 0 && len(out) >= limit {
-			break
+		res := SourceNodeResult{Node: n}
+		if limit > 0 {
+			res.SourceContent = t.sourceHydrator.hydrateNode(ctx, ri, n, req)
+			limit--
+		} else {
+			res.SourceContent = SourceContent{Status: sourceContentStatusSkipped, SourceFile: n.SourceFile, Reason: "max_candidates hydration limit reached"}
 		}
+		out = append(out, res)
 	}
 	return out, nil
 }
