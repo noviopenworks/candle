@@ -663,7 +663,7 @@ Expected: PASS.
 - Consumes: `sourceContentRequestFromOptions`, `sourceHydrator.hydrateNode`, `SourceNodeResult`, `SourceSymbolExplanation`.
 - Produces: `QueryRepoWithSource` and `ExplainSymbolWithSource`, while existing `QueryRepo(repo, name)` and `ExplainSymbol(repo, symbol)` remain metadata-only.
 
-- [ ] **Step 1: Write `query_repo` default and hydrated tests**
+- [x] **Step 1: Write `query_repo` default and hydrated tests**
 
 Append to `internal/mcp/tools_test.go`.
 
@@ -700,7 +700,7 @@ func TestQueryRepoWithSourceHydratesExplicitSnippet(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Write `explain_symbol` default and hydrated tests**
+- [x] **Step 2: Write `explain_symbol` default and hydrated tests**
 
 Append to `internal/mcp/tools_test.go`.
 
@@ -737,13 +737,13 @@ func TestExplainSymbolWithSourceHydratesFullContent(t *testing.T) {
 }
 ```
 
-- [ ] **Step 3: Run focused failing tests**
+- [x] **Step 3: Run focused failing tests**
 
 Run: `go test ./internal/mcp -run 'TestQueryRepoWithSource|TestExplainSymbolWithSource' -count=1`
 
 Expected: FAIL with missing `QueryRepoArgs`, `ExplainSymbolArgs`, or hydratable methods.
 
-- [ ] **Step 4: Add hydratable args and methods**
+- [x] **Step 4: Add hydratable args and methods**
 
 Add exported args, then keep existing pure methods untouched.
 
@@ -777,7 +777,7 @@ Implement `ExplainSymbolWithSource`:
 - For mode `snippet` or `full`, hydrate the resolved node.
 - Return `SourceSymbolExplanation{Explanation: explanation, SourceContent: source}` when hydrating.
 
-- [ ] **Step 5: Verify focused tests pass**
+- [x] **Step 5: Verify focused tests pass**
 
 Run: `go test ./internal/mcp -run 'TestQueryRepoWithSource|TestExplainSymbolWithSource' -count=1`
 

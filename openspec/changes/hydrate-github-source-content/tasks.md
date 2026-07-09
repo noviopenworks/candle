@@ -7,8 +7,8 @@
 
 ## 2. MCP Tool Integration
 
-- [ ] 2.1 Add source hydration options to `query_repo`, preserving existing output when the option is absent.
-- [ ] 2.2 Add source hydration options to `explain_symbol`, preserving existing output when the option is absent.
+- [x] 2.1 Add source hydration options to `query_repo`, preserving existing output when the option is absent.
+- [x] 2.2 Add source hydration options to `explain_symbol`, preserving existing output when the option is absent.
 - [ ] 2.3 Add source hydration options to `get_file_context`, including explicit file/resource-triggered hydration.
 - [ ] 2.4 Add source hydration options to `get_context`, including automatic hydration for ambiguous matches or missing source locations when enabled.
 - [x] 2.5 Add a dedicated direct source-read MCP tool that accepts repo plus node or file reference and returns the structured source-content envelope.
