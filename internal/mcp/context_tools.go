@@ -1,20 +1,23 @@
 package mcp
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
+	"github.com/noviopenworks/candle/internal/registry"
 	"github.com/noviopenworks/candle/internal/store"
 )
 
 // GetContextArgs is the pure-tool input for get_context. Repo is required.
 // Topic is optional: empty means repo catalog, non-empty means focused lookup.
 type GetContextArgs struct {
-	Repo             string `json:"repo" jsonschema:"repo identity (org/name)"`
-	Topic            string `json:"topic,omitempty" jsonschema:"optional symbol/API/schema/library topic"`
-	Mode             string `json:"mode,omitempty" jsonschema:"optional: overview|code|api|proto|library|all"`
-	Depth            int    `json:"depth,omitempty" jsonschema:"optional graph depth; v1 supports 1"`
-	IncludeResources bool   `json:"include_resources,omitempty" jsonschema:"include resource URI hints"`
+	Repo             string                `json:"repo" jsonschema:"repo identity (org/name)"`
+	Topic            string                `json:"topic,omitempty" jsonschema:"optional symbol/API/schema/library topic"`
+	Mode             string                `json:"mode,omitempty" jsonschema:"optional: overview|code|api|proto|library|all"`
+	Depth            int                   `json:"depth,omitempty" jsonschema:"optional graph depth; v1 supports 1"`
+	IncludeResources bool                  `json:"include_resources,omitempty" jsonschema:"include resource URI hints"`
+	SourceContent    *SourceContentOptions `json:"source_content,omitempty" jsonschema:"optional GitHub source hydration: off|auto|snippet|full"`
 }
 
 // RepoSummary is the typed repo identity exposed by get_context.
@@ -64,10 +67,11 @@ type ContextMatches struct {
 
 // CodeContext is a matched code node with its one-hop callers and callees.
 type CodeContext struct {
-	Node     store.NodeRow   `json:"node"`
-	Callers  []store.EdgeRow `json:"callers"`
-	Callees  []store.EdgeRow `json:"callees"`
-	Resource string          `json:"resource,omitempty"`
+	Node          store.NodeRow   `json:"node"`
+	Callers       []store.EdgeRow `json:"callers"`
+	Callees       []store.EdgeRow `json:"callees"`
+	Resource      string          `json:"resource,omitempty"`
+	SourceContent *SourceContent  `json:"source_content,omitempty"`
 }
 
 // ToolHint suggests a precise follow-up tool call.
@@ -110,7 +114,7 @@ func (t *Tools) GetContext(args GetContextArgs) (ContextResult, error) {
 	}
 	// Overview mode returns the catalog only and suppresses topic matches.
 	if strings.TrimSpace(args.Topic) != "" && mode != "overview" {
-		matches, resources, hints := t.contextMatches(ri.IndexID, ri.Repo, ri.Commit, args.Topic, mode, args.IncludeResources)
+		matches, resources, hints := t.contextMatches(ri.IndexID, ri, args.Topic, mode, args.IncludeResources, args.SourceContent)
 		out.Matches = matches
 		out.Resources = resources
 		out.SuggestedNextCalls = append(hints, out.SuggestedNextCalls...)
@@ -119,15 +123,24 @@ func (t *Tools) GetContext(args GetContextArgs) (ContextResult, error) {
 }
 
 // contextMatches searches the requested surfaces for topic and returns matches,
-// resource URI hints, and follow-up tool hints.
-func (t *Tools) contextMatches(indexID int64, repo, commit, topic, mode string, includeResources bool) (ContextMatches, []string, []ToolHint) {
+// resource URI hints, and follow-up tool hints. opts controls source hydration
+// for code-symbol matches only; API, proto, and library surfaces are unchanged.
+func (t *Tools) contextMatches(indexID int64, ri registry.RepoInfo, topic, mode string, includeResources bool, opts *SourceContentOptions) (ContextMatches, []string, []ToolHint) {
 	var matches ContextMatches
 	var resources []string
 	var hints []ToolHint
+	repo := ri.Repo
+	commit := ri.Commit
 	include := func(surface string) bool { return mode == "all" || mode == surface }
 
 	if include("code") {
 		nodes, _ := t.s.NodesByLabel(indexID, topic)
+		req := sourceContentRequestFromOptions(opts, sourceContentModeOff)
+		hydrate := req.mode != sourceContentModeOff
+		if hydrate && req.mode == sourceContentModeAuto && !queryRepoShouldHydrateAuto(nodes, ri) {
+			hydrate = false
+		}
+		limit := req.maxCandidates
 		for _, n := range nodes {
 			callers, _ := t.s.Callers(indexID, n.NodeID)
 			callees, _ := t.s.Callees(indexID, n.NodeID)
@@ -135,6 +148,11 @@ func (t *Tools) contextMatches(indexID int64, repo, commit, topic, mode string, 
 			if includeResources {
 				cc.Resource = graphNodeResource(repo, commit, n.NodeID)
 				resources = append(resources, cc.Resource)
+			}
+			if hydrate && limit > 0 {
+				sc := t.sourceHydrator.hydrateNode(context.Background(), ri, n, req)
+				cc.SourceContent = &sc
+				limit--
 			}
 			matches.CodeSymbols = append(matches.CodeSymbols, cc)
 		}

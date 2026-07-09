@@ -22,6 +22,7 @@ var ToolNames = []string{
 	"query_repo",
 	"explain_symbol",
 	"get_file_context",
+	"read_source_content",
 	"call_path",
 	"list_apis",
 	"find_endpoint",
@@ -55,6 +56,7 @@ func NewServerScoped(s *store.Store, allowed map[int64]bool) *mcpsdk.Server {
 	registerQueryRepo(srv, tools)
 	registerExplainSymbol(srv, tools)
 	registerGetFileContext(srv, tools)
+	registerReadSourceContent(srv, tools)
 	registerCallPath(srv, tools)
 	registerListAPIs(srv, tools)
 	registerFindEndpoint(srv, tools)
@@ -135,35 +137,12 @@ func registerGetContext(srv *mcpsdk.Server, tools *Tools) {
 	})
 }
 
-type queryRepoArgs struct {
-	Repo string `json:"repo" jsonschema:"repo identity (org/name)"`
-	Name string `json:"name" jsonschema:"symbol label to look up"`
-}
-
 func registerQueryRepo(srv *mcpsdk.Server, tools *Tools) {
 	mcpsdk.AddTool(srv, &mcpsdk.Tool{
 		Name:        "query_repo",
 		Description: "Structural node lookup in a repo by symbol label.",
-	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args queryRepoArgs) (*mcpsdk.CallToolResult, any, error) {
-		nodes, err := tools.QueryRepo(args.Repo, args.Name)
-		if err != nil {
-			return toolErr(err)
-		}
-		return textResult(mustJSON(nodes)), nil, nil
-	})
-}
-
-type explainSymbolArgs struct {
-	Repo   string `json:"repo" jsonschema:"repo identity (org/name)"`
-	Symbol string `json:"symbol" jsonschema:"node id or label to explain"`
-}
-
-func registerExplainSymbol(srv *mcpsdk.Server, tools *Tools) {
-	mcpsdk.AddTool(srv, &mcpsdk.Tool{
-		Name:        "explain_symbol",
-		Description: "Explain a symbol: its node plus callers and callees.",
-	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args explainSymbolArgs) (*mcpsdk.CallToolResult, any, error) {
-		out, err := tools.ExplainSymbol(args.Repo, args.Symbol)
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args QueryRepoArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.QueryRepoWithSource(args)
 		if err != nil {
 			return toolErr(err)
 		}
@@ -171,21 +150,42 @@ func registerExplainSymbol(srv *mcpsdk.Server, tools *Tools) {
 	})
 }
 
-type getFileContextArgs struct {
-	Repo string `json:"repo" jsonschema:"repo identity (org/name)"`
-	File string `json:"file" jsonschema:"source file path"`
+func registerExplainSymbol(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "explain_symbol",
+		Description: "Explain a symbol: its node plus callers and callees.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args ExplainSymbolArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.ExplainSymbolWithSource(args)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(out)), nil, nil
+	})
 }
 
 func registerGetFileContext(srv *mcpsdk.Server, tools *Tools) {
 	mcpsdk.AddTool(srv, &mcpsdk.Tool{
 		Name:        "get_file_context",
 		Description: "List the symbols defined in a given source file.",
-	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args getFileContextArgs) (*mcpsdk.CallToolResult, any, error) {
-		syms, err := tools.GetFileContext(args.Repo, args.File)
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args GetFileContextArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.GetFileContextWithSource(args)
 		if err != nil {
 			return toolErr(err)
 		}
-		return textResult(mustJSON(syms)), nil, nil
+		return textResult(mustJSON(out)), nil, nil
+	})
+}
+
+func registerReadSourceContent(srv *mcpsdk.Server, tools *Tools) {
+	mcpsdk.AddTool(srv, &mcpsdk.Tool{
+		Name:        "read_source_content",
+		Description: "Read GitHub source content for an indexed graph node or source file using stored Graphify provenance.",
+	}, func(_ context.Context, _ *mcpsdk.CallToolRequest, args ReadSourceContentArgs) (*mcpsdk.CallToolResult, any, error) {
+		out, err := tools.ReadSourceContent(args)
+		if err != nil {
+			return toolErr(err)
+		}
+		return textResult(mustJSON(out)), nil, nil
 	})
 }
 

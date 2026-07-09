@@ -1,9 +1,9 @@
 # MCP tools reference
 
-The server advertises **16 tools**, in this registration order:
+The server advertises **17 tools**, in this registration order:
 
 `list_repos` · `resolve_repo` · `get_context` · `query_repo` · `explain_symbol` ·
-`get_file_context` · `call_path` · `list_apis` · `find_endpoint` · `explain_endpoint` ·
+`get_file_context` · `read_source_content` · `call_path` · `list_apis` · `find_endpoint` · `explain_endpoint` ·
 `find_schema` · `find_rpc` · `explain_rpc` · `find_private_library` ·
 `find_library_consumers` · `explain_private_library`
 
@@ -69,6 +69,7 @@ callers/callees.
 | `mode` | string | optional: `overview`, `code`, `api`, `proto`, `library`, `all` (`overview` returns the catalog only and suppresses topic matches; unknown/empty ⇒ `all`) |
 | `depth` | number | optional; v1 supports one-hop code context |
 | `include_resources` | boolean | include exact resource URI hints |
+| `source_content` | object | optional GitHub source hydration (see [option table](#source-content-hydration-option)); only `matches.code_symbols[]` are hydrated, and only when a `topic` is set |
 
 **Overview request:**
 
@@ -87,6 +88,11 @@ callers/callees.
 `suggested_next_calls` into precise tools (`explain_symbol`, `explain_rpc`,
 `explain_endpoint`, `find_private_library`) once a surface is identified.
 
+When `source_content` is supplied with a `topic`, each `matches.code_symbols[]` entry
+gains an optional `source_content` envelope (up to `max_candidates` entries hydrated);
+API, proto, and library surfaces are unchanged. Omit `source_content` to keep
+`code_symbols[]` metadata-only.
+
 ### `query_repo`
 
 Structural node lookup in a repo by symbol label.
@@ -95,12 +101,36 @@ Structural node lookup in a repo by symbol label.
 |-----|------|-------------|
 | `repo` | string | repo identity (`org/name`) |
 | `name` | string | symbol label to look up |
+| `source_content` | object | optional GitHub source hydration (see [option table](#source-content-hydration-option)); omitted or `mode: "off"` returns `[]NodeRow` |
 
 **Response** — array of `NodeRow`:
 
 ```json
 [
   {"IndexID": 1, "NodeID": "reservation_service_reserveproduct", "Label": "ReserveProduct", "FileType": "code", "SourceFile": "internal/reservation/service.go", "SourceLocation": ""}
+]
+```
+
+With `source_content` enabled the response becomes an array of `{node, source_content}`
+covering every matched node; only the first `max_candidates` are fetched, and nodes past
+that limit carry a `skipped` envelope so no structural match is hidden. `mode: "auto"`
+hydrates only on ambiguity (more than one node) or when a node with fetchable provenance
+lacks a parseable source location.
+
+```json
+[
+  {
+    "node": {"IndexID": 1, "NodeID": "reservation_service_reserveproduct", "Label": "ReserveProduct", "SourceFile": "internal/reservation/service.go", "SourceURL": "https://github.com/org/inventory-service/blob/abc123/internal/reservation/service.go"},
+    "source_content": {
+      "status": "fetched",
+      "mode": "snippet",
+      "source_file": "internal/reservation/service.go",
+      "source_url": "https://raw.githubusercontent.com/org/inventory-service/abc123/internal/reservation/service.go",
+      "start_line": 30,
+      "end_line": 70,
+      "content": "func (s *Service) ReserveProduct(ctx context.Context, req Request) Response {\n  return Response{}\n}"
+    }
+  }
 ]
 ```
 
@@ -113,6 +143,7 @@ Explain a symbol: its node plus callers and callees. `symbol` may be a node id
 |-----|------|-------------|
 | `repo` | string | repo identity |
 | `symbol` | string | node id or label to explain |
+| `source_content` | object | optional GitHub source hydration (see [option table](#source-content-hydration-option)); omitted or `mode: "off"` returns the `SymbolExplanation` shape below |
 
 **Response** — `{ Node, Callers, Callees }`:
 
@@ -128,6 +159,29 @@ Explain a symbol: its node plus callers and callees. `symbol` may be a node id
 }
 ```
 
+With `source_content` enabled the response wraps the explanation under `explanation` and
+adds a `source_content` envelope for the resolved node. `mode: "auto"` hydrates only when
+the resolved node has no parseable source location and fetchable provenance.
+
+```json
+{
+  "explanation": {
+    "Node": {"NodeID": "reservation_service_reserveproduct", "Label": "ReserveProduct", "SourceFile": "internal/reservation/service.go"},
+    "Callers": [],
+    "Callees": []
+  },
+  "source_content": {
+    "status": "fetched",
+    "mode": "snippet",
+    "source_file": "internal/reservation/service.go",
+    "source_url": "https://raw.githubusercontent.com/org/inventory-service/abc123/internal/reservation/service.go",
+    "start_line": 30,
+    "end_line": 70,
+    "content": "func (s *Service) ReserveProduct(ctx context.Context, req Request) Response {\n  return Response{}\n}"
+  }
+}
+```
+
 ### `get_file_context`
 
 List the symbols defined in a given source file.
@@ -136,8 +190,85 @@ List the symbols defined in a given source file.
 |-----|------|-------------|
 | `repo` | string | repo identity |
 | `file` | string | source file path |
+| `source_content` | object | optional GitHub source hydration (see [option table](#source-content-hydration-option)); omitted or `mode: "off"` returns `[]NodeRow` |
 
 **Response** — array of `NodeRow` defined in that file.
+
+With `source_content` enabled the response becomes `{file, symbols, source_content}`
+(an explicit file-context request, so an empty object means `auto` and fetches the file).
+`mode: "snippet"`/`"full"` tune the fetch; `max_bytes`, `line_radius`, and
+`max_candidates` apply.
+
+```json
+{
+  "file": "internal/reservation/service.go",
+  "symbols": [
+    {"NodeID": "reservation_service_reserveproduct", "Label": "ReserveProduct", "SourceFile": "internal/reservation/service.go"}
+  ],
+  "source_content": {
+    "status": "fetched",
+    "mode": "full",
+    "source_file": "internal/reservation/service.go",
+    "source_url": "https://raw.githubusercontent.com/org/inventory-service/abc123/internal/reservation/service.go",
+    "content": "package reservation\n"
+  }
+}
+```
+
+### Source content hydration option
+
+`get_context`, `query_repo`, `explain_symbol`, and `get_file_context` accept an optional
+`source_content` object. Omitting it preserves metadata-only behavior and does not fetch
+source text.
+
+| Field | Type | Description |
+|-----|------|-------------|
+| `mode` | string | `off`, `auto`, `snippet`, or `full`; an empty object means `auto` for enrichment tools |
+| `max_bytes` | number | maximum fetched bytes before truncation; default 65536 |
+| `line_radius` | number | lines before and after the node source location for snippets; default 20 |
+| `max_candidates` | number | maximum hydrated candidates for ambiguous results; default 5 |
+
+The source-content envelope uses `status` values `fetched`, `skipped`, `unsupported`,
+and `error`. Fetch errors, unsupported URLs, missing provenance, non-text content, and
+truncation are reported inside this envelope instead of failing the whole tool call when
+graph metadata is available. Envelope fields: `status` (always set), `mode`,
+`source_file`, `source_url`, `start_line`/`end_line` (snippet windows), `truncated`,
+`content`, and `reason` (set for non-`fetched` outcomes).
+
+candle prefers `nodes.source_url` from Graphify when it is a GitHub raw
+(`raw.githubusercontent.com`) URL or a convertible `github.com` blob URL. When
+`source_url` is absent or unsupported, candle can fall back to the repo identity
+(`org/name`) plus commit (or branch) plus `source_file` to assemble a raw URL. Non-GitHub
+hosts return `unsupported` for this release.
+
+### `read_source_content`
+
+Read GitHub source content directly for an indexed graph node or source file.
+
+| Arg | Type | Description |
+|-----|------|-------------|
+| `repo` | string | repo identity |
+| `node_id` | string | graph node id to read; provide this or `file` |
+| `file` | string | source file path to read; provide this or `node_id` |
+| `source_content` | object | optional source-content options; omitted means `snippet` for node reads with a source location and capped `full` content for file reads |
+
+**Response** — a `SourceContent` envelope:
+
+```json
+{
+  "status": "fetched",
+  "mode": "snippet",
+  "source_file": "internal/reservation/service.go",
+  "source_url": "https://raw.githubusercontent.com/org/inventory-service/abc123/internal/reservation/service.go",
+  "start_line": 30,
+  "end_line": 70,
+  "content": "func (s *Service) ReserveProduct(ctx context.Context, req Request) Response {\n  return Response{}\n}"
+}
+```
+
+A missing-file read (no indexed nodes for `file`) returns a `skipped` status envelope
+rather than an error, so an agent can keep iterating. Unknown repo/node still surface as
+tool-level `not found` errors.
 
 ---
 
