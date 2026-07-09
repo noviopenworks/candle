@@ -479,7 +479,7 @@ Expected: PASS.
 - Consumes: `Tools.reg.Resolve`, `Store.NodeByID`, `Store.NodesByFile`, `sourceHydrator.hydrateNode`.
 - Produces: `func (t *Tools) ReadSourceContent(args ReadSourceContentArgs) (SourceContent, error)`.
 
-- [ ] **Step 1: Write direct read tests by node and by file**
+- [x] **Step 1: Write direct read tests by node and by file**
 
 Append these tests to `internal/mcp/source_content_test.go`.
 
@@ -548,13 +548,13 @@ func TestReadSourceContentFileWithoutResolvableNodeReturnsSkippedStatus(t *testi
 }
 ```
 
-- [ ] **Step 2: Run the focused failing direct-read tests**
+- [x] **Step 2: Run the focused failing direct-read tests**
 
 Run: `go test ./internal/mcp -run 'TestReadSourceContent' -count=1`
 
 Expected: FAIL with missing `Tools.sourceHydrator` or `ReadSourceContent` compile errors.
 
-- [ ] **Step 3: Add the hydrator dependency to `Tools`**
+- [x] **Step 3: Add the hydrator dependency to `Tools`**
 
 Modify `internal/mcp/tools.go`.
 
@@ -574,7 +574,7 @@ func NewToolsScoped(s *store.Store, allowed map[int64]bool) *Tools {
 }
 ```
 
-- [ ] **Step 4: Implement `ReadSourceContent`**
+- [x] **Step 4: Implement `ReadSourceContent`**
 
 Implement this behavior:
 
@@ -645,7 +645,7 @@ func defaultDirectMode(node store.NodeRow) string {
 }
 ```
 
-- [ ] **Step 5: Verify direct-read tests pass**
+- [x] **Step 5: Verify direct-read tests pass**
 
 Run: `go test ./internal/mcp -run 'TestReadSourceContent|TestHydrateSourceContent|TestNormalizeGitHubSourceURL' -count=1`
 
