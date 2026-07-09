@@ -211,7 +211,7 @@ Expected: PASS.
 - Consumes: `store.NodeRow` provenance fields from Task 1 and `registry.RepoInfo`.
 - Produces: source modes, `SourceContentOptions`, `SourceContent`, wrapper result structs, URL normalization, bounded fetch, text detection, snippet extraction, and status-only failures.
 
-- [ ] **Step 1: Write URL normalization tests**
+- [x] **Step 1: Write URL normalization tests**
 
 Create `internal/mcp/source_content_test.go` with these tests first.
 
@@ -267,7 +267,7 @@ func TestNormalizeGitHubSourceURLRejectsUnsupportedHost(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Write fetch, snippet, and status tests**
+- [x] **Step 2: Write fetch, snippet, and status tests**
 
 Append these tests to `internal/mcp/source_content_test.go`. Use a fake `RoundTripper` so hydration can use GitHub URLs without reaching the network.
 
@@ -345,13 +345,13 @@ func TestHydrateSourceContentFetchErrorIsStatus(t *testing.T) {
 }
 ```
 
-- [ ] **Step 3: Run the focused failing hydrator tests**
+- [x] **Step 3: Run the focused failing hydrator tests**
 
 Run: `go test ./internal/mcp -run 'TestNormalizeGitHubSourceURL|TestHydrateSourceContent' -count=1`
 
 Expected: FAIL with compile errors for missing source hydration types and functions.
 
-- [ ] **Step 4: Add the source hydration implementation**
+- [x] **Step 4: Add the source hydration implementation**
 
 Create `internal/mcp/source_content.go` with package `mcp`. Include these constants and unexported request type.
 
@@ -460,7 +460,7 @@ func (h *sourceHydrator) hydrateNode(ctx context.Context, ri registry.RepoInfo, 
 - snippet mode with no parseable source line returns full capped content with mode `full` only for direct reads; for enrichment calls return `Status: "skipped"` with reason `missing source location for snippet`.
 - fetched content sets `Status: "fetched"`, `Mode`, `SourceFile`, `SourceURL`, optional line range, `Truncated`, and `Content`.
 
-- [ ] **Step 5: Verify hydrator unit tests pass**
+- [x] **Step 5: Verify hydrator unit tests pass**
 
 Run: `go test ./internal/mcp -run 'TestNormalizeGitHubSourceURL|TestHydrateSourceContent' -count=1`
 
