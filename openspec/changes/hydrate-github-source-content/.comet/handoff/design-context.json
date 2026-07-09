@@ -1,0 +1,14 @@
+{
+  "change": "hydrate-github-source-content",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "569e599ba2c3d02011fd695b6cb3c8b2d5fc65e5397ad743e18e4e41e41cccf8",
+  "files": [
+    { "path": "openspec/changes/hydrate-github-source-content/proposal.md", "sha256": "b58b8793babf1ad249b3c52583ddd99bf7a9a55d8846cc0ac7f5a940ae25a8b6" },
+    { "path": "openspec/changes/hydrate-github-source-content/design.md", "sha256": "9dfb864bf41e011b65db499827d9617a7faef2c8658d51b63a422cde2a4ff3ed" },
+    { "path": "openspec/changes/hydrate-github-source-content/tasks.md", "sha256": "5de796496110594f94e1b2b48d3c7ed00320c70d21e3146a3667619641ff2116" },
+    { "path": "openspec/changes/hydrate-github-source-content/specs/source-content-hydration/spec.md", "sha256": "478abfac8c75e4155c681599b18f762c077701b3e376a66776bd1514e5368017" }
+  ]
+}
