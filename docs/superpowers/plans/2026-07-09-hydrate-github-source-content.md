@@ -1125,12 +1125,12 @@ After `go test ./...` passes, edit `openspec/changes/hydrate-github-source-conte
 
 ## Final Verification Checklist
 
-- [ ] Run `go test ./internal/store -count=1`.
-- [ ] Run `go test ./internal/mcp -count=1`.
-- [ ] Run `go test ./...`.
-- [ ] Confirm default JSON shapes remain metadata-only when `source_content` is omitted by inspecting tests for `QueryRepoWithSource`, `ExplainSymbolWithSource`, `GetFileContextWithSource`, and `GetContext`.
-- [ ] Confirm `docs/tools.md` says 17 tools and lists `read_source_content` exactly once.
-- [ ] Confirm `openspec/changes/hydrate-github-source-content/tasks.md` is fully checked only after tests pass.
+- [x] Run `go test ./internal/store -count=1`.
+- [x] Run `go test ./internal/mcp -count=1`.
+- [x] Run `go test ./...`.
+- [x] Confirm default JSON shapes remain metadata-only when `source_content` is omitted by inspecting tests for `QueryRepoWithSource`, `ExplainSymbolWithSource`, `GetFileContextWithSource`, and `GetContext`.
+- [x] Confirm `docs/tools.md` says 17 tools and lists `read_source_content` exactly once.
+- [x] Confirm `openspec/changes/hydrate-github-source-content/tasks.md` is fully checked only after tests pass.
 
 ## Planning Risks
 
