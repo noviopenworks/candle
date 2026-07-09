@@ -125,7 +125,7 @@ func TestGetFileContext(t *testing.T) {
 }
 
 func TestQueryRepoWithSourcePreservesDefaultShape(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	out, err := tools.QueryRepoWithSource(QueryRepoArgs{Repo: "org/repo", Name: "ReserveProduct"})
 	if err != nil {
 		t.Fatal(err)
@@ -136,7 +136,7 @@ func TestQueryRepoWithSourcePreservesDefaultShape(t *testing.T) {
 }
 
 func TestQueryRepoWithSourceHydratesExplicitSnippet(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	tools.sourceHydrator = testHydrator("line1\nline2\nline3\n", "text/plain")
 	out, err := tools.QueryRepoWithSource(QueryRepoArgs{
 		Repo:          "org/repo",
@@ -156,7 +156,7 @@ func TestQueryRepoWithSourceHydratesExplicitSnippet(t *testing.T) {
 }
 
 func TestExplainSymbolWithSourcePreservesDefaultShape(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	out, err := tools.ExplainSymbolWithSource(ExplainSymbolArgs{Repo: "org/repo", Symbol: "ReserveProduct"})
 	if err != nil {
 		t.Fatal(err)
@@ -167,7 +167,7 @@ func TestExplainSymbolWithSourcePreservesDefaultShape(t *testing.T) {
 }
 
 func TestExplainSymbolWithSourceHydratesFullContent(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	tools.sourceHydrator = testHydrator("package server\nfunc ReserveProduct() {}\n", "text/plain")
 	out, err := tools.ExplainSymbolWithSource(ExplainSymbolArgs{
 		Repo:          "org/repo",
@@ -187,7 +187,7 @@ func TestExplainSymbolWithSourceHydratesFullContent(t *testing.T) {
 }
 
 func TestGetFileContextWithSourcePreservesDefaultShape(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	out, err := tools.GetFileContextWithSource(GetFileContextArgs{Repo: "org/repo", File: "internal/server.go"})
 	if err != nil {
 		t.Fatal(err)
@@ -198,7 +198,7 @@ func TestGetFileContextWithSourcePreservesDefaultShape(t *testing.T) {
 }
 
 func TestGetFileContextWithSourceHydratesFile(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	tools.sourceHydrator = testHydrator("package server\nfunc ReserveProduct() {}\n", "text/plain")
 	out, err := tools.GetFileContextWithSource(GetFileContextArgs{
 		Repo:          "org/repo",

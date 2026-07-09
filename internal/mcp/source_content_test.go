@@ -132,7 +132,7 @@ func TestHydrateSourceContentFetchErrorIsStatus(t *testing.T) {
 	}
 }
 
-func seedSourceContentTools(t *testing.T) (*Tools, int64) {
+func seedSourceContentTools(t *testing.T) *Tools {
 	t.Helper()
 	s, err := store.Open(":memory:")
 	if err != nil {
@@ -147,11 +147,11 @@ func seedSourceContentTools(t *testing.T) (*Tools, int64) {
 		id, "n1", "ReserveProduct", "code", "internal/server.go", "L2", "https://raw.githubusercontent.com/org/repo/abc/internal/server.go"); err != nil {
 		t.Fatal(err)
 	}
-	return NewTools(s), id
+	return NewTools(s)
 }
 
 func TestReadSourceContentByNode(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	tools.sourceHydrator = testHydrator("line1\nline2\nline3\n", "text/plain")
 
 	got, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo", NodeID: "n1"})
@@ -164,7 +164,7 @@ func TestReadSourceContentByNode(t *testing.T) {
 }
 
 func TestReadSourceContentByFile(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	tools.sourceHydrator = testHydrator("package server\nfunc ReserveProduct() {}\n", "text/plain")
 
 	got, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo", File: "internal/server.go"})
@@ -177,7 +177,7 @@ func TestReadSourceContentByFile(t *testing.T) {
 }
 
 func TestReadSourceContentRequiresNodeOrFile(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	_, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo"})
 	if err == nil || !strings.Contains(err.Error(), "node_id or file") {
 		t.Fatalf("expected node_id/file validation error, got %v", err)
@@ -185,7 +185,7 @@ func TestReadSourceContentRequiresNodeOrFile(t *testing.T) {
 }
 
 func TestReadSourceContentFileWithoutResolvableNodeReturnsSkippedStatus(t *testing.T) {
-	tools, _ := seedSourceContentTools(t)
+	tools := seedSourceContentTools(t)
 	got, err := tools.ReadSourceContent(ReadSourceContentArgs{Repo: "org/repo", File: "missing.go"})
 	if err != nil {
 		t.Fatal(err)

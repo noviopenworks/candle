@@ -33,6 +33,10 @@ const (
 	defaultSourceContentLineRadius    = 20
 	defaultSourceContentMaxCandidates = 5
 	defaultSourceContentTimeout       = 5 * time.Second
+
+	// maxSourceContentMaxBytes caps caller-supplied MaxBytes to prevent
+	// accidental large allocations. Larger values are clamped silently.
+	maxSourceContentMaxBytes = 1 << 20 // 1 MiB
 )
 
 // SourceContentOptions is the optional source_content argument attached to MCP
@@ -87,6 +91,9 @@ func sourceContentRequestFromOptions(opts *SourceContentOptions, defaultMode str
 	}
 	if opts.MaxBytes > 0 {
 		req.maxBytes = opts.MaxBytes
+		if req.maxBytes > maxSourceContentMaxBytes {
+			req.maxBytes = maxSourceContentMaxBytes
+		}
 	}
 	if opts.LineRadius >= 0 {
 		req.lineRadius = opts.LineRadius
