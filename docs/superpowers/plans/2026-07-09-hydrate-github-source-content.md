@@ -797,7 +797,7 @@ Expected: PASS.
 - Consumes: `GetFileContextWithSource`, `GetContextArgs.SourceContent`, optional `CodeContext.SourceContent`.
 - Produces: `SourceFileContextResult` for hydrated file context and hydrated code-symbol matches in `ContextResult`.
 
-- [ ] **Step 1: Write `get_file_context` default and hydrated tests**
+- [x] **Step 1: Write `get_file_context` default and hydrated tests**
 
 Append to `internal/mcp/tools_test.go`.
 
@@ -834,7 +834,7 @@ func TestGetFileContextWithSourceHydratesFile(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Write `get_context` default and hydrated tests**
+- [x] **Step 2: Write `get_context` default and hydrated tests**
 
 Append to `internal/mcp/context_tools_test.go`.
 
@@ -873,13 +873,13 @@ func TestGetContextSourceContentHydratesCodeSymbols(t *testing.T) {
 }
 ```
 
-- [ ] **Step 3: Run focused failing tests**
+- [x] **Step 3: Run focused failing tests**
 
 Run: `go test ./internal/mcp -run 'TestGetFileContextWithSource|TestGetContextSourceContent' -count=1`
 
 Expected: FAIL with missing `GetFileContextArgs`, `GetFileContextWithSource`, or `CodeContext.SourceContent` compile errors.
 
-- [ ] **Step 4: Add `GetFileContextArgs` and hydratable file context method**
+- [x] **Step 4: Add `GetFileContextArgs` and hydratable file context method**
 
 Define args.
 
@@ -899,7 +899,7 @@ Implement `GetFileContextWithSource`:
 - Use `ReadSourceContent(ReadSourceContentArgs{Repo: args.Repo, File: args.File, SourceContent: args.SourceContent})` to hydrate full-file content by default.
 - Return `SourceFileContextResult{File: args.File, Symbols: symbols, SourceContent: source}`.
 
-- [ ] **Step 5: Add `get_context` source content fields and logic**
+- [x] **Step 5: Add `get_context` source content fields and logic**
 
 Modify `GetContextArgs`.
 
@@ -921,7 +921,7 @@ func (t *Tools) contextMatches(indexID int64, ri registry.RepoInfo, topic, mode 
 
 Hydrate only code-symbol matches. Preserve API, proto, and library behavior. For `mode: auto`, hydrate when more than one code symbol matched or a matched code symbol has no parseable source location and fetchable provenance. For explicit `snippet` or `full`, hydrate up to `max_candidates` code-symbol matches.
 
-- [ ] **Step 6: Verify focused tests pass**
+- [x] **Step 6: Verify focused tests pass**
 
 Run: `go test ./internal/mcp -run 'TestGetFileContextWithSource|TestGetContextSourceContent' -count=1`
 
