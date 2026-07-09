@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/noviopenworks/candle/internal/registry"
 	"github.com/noviopenworks/candle/internal/store"
@@ -120,6 +121,55 @@ func (t *Tools) GetFileContext(repo, file string) ([]store.NodeRow, error) {
 		return nil, repoNotFound(repo)
 	}
 	return t.s.NodesByFile(ri.IndexID, file)
+}
+
+// SourceFileContextResult is the hydrated get_file_context response: the file's
+// symbols paired with the fetched source content for that file.
+type SourceFileContextResult struct {
+	File          string          `json:"file"`
+	Symbols       []store.NodeRow `json:"symbols"`
+	SourceContent SourceContent   `json:"source_content"`
+}
+
+// GetFileContextArgs are the arguments to GetFileContextWithSource. SourceContent
+// is optional: nil or mode "off" preserves the existing metadata-only shape.
+type GetFileContextArgs struct {
+	Repo          string                `json:"repo" jsonschema:"repo identity (org/name)"`
+	File          string                `json:"file" jsonschema:"source file path"`
+	SourceContent *SourceContentOptions `json:"source_content,omitempty"`
+}
+
+// GetFileContextWithSource is the source-aware get_file_context. It resolves
+// symbols via the existing GetFileContext, then optionally hydrates the file's
+// source content:
+//
+//   - nil opts or mode "off" -> returns []store.NodeRow (preserves default shape).
+//   - present opts with empty mode -> treated as auto; hydrates because
+//     get_file_context is an explicit file-context request.
+//   - mode "auto"/"snippet"/"full" -> hydrates via ReadSourceContent's file
+//     branch (defaults to full-file content).
+//
+// When hydration runs the return type is SourceFileContextResult.
+func (t *Tools) GetFileContextWithSource(args GetFileContextArgs) (any, error) {
+	symbols, err := t.GetFileContext(args.Repo, args.File)
+	if err != nil {
+		return nil, err
+	}
+	if args.SourceContent == nil {
+		return symbols, nil
+	}
+	if strings.ToLower(strings.TrimSpace(args.SourceContent.Mode)) == sourceContentModeOff {
+		return symbols, nil
+	}
+	source, err := t.ReadSourceContent(ReadSourceContentArgs{
+		Repo:          args.Repo,
+		File:          args.File,
+		SourceContent: args.SourceContent,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return SourceFileContextResult{File: args.File, Symbols: symbols, SourceContent: source}, nil
 }
 
 // QueryRepo implements query_repo: structural node lookup by label.

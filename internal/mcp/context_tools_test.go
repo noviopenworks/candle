@@ -153,3 +153,36 @@ func TestGetContextUnknownRepo(t *testing.T) {
 		t.Fatalf("expected ErrNotFound, got %v", err)
 	}
 }
+
+func TestGetContextSourceContentPreservesDefaultCodeSymbolShape(t *testing.T) {
+	tools := seedContextTools(t)
+	out, err := tools.GetContext(GetContextArgs{Repo: "org/inventory", Topic: "ReserveProduct", Mode: "code"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out.Matches.CodeSymbols) != 1 {
+		t.Fatalf("expected one code symbol, got %+v", out.Matches.CodeSymbols)
+	}
+	if out.Matches.CodeSymbols[0].SourceContent != nil {
+		t.Fatalf("default get_context included source content: %+v", out.Matches.CodeSymbols[0].SourceContent)
+	}
+}
+
+func TestGetContextSourceContentHydratesCodeSymbols(t *testing.T) {
+	tools := seedContextTools(t)
+	tools.sourceHydrator = testHydrator("line1\nline2\nline3\nline4\n", "text/plain")
+	_, err := tools.s.DB.Exec(`UPDATE nodes SET source_url=? WHERE node_id=?`, "https://raw.githubusercontent.com/org/inventory/abc123/internal/http/reservation_handler.go", "handler_reserve")
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, err := tools.GetContext(GetContextArgs{Repo: "org/inventory", Topic: "ReserveProduct", Mode: "code", SourceContent: &SourceContentOptions{Mode: sourceContentModeSnippet, LineRadius: 0}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out.Matches.CodeSymbols) != 1 || out.Matches.CodeSymbols[0].SourceContent == nil {
+		t.Fatalf("expected hydrated code symbol, got %+v", out.Matches.CodeSymbols)
+	}
+	if out.Matches.CodeSymbols[0].SourceContent.Status != sourceContentStatusFetched {
+		t.Fatalf("source content mismatch: %+v", out.Matches.CodeSymbols[0].SourceContent)
+	}
+}

@@ -185,3 +185,34 @@ func TestExplainSymbolWithSourceHydratesFullContent(t *testing.T) {
 		t.Fatalf("hydrated explain_symbol mismatch: %+v", got)
 	}
 }
+
+func TestGetFileContextWithSourcePreservesDefaultShape(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	out, err := tools.GetFileContextWithSource(GetFileContextArgs{Repo: "org/repo", File: "internal/server.go"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := out.([]store.NodeRow); !ok {
+		t.Fatalf("default get_file_context shape = %T, want []store.NodeRow", out)
+	}
+}
+
+func TestGetFileContextWithSourceHydratesFile(t *testing.T) {
+	tools, _ := seedSourceContentTools(t)
+	tools.sourceHydrator = testHydrator("package server\nfunc ReserveProduct() {}\n", "text/plain")
+	out, err := tools.GetFileContextWithSource(GetFileContextArgs{
+		Repo:          "org/repo",
+		File:          "internal/server.go",
+		SourceContent: &SourceContentOptions{},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := out.(SourceFileContextResult)
+	if !ok {
+		t.Fatalf("hydrated get_file_context shape = %T, want SourceFileContextResult", out)
+	}
+	if got.File != "internal/server.go" || len(got.Symbols) != 1 || got.SourceContent.Status != sourceContentStatusFetched {
+		t.Fatalf("hydrated get_file_context mismatch: %+v", got)
+	}
+}
