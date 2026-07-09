@@ -12,7 +12,7 @@
 - [x] 2.3 Add source hydration options to `get_file_context`, including explicit file/resource-triggered hydration.
 - [x] 2.4 Add source hydration options to `get_context`, including automatic hydration for ambiguous matches or missing source locations when enabled.
 - [x] 2.5 Add a dedicated direct source-read MCP tool that accepts repo plus node or file reference and returns the structured source-content envelope.
-- [ ] 2.6 Register the new source-read tool in the MCP server and update the e2e advertised tool surface expectations.
+- [x] 2.6 Register the new source-read tool in the MCP server and update the e2e advertised tool surface expectations.
 
 ## 3. Tests and Documentation
 

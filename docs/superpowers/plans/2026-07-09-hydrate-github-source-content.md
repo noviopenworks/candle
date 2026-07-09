@@ -940,7 +940,7 @@ Expected: PASS.
 - Consumes: pure hydratable methods and `ReadSourceContent`.
 - Produces: advertised `read_source_content` MCP tool and server wrappers for optional `source_content` args.
 
-- [ ] **Step 1: Write server-surface expectations first**
+- [x] **Step 1: Write server-surface expectations first**
 
 Modify `internal/mcp/e2e_surface_test.go` fixture graph nodes to include deterministic `source_url` values such as `https://raw.githubusercontent.com/org/inventory/abc/internal/grpc/server.go`. Add a call assertion for `read_source_content` that expects a status envelope, not necessarily live fetched content, because e2e must not depend on GitHub network.
 
@@ -953,13 +953,13 @@ mustContain("read_source_content", sourceBody, "status", "source_url")
 
 If the e2e fixture uses raw GitHub URLs that cannot be reached in CI, assert the structured status only. The acceptable statuses are `fetched`, `error`, `unsupported`, or `skipped`; the key requirement is that the tool call succeeds and returns a `source_content` envelope rather than a protocol error.
 
-- [ ] **Step 2: Run the focused failing surface test compile**
+- [x] **Step 2: Run the focused failing surface test compile**
 
 Run: `go test ./internal/mcp -run TestEndToEndToolSurface -count=1`
 
 Expected: FAIL because `read_source_content` is not registered or not advertised yet.
 
-- [ ] **Step 3: Update `ToolNames` and registration order**
+- [x] **Step 3: Update `ToolNames` and registration order**
 
 In `internal/mcp/server.go`, add `read_source_content` after `get_file_context` so it sits with code/source tools.
 
@@ -987,7 +987,7 @@ var ToolNames = []string{
 
 Call `registerReadSourceContent(srv, tools)` after `registerGetFileContext(srv, tools)`.
 
-- [ ] **Step 4: Replace server arg structs for hydrated tools**
+- [x] **Step 4: Replace server arg structs for hydrated tools**
 
 Remove or stop using unexported `queryRepoArgs`, `explainSymbolArgs`, and `getFileContextArgs`. Reuse `QueryRepoArgs`, `ExplainSymbolArgs`, and `GetFileContextArgs` in registrations.
 
@@ -1007,7 +1007,7 @@ out, err := tools.GetFileContextWithSource(args)
 
 Keep `registerGetContext` as-is except the decoded `GetContextArgs` now carries `SourceContent`.
 
-- [ ] **Step 5: Add `read_source_content` registration**
+- [x] **Step 5: Add `read_source_content` registration**
 
 Add this registration in `internal/mcp/server.go`.
 
@@ -1028,7 +1028,7 @@ func registerReadSourceContent(srv *mcpsdk.Server, tools *Tools) {
 
 If `ReadSourceContent` can return validation errors that are not `ErrNotFound`, let them be protocol errors. Repo and node not-found errors should still use `toolErr`.
 
-- [ ] **Step 6: Verify server-surface tests**
+- [x] **Step 6: Verify server-surface tests**
 
 Run: `go test ./internal/mcp -run 'TestEndToEndToolSurface|TestEndToEndStdio' -count=1`
 
