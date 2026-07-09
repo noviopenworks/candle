@@ -1,6 +1,6 @@
 ## 1. Provenance and Hydration Core
 
-- [ ] 1.1 Expose stored node provenance (`source_url`, `captured_at`, `author`, `contributor`) through query-facing store rows without changing default metadata-only behavior.
+- [x] 1.1 Expose stored node provenance (`source_url`, `captured_at`, `author`, `contributor`) through query-facing store rows without changing default metadata-only behavior.
 - [ ] 1.2 Add a source hydration request/response model with modes for `off`, automatic snippets, explicit snippets, and capped full-file content.
 - [ ] 1.3 Implement GitHub source URL normalization for raw URLs and convertible blob URLs, returning a structured unsupported status for other URLs.
 - [ ] 1.4 Implement bounded text fetching with timeout, byte cap, text detection, line-window extraction, truncation reporting, and per-source error status.

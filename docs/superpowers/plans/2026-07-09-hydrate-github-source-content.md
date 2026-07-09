@@ -115,7 +115,7 @@ Define `QueryRepoArgs`, `ExplainSymbolArgs`, and `GetFileContextArgs` in `intern
 - Consumes: existing `nodes.source_url`, `nodes.captured_at`, `nodes.author`, `nodes.contributor` columns from `internal/store/schema.go`.
 - Produces: `store.NodeRow.SourceURL`, `store.NodeRow.CapturedAt`, `store.NodeRow.Author`, `store.NodeRow.Contributor` for all node query helpers.
 
-- [ ] **Step 1: Write the failing store provenance test**
+- [x] **Step 1: Write the failing store provenance test**
 
 Add this test to `internal/store/query_test.go`.
 
@@ -156,13 +156,13 @@ func TestNodeRowsIncludeStoredProvenance(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run the focused failing test**
+- [x] **Step 2: Run the focused failing test**
 
 Run: `go test ./internal/store -run TestNodeRowsIncludeStoredProvenance -count=1`
 
 Expected: FAIL with compile errors that `store.NodeRow` has no `SourceURL`, `CapturedAt`, `Author`, or `Contributor` fields.
 
-- [ ] **Step 3: Extend `NodeRow`, `scanNodes`, and `nodeCols`**
+- [x] **Step 3: Extend `NodeRow`, `scanNodes`, and `nodeCols`**
 
 In `internal/store/query.go`, keep existing field names unchanged and append the provenance fields without JSON tags so existing `NodeRow` JSON casing remains stable.
 
@@ -193,7 +193,7 @@ if err := rows.Scan(&n.IndexID, &n.NodeID, &n.Label, &n.FileType, &n.SourceFile,
 const nodeCols = `index_id, node_id, COALESCE(label,''), COALESCE(file_type,''), COALESCE(source_file,''), COALESCE(source_location,''), COALESCE(source_url,''), COALESCE(captured_at,''), COALESCE(author,''), COALESCE(contributor,'')`
 ```
 
-- [ ] **Step 4: Verify store provenance passes**
+- [x] **Step 4: Verify store provenance passes**
 
 Run: `go test ./internal/store -run 'TestNodeRowsIncludeStoredProvenance|TestNodesByLabel|TestNeighbors|TestNodesByLabelAcrossIndexes' -count=1`
 
