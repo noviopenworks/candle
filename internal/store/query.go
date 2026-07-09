@@ -8,6 +8,10 @@ type NodeRow struct {
 	FileType       string
 	SourceFile     string
 	SourceLocation string
+	SourceURL      string
+	CapturedAt     string
+	Author         string
+	Contributor    string
 }
 
 // EdgeRow is a stored graph edge.
@@ -27,7 +31,7 @@ func scanNodes(rows interface {
 	var out []NodeRow
 	for rows.Next() {
 		var n NodeRow
-		if err := rows.Scan(&n.IndexID, &n.NodeID, &n.Label, &n.FileType, &n.SourceFile, &n.SourceLocation); err != nil {
+		if err := rows.Scan(&n.IndexID, &n.NodeID, &n.Label, &n.FileType, &n.SourceFile, &n.SourceLocation, &n.SourceURL, &n.CapturedAt, &n.Author, &n.Contributor); err != nil {
 			return nil, err
 		}
 		out = append(out, n)
@@ -35,7 +39,7 @@ func scanNodes(rows interface {
 	return out, rows.Err()
 }
 
-const nodeCols = `index_id, node_id, COALESCE(label,''), COALESCE(file_type,''), COALESCE(source_file,''), COALESCE(source_location,'')`
+const nodeCols = `index_id, node_id, COALESCE(label,''), COALESCE(file_type,''), COALESCE(source_file,''), COALESCE(source_location,''), COALESCE(source_url,''), COALESCE(captured_at,''), COALESCE(author,''), COALESCE(contributor,'')`
 
 // NodesByLabel returns nodes in indexID whose label matches exactly.
 func (s *Store) NodesByLabel(indexID int64, label string) ([]NodeRow, error) {

@@ -60,3 +60,38 @@ func TestNodesByLabelAcrossIndexes(t *testing.T) {
 		t.Fatalf("expected 2 cross-index hits, got %d", len(hits))
 	}
 }
+
+func TestNodeRowsIncludeStoredProvenance(t *testing.T) {
+	s, idA, _ := seed(t)
+	defer s.Close()
+	mustExec(t, s, `UPDATE nodes SET source_url=?, captured_at=?, author=?, contributor=? WHERE index_id=? AND node_id=?`,
+		"https://github.com/org/svc-a/blob/a1/h.go", "2026-07-09T12:00:00Z", "Ada", "Grace", idA, "n1")
+
+	ns, err := s.NodesByLabel(idA, "ReserveProduct")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ns) != 1 {
+		t.Fatalf("expected one node, got %+v", ns)
+	}
+	got := ns[0]
+	if got.SourceURL != "https://github.com/org/svc-a/blob/a1/h.go" || got.CapturedAt != "2026-07-09T12:00:00Z" || got.Author != "Ada" || got.Contributor != "Grace" {
+		t.Fatalf("provenance not scanned: %+v", got)
+	}
+
+	byID, ok, err := s.NodeByID(idA, "n1")
+	if err != nil || !ok {
+		t.Fatalf("NodeByID: ok=%v err=%v", ok, err)
+	}
+	if byID.SourceURL != got.SourceURL {
+		t.Fatalf("NodeByID SourceURL=%q, want %q", byID.SourceURL, got.SourceURL)
+	}
+
+	byFile, err := s.NodesByFile(idA, "h.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(byFile) != 1 || byFile[0].Contributor != "Grace" {
+		t.Fatalf("NodesByFile provenance mismatch: %+v", byFile)
+	}
+}
