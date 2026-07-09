@@ -1046,11 +1046,11 @@ Expected: PASS. If network restrictions make the direct source read return `erro
 - Consumes: final tool args and response shapes from Tasks 2 through 6.
 - Produces: accurate docs and checked OpenSpec task list.
 
-- [ ] **Step 1: Update tool count and list in docs**
+- [x] **Step 1: Update tool count and list in docs**
 
 In `docs/tools.md`, change the advertised count from 16 to 17 and add `read_source_content` after `get_file_context` in the registration-order list.
 
-- [ ] **Step 2: Document `source_content` options once**
+- [x] **Step 2: Document `source_content` options once**
 
 Add a section under `## Repo & code-graph tools` before `get_context` or after `get_file_context` with this exact option table.
 
@@ -1069,7 +1069,7 @@ Add a section under `## Repo & code-graph tools` before `get_context` or after `
 The source-content envelope uses `status` values `fetched`, `skipped`, `unsupported`, and `error`. Fetch errors, unsupported URLs, missing provenance, non-text content, and truncation are reported inside this envelope instead of failing the whole tool call when graph metadata is available.
 ```
 
-- [ ] **Step 3: Update each affected tool doc**
+- [x] **Step 3: Update each affected tool doc**
 
 For `get_context`, `query_repo`, `explain_symbol`, and `get_file_context`, add `source_content` to the arg table and show the hydrated response shape for that tool:
 
@@ -1090,7 +1090,7 @@ For `get_context`, `query_repo`, `explain_symbol`, and `get_file_context`, add `
 
 For `explain_symbol`, document that the response wraps the existing `SymbolExplanation` under `explanation` and adds `source_content`. For `get_file_context`, document that the response contains `file`, `symbols`, and `source_content`. For `get_context`, document that `matches.code_symbols[]` gains an optional `source_content` field.
 
-- [ ] **Step 4: Document `read_source_content`**
+- [x] **Step 4: Document `read_source_content`**
 
 Add a new subsection after `get_file_context`.
 
@@ -1109,17 +1109,17 @@ Read GitHub source content directly for an indexed graph node or source file.
 **Response** — `SourceContent` envelope.
 ```
 
-- [ ] **Step 5: Document Graphify provenance expectations and limits**
+- [x] **Step 5: Document Graphify provenance expectations and limits**
 
 In the same docs section, state that candle prefers `nodes.source_url` from Graphify when it is a GitHub raw URL or convertible GitHub blob URL, and can fall back to repo identity plus commit/branch plus `source_file` when enough snapshot data exists. State that non-GitHub hosts return `unsupported` for this release.
 
-- [ ] **Step 6: Run docs and full tests**
+- [x] **Step 6: Run docs and full tests**
 
 Run: `go test ./...`
 
 Expected: PASS.
 
-- [ ] **Step 7: Mark OpenSpec tasks complete**
+- [x] **Step 7: Mark OpenSpec tasks complete**
 
 After `go test ./...` passes, edit `openspec/changes/hydrate-github-source-content/tasks.md` and change every checkbox from `- [ ]` to `- [x]` for tasks 1.1 through 3.5.
 
