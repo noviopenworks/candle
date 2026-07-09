@@ -182,7 +182,7 @@ list.
 ### Any MCP client
 
 Launch `candle serve --db <path>` as a stdio MCP server. The server
-advertises 16 tools and 5 resource templates (see [tools.md](tools.md) and
+advertises 17 tools and 5 resource templates (see [tools.md](tools.md) and
 [resources.md](resources.md)).
 
 ## 6. Try a query

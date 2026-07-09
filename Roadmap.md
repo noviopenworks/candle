@@ -18,7 +18,7 @@ one queryable SQLite-backed graph:
 - **API contracts** — OpenAPI and protobuf, parsed and stored.
 - **Private Go libraries** — indexed from provider and consumer sides.
 
-**16 tools**, **5 resource URI schemes**, commit-pinned lookups, idempotent
+**17 tools**, **5 resource URI schemes**, commit-pinned lookups, idempotent
 per-repo indexing, scoped multi-instance serving, and a real end-to-end test
 (134 tests, 12 packages). MIT-licensed; mise + task + golangci-lint + GitHub
 Actions CI + GoReleaser all in place. Phase 0 and Phase 1 are complete; this
